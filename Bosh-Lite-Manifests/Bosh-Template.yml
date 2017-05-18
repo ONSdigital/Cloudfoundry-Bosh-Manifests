@@ -1,0 +1,167 @@
+# TODO
+#       Update sha1 hashes
+
+---
+name: ((bosh_deployment))
+
+releases:
+  # can use file:// URLs - then SHA1 not required
+- name: bosh
+  # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.4
+  sha1: 4da9cedbcc8fbf11378ef439fb89de08300ad091
+- name: bosh-aws-cpi
+  # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=65
+  sha1: 26b3a5c43e6f82594a373309a495660d6db26254
+
+resource_pools:
+- name: vms
+  network: dmz
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    # Sometimes the version stays the same but the hash changes
+    # https://bosh.io/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    #
+    # The following error generally indicates a full stemcell is being used rather than the 'light' version. Prior to 2017/05/11
+    # the 'light' stemcell was always downloaded regardless of the link not including 'light' in its name
+    #
+    # The following error occurs when a normal stemcell is used:
+    # creating stemcell (bosh-aws-xen-hvm-ubuntu-trusty-go_agent 3363.20):
+    #  CPI 'create_stemcell' method responded with error: CmdError{"type":"Unknown","message":"Connection refused - Connection refused - connect(2) for \"169.254.169.254\" port 80 (169.254.169.254:80)","ok_to_retry":false}
+    #
+    # Despite not having 'light' in the URL, this always seems to download the 'light' version' (2017/05/15)
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3363.22
+    sha1: 917932a11b5774b5e51119f201d86972dcd06731
+  cloud_properties:
+    instance_type: m4.large
+    ephemeral_disk: {size: 25_000, type: gp2}
+    availability_zone: ((aws_availability_zone1))
+
+disk_pools:
+- name: disks
+  disk_size: 20_000
+  cloud_properties: {type: gp2}
+
+networks:
+- name: dmz
+  type: manual
+  subnets:
+  - range: ((dmz_cidr))
+    gateway: ((dmz_default_route))
+    dns: [((vpc_dns_ip))]
+    cloud_properties: {subnet: ((dmz_subnet))}
+- name: public
+  type: vip
+
+jobs:
+- name: ((deployment_name))-boshlite
+  instances: 1
+
+  templates:
+  - {name: nats, release: bosh}
+  - {name: postgres, release: bosh}
+  - {name: blobstore, release: bosh}
+  - {name: director, release: bosh}
+  - {name: health_monitor, release: bosh}
+  - {name: registry, release: bosh}
+  - {name: aws_cpi, release: bosh-aws-cpi}
+
+  resource_pool: vms
+  persistent_disk_pool: disks
+
+  networks:
+  - name: dmz
+    static_ips: [((dmz_cidr_prefix)).6]
+    default: [dns, gateway]
+  - name: public
+    static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
+
+  properties:
+    nats:
+      address: 127.0.0.1
+      user: nats
+      password: ((nats_password))
+
+    postgres: &db
+      listen_address: 127.0.0.1
+      host: 127.0.0.1
+      user: postgres
+      password: ((postgres_password))
+      database: bosh
+      adapter: postgres
+
+    registry:
+      address: ((dmz_cidr_prefix)).6
+      host: ((dmz_cidr_prefix)).6
+      db: *db
+      http:
+        user: admin
+        password: ((http_password))
+        port: 25777
+      username: admin
+      password: ((registry_password))
+      port: 25777
+
+    blobstore:
+      address: ((dmz_cidr_prefix)).6
+      port: 25250
+      provider: dav
+      director:
+        user: director
+        password: ((director_blobstore_password))
+      agent:
+        user: agent
+        password: ((agent_blobstore_password))
+
+    director:
+      address: 127.0.0.1
+      name: ((bosh_name))
+      #generate_vm_passwords: true
+      db: *db
+      cpi_job: aws_cpi
+      max_threads: 10
+      ssl:
+        key: ((director_key))
+        cert: ((director_crt))
+      user_management:
+        provider: local
+        local:
+          users:
+          - {name: director, password: ((director_password))}
+          - {name: hm, password: ((hm_password))}
+
+    hm:
+      director_account:
+        user: hm
+        password: ((hm_password))
+      resurrector_enabled: true
+
+    aws: &aws
+      access_key_id: ((aws_access_key_id))
+      secret_access_key: ((aws_secret_access_key))
+      default_key_name: ((bosh_ssh_key_name))
+      # AWS outputs an array
+      default_security_groups: ((private_security_groups))
+      region: ((aws_region))
+
+    agent: {mbus: "nats://nats:((nats_password))@((dmz_cidr_prefix)).6:4222"}
+
+    ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+
+cloud_provider:
+  template: {name: aws_cpi, release: bosh-aws-cpi}
+
+  ssh_tunnel:
+    host: ((bosh_lite_public_ip))
+    port: 22
+    user: vcap
+    private_key: ((bosh_ssh_key_file))
+
+  mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
+
+  properties:
+    aws: *aws
+    agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
+    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    ntp: *ntp
