@@ -364,6 +364,9 @@ properties:
   networks: {apps: cf_private}
   # https://docs.cloudfoundry.org/deploying/aws/cf-stub.html
   app_domains: [apps.((domain_name))]
+  app_ssh:
+     host_key_fingerprint: ((ssh_host_key_fingerprint))
+     oauth_client_id: ssh-proxy
   cc:
     # https://github.com/cloudfoundry/cloud_controller_ng/blob/master/bosh/jobs/cloud_controller_ng/spec
     # quota_definitions & default_quota_definition
@@ -593,6 +596,15 @@ properties:
     branding:
       company_name: ((organisation))
     clients:
+      cc-service-dashboards:
+        authorities: clients.read,clients.write,clients.admin
+        authorized-grant-types: client_credentials
+        scope: openid,cloud_controller_service_permissions.read
+        secret: ((uaa_cc_service_dashboard_client_secret))
+      cc_routing:
+        authorities: routing.router_groups.read
+        secret: ((uaa_cc_routing_client_secret))
+        authorized-grant-types: client_credentials
       cf-services:
         access-token-validity: 600
         authorities: uaa.none
@@ -602,19 +614,10 @@ properties:
         override: true
         refresh-token-validity: 604800
         scope: cloud_controller.read,cloud_controller.write,openid,password.write,cloud_controller.admin,scim.read,scim.write,doppler.firehose,uaa.user,routing.router_groups.read
-      cc-service-dashboards:
-        authorities: clients.read,clients.write,clients.admin
-        authorized-grant-types: client_credentials
-        scope: openid,cloud_controller_service_permissions.read
-        secret: ((uaa_cc_service_dashboard_client_secret))
       cloud_controller_username_lookup:
         authorities: scim.userids
         authorized-grant-types: client_credentials
         secret: ((uaa_cc_username_lookup_client_secret))
-      cc_routing:
-        authorities: routing.router_groups.read
-        secret: ((uaa_cc_routing_client_secret))
-        authorized-grant-types: client_credentials
       doppler:
         authorities: uaa.resource
         authorized-grant-types: client_credentials
@@ -629,6 +632,13 @@ properties:
         redirect-uri: https://login.system.((domain_name))
         scope: openid,oauth.approvals
         secret: ((uaa_login_client_secret))
+      ssh-proxy:
+        authorized-grant-types: authorization_code
+        autoapprove: true
+        override: true
+        redirect-uri: /login
+        scope: openid,cloud_controller.read,cloud_controller.write,cloud_controller.admin
+        secret: ((uaa_ssh_proxy_secret))
       tcp_emitter:
         authorities: routing.routes.write,routing.routes.read
         authorized-grant-types: client_credentials
@@ -786,6 +796,13 @@ properties:
         user: nats
     ssl:
       skip_cert_verify: true
+  ssh_proxy:
+    host_key: ((ssh_host_key))
+    enable_cf_auth: true
+    enable_diego_auth: false
+    diego_credentials: ""
+    uaa_secret: ((uaa_ssh_proxy_secret))
+    uaa_token_url: https://uaa.system.((domain_name))/oauth/token
   garden:
     graph_cleanup_threshold_in_mb: 0
     persistent_image_list: ["/var/vcap/packages/cflinuxfs2/rootfs"]
