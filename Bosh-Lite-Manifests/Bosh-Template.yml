@@ -32,7 +32,7 @@ resource_pools:
     #
     # Despite not having 'light' in the URL, this always seems to download the 'light' version' (2017/05/15)
     url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3421
-    sha1: 3004f7bd7357e0853ef6056a7951ee6991f644c7
+    sha1: 6a50f8aa672cdb0d9e0952e06df7f28e2e1dd4e5
   cloud_properties:
     instance_type: m4.large
     ephemeral_disk: {size: 25_000, type: gp2}
