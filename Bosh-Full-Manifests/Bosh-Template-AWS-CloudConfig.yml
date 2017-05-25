@@ -38,6 +38,17 @@ networks:
       subnet: ((dmz_subnet))
       # AWS outputs an array
       security_groups: ((dmz_security_groups))
+- name: cf_services
+  type: manual
+  subnets:
+  - range: ((services_cidr))
+    gateway: ((services_default_route))
+    dns: [((vpc_dns_ip))]
+    az: az1
+    reserved: ["((services_cidr_prefix)).1 - ((services_cidr_prefix)).10"]
+    static: ["((services_cidr_prefix)).200 - ((services_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((services_subnet))
 - name: elastic
   type: vip
   cloud_properties: {}
