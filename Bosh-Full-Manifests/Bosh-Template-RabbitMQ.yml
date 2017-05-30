@@ -413,12 +413,12 @@ jobs:
         services: {}
 
 
- - name: broker-registrar
+- name: broker-registrar
   instances: 1
   azs: [az1]
   resource_pool: small_general
   templates:
-  - {release: broker-registrar, release cf-rabbitmq}
+  - {release: broker-registrar, release: cf-rabbitmq}
   lifecycle: errand
   networks:
   - name: cf_rabbitmq_services
