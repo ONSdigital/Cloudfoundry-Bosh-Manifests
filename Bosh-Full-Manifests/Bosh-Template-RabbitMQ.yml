@@ -412,24 +412,6 @@ jobs:
       agent:
         services: {}
 
-
-- name: broker-registrar
-  instances: 1
-  azs: [az1]
-  resource_pool: small_general
-  templates:
-  - {name: broker-registrar, release: cf-rabbitmq}
-  lifecycle: errand
-  networks:
-  - name: cf_rabbitmq_services
-  properties:
-    broker:
-      host: rabbitmq-broker.system.((domain_name))
-      port: 4567
-      name: RabbitMQ
-      username: rabbitmq-broker
-      password: ((rabbitmq_broker_password))
-
 properties:
   router:
     route_services_secret: ((router_route_services_secret))
@@ -890,27 +872,26 @@ properties:
     persistent_image_list: ["/var/vcap/packages/cflinuxfs2/rootfs"]
     deny_networks:
     - 0.0.0.0/0
-  cf:
-    api_url: https://api.system.((domain_name))
-    admin_username: ((cf_admin_username))
-    admin_password: ((cf_admin_password))
-  broker:
-    host: rabbitmq-broker.system.((domain_name))
-    protocol:
-    #name: ((rabbitmq_product_name))
-    name: rabbitmq
-    username: rabbitmq-broker
-    password: ((rabbitmq_broker_password))
+#  cf:
+#    api_url: https://api.system.((domain_name))
+#    admin_username: cf_admin
+#    admin_password: ((cf_admin_password))
+#  broker:
+#    host: rabbitmq-broker.system.((domain_name))
+#    protocol:
+#    #name: ((rabbitmq_product_name))
+#    name: rabbitmq
+#    username: rabbitmq-broker
+#    password: ((rabbitmq_broker_password))
   rabbitmq-broker:
     #route: ((rabbitmq_broker_domain))
-    route: rabbitbroker
+    route: rabbitmq-broker
     cc_endpoint: https://api.system.((domain_name))
     service:
-      #name: ((rabbitmq_product_name))
       name: rabbitmq
       username: rabbitmq-broker
       password: ((rabbitmq_broker_password))
-      url: http://rabbitmq-broker.system.((domain_name))
+      url: https://rabbitmq-broker.system.((domain_name))
     rabbitmq:
       hosts: rabbitmq-node.service.((internal_domain))
 #      operator_set_policy:
@@ -921,8 +902,8 @@ properties:
       management_domain: rabbitmq-mgnt.system.((domain_name))
       ssl: false
       administrator:
-        username: rabbitmq-broker
-        password: ((rabbitmq_broker_password))
+        username: rabbitmq-mangement
+        password: ((rabbitmq_mangement_password))
   rabbitmq-haproxy:
     ports:
     - 5671
@@ -935,7 +916,7 @@ properties:
     - 15674
     stats:
       username: rabbitmq-stats
-      password: (rabbitmq_stats_password)
+      password: ((rabbitmq_stats_password))
     server_ips: rabbitmq-node.service.((internal_domain))
   rabbitmq-server: 
     plugins:
