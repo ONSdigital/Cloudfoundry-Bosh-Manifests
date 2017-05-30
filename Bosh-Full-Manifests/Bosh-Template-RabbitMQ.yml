@@ -872,8 +872,8 @@ properties:
     persistent_image_list: ["/var/vcap/packages/cflinuxfs2/rootfs"]
     deny_networks:
     - 0.0.0.0/0
-#  cf:
-#    api_url: https://api.system.((domain_name))
+  cf:
+    api_url: https://api.system.((domain_name))
 #    admin_username: cf_admin
 #    admin_password: ((cf_admin_password))
 #  broker:
