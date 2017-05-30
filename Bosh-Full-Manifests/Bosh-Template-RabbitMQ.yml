@@ -427,7 +427,7 @@ jobs:
       host: rabbitmq-broker.system.((domain_name))
       port: 4567
       name: RabbitMQ
-      username: ((rabbitmq_broker_username))
+      username: rabbitmq-broker
       password: ((rabbitmq_broker_password))
 
 properties:
@@ -895,16 +895,12 @@ properties:
     admin_username: ((cf_admin_username))
     admin_password: ((cf_admin_password))
   broker:
-    #host: ((rabbitmq_broker_domain)).((internal_domain))
-    #host: rabbitbroker.system.((domain_name))
     host: rabbitmq-broker.system.((domain_name))
     protocol:
     #name: ((rabbitmq_product_name))
     name: rabbitmq
-    #username: ((rabbitmq_broker_username))
-    username: rabbit_username
-    #password: ((rabbitmq_broker_password))
-    password: rabbit_password
+    username: rabbitmq-broker
+    password: ((rabbitmq_broker_password))
   rabbitmq-broker:
     #route: ((rabbitmq_broker_domain))
     route: rabbitbroker
@@ -912,13 +908,9 @@ properties:
     service:
       #name: ((rabbitmq_product_name))
       name: rabbitmq
-      #username: ((rabbitmq_broker_username))
-      username: rabbit_username
-      #password: ((rabbitmq_broker_password))
-      password: rabbit_password
+      username: rabbitmq-broker
+      password: ((rabbitmq_broker_password))
       url: http://rabbitmq-broker.system.((domain_name))
-      #uuid:
-      #plan_uuid:
     rabbitmq:
       hosts: rabbitmq-node.service.((internal_domain))
 #      operator_set_policy:
@@ -929,10 +921,8 @@ properties:
       management_domain: rabbitmq-mgnt.system.((domain_name))
       ssl: false
       administrator:
-        #username: ((rabbitmq_broker_username))
-        username: rabbit_username
-        #password: ((rabbitmq_broker_password))
-        password: rabbit_password
+        username: rabbitmq-broker
+        password: ((rabbitmq_broker_password))
   rabbitmq-haproxy:
     ports:
     - 5671
@@ -944,8 +934,8 @@ properties:
     - 15672
     - 15674
     stats:
-      username: stats_username
-      password: stats_password
+      username: rabbitmq-stats
+      password: (rabbitmq_stats_password)
     server_ips: rabbitmq-node.service.((internal_domain))
   rabbitmq-server: 
     plugins:
@@ -962,15 +952,11 @@ properties:
     - 15674
     administrators:
       management:
-        #username: ((rabbitmq_management_username))
-        username: rabbit_username
-        #password: ((rabbitmq_management_password))
-        password: rabbit_password
+        username: rabbit-management
+        password: ((rabbitmq_management_password))
       broker:
-        #username: ((rabbitmq_broker_username))
-        username: rabbit_username
-        #password: ((rabbitmq_broker_password))
-        password: rabbit_password
+        username: rabbit-broker
+        password: ((rabbitmq_broker_password))
     cluster_partition_handling: autoheal
     #ssl:
     #  security_options:
