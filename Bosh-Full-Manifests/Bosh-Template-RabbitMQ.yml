@@ -418,7 +418,7 @@ jobs:
   azs: [az1]
   resource_pool: small_general
   templates:
-  - {release: broker-registrar, release: cf-rabbitmq}
+  - {name: broker-registrar, release: cf-rabbitmq}
   lifecycle: errand
   networks:
   - name: cf_rabbitmq_services
