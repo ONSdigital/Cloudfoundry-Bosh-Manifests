@@ -9,6 +9,7 @@ releases:
 - {name: diego, version: latest}
 - {name: garden-runc, version: latest}
 - {name: cflinuxfs2, version: latest}
+- {name: cf-rabbitmq, version: latest}
 
 update:
   canaries: 1
@@ -354,6 +355,62 @@ jobs:
     metron_agent:
       zone: z1
     dropsonde: {enabled: true}
+
+- name: rabbitmq-haproxy
+  instances: 1
+  azs: [az1]
+  resource_pool: micro_general
+  templates:
+  - {name: rabbitmq-haproxy, release: cf-rabbitmq}
+  - {name: route_registrar, release: cf}
+  - {name: consul_agent, release: cf}
+  properties:
+    route_registrar:
+      routes:
+      - name: rabbitmq-haproxy
+        port: 15672
+        registration_interval: 20s
+        uris:
+        - rabbitmq-haproxy.system.((domain_name))
+    consul:
+      agent:
+        services: {}
+  networks:
+  - name: cf_rabbitmq_services
+
+- name: rabbitmq-broker
+  instances: 1
+  azs: [az1]
+  resource_pool: micro_general
+  persistent_disk: 10240
+  templates:
+  - {name: rabbitmq-broker, release: cf-rabbitmq}
+  - {name: route_registrar, release: cf}
+  networks:
+  - name: cf_rabbitmq_services
+  properties:
+    route_registrar:
+      routes:
+      - name: rabbitmq-broker
+        port: 4567
+        registration_interval: 20s
+        uris:
+        - rabbitmq-broker.system.((domain_name))
+
+- name: rabbitmq-node
+  instances: 1
+  azs: [az1]
+  resource_pool: small_general
+  persistent_disk: 10240
+  templates:
+  - {name: rabbitmq-server, release: cf-rabbitmq}
+  - {name: consul_agent, release: cf}
+  networks:
+  - name: cf_rabbitmq_services
+  properties:
+    consul:
+      agent:
+        services: {}
 
 properties:
   router:
@@ -815,3 +872,67 @@ properties:
     persistent_image_list: ["/var/vcap/packages/cflinuxfs2/rootfs"]
     deny_networks:
     - 0.0.0.0/0
+  cf:
+    api_url: https://api.system.((domain_name))
+    domain: ((domain_name))
+  rabbitmq-broker:
+    route: rabbitbroker
+    cc_endpoint: https://api.system.((domain_name))
+    service:
+      #name: ((rabbitmq_product_name))
+      name: rabbitmq
+      username: rabbitmq-broker
+      password: ((rabbitmq_broker_password))
+      url: http://rabbitmq-broker.system.((domain_name))
+    rabbitmq:
+      hosts: rabbitmq-node.service.((internal_domain))
+#      operator_set_policy:
+#        enabled: true
+#        policy_name: "operator_set_policy"
+#        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
+#        policy_priority: 50
+      management_domain: rabbitmq-mgnt.system.((domain_name))
+      ssl: false
+      administrator:
+        username: rabbitmq-broker
+        password: ((rabbitmq_broker_password))
+  rabbitmq-haproxy:
+    ports:
+    - 5671
+    - 5672
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    stats:
+      username: rabbitmq-stats
+      password: (rabbitmq_stats_password)
+#    server_ips: rabbitmq-node.service.((internal_domain))
+  rabbitmq-server:
+    plugins:
+    - rabbitmq_management
+    - rabbitmq_mqtt
+    ports:
+    - 5671
+    - 5672
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    administrators:
+      management:
+        username: rabbitmq-management
+        password: ((rabbitmq_management_password))
+      broker:
+        username: rabbitmq-broker
+        password: ((rabbitmq_broker_password))
+    cluster_partition_handling: autoheal
+    #ssl:
+    #  security_options:
+    #  cert:
+    #  key:
+    #  cacert:
