@@ -148,34 +148,34 @@ jobs:
       agent:
         services: {}
 
-- name: blobstore
-  instances: 1
-  azs: [az1]
-  persistent_disk: 102400
-  resource_pool: small_general
-  templates:
-  - {name: blobstore, release: cf}
-  - {name: metron_agent, release: cf}
-  - {name: route_registrar, release: cf}
-  - {name: consul_agent, release: cf}
-  networks:
-  - name: cf_private
-  properties:
-    metron_agent:
-      zone: z1
-    consul:
-      agent:
-        services:
-          blobstore: {}
-    route_registrar:
-      routes:
-      - name: blobstore
-        port: 8080
-        registration_interval: 20s
-        tags:
-          component: blobstore
-        uris:
-        - "blobstore.system.((domain_name))"
+#- name: blobstore
+#  instances: 1
+#  azs: [az1]
+#  persistent_disk: 102400
+#  resource_pool: small_general
+#  templates:
+#  - {name: blobstore, release: cf}
+#  - {name: metron_agent, release: cf}
+#  - {name: route_registrar, release: cf}
+#  - {name: consul_agent, release: cf}
+#  networks:
+#  - name: cf_private
+#  properties:
+#    metron_agent:
+#      zone: z1
+#    consul:
+#      agent:
+#        services:
+#          blobstore: {}
+#    route_registrar:
+#      routes:
+#      - name: blobstore
+#        port: 8080
+#        registration_interval: 20s
+#        tags:
+#          component: blobstore
+#        uris:
+#        - "blobstore.system.((domain_name))"
 
 - name: api
   instances: 1
@@ -437,43 +437,27 @@ properties:
     allow_app_ssh_access: true
     default_to_diego_backend: true
     internal_api_user: internal_user
-    buildpacks:
-      blobstore_type: webdav
-      webdav_config:
-        blobstore_timeout: 5
-        password: ((webdav_blobstore_password))
-        private_endpoint: https://blobstore.service.((internal_domain)):4443
-        public_endpoint: https://blobstore.system.((domain_name))
-        secret: ((blobstore_secret))
-        username: blobstore-username
-    droplets:
-      blobstore_type: webdav
-      webdav_config:
-        blobstore_timeout: 5
-        password: ((webdav_blobstore_password))
-        private_endpoint: https://blobstore.service.((internal_domain)):4443
-        public_endpoint: https://blobstore.system.((domain_name))
-        secret: ((blobstore_secret))
-        username: blobstore-username
     external_port: 9022
+    buildpacks:
+      blobstore_type: fog
+      buildpack_directory_key: ((blobstore_bucket))
+      fog_connection: &fog_s3_bucket_connection
+        provider: AWS
+        region: ((aws_region))
+        aws_access_key_id: ((s3_bucket_access_key_id))
+        aws_secret_access_key: ((s3_bucket_access_key))
+    droplets:
+      blobstore_type: fog
+      buildpack_directory_key: ((droplet_bucket))
+      fog_connection: *fog_s3_bucket_connection
     packages:
-      blobstore_type: webdav
-      webdav_config:
-        blobstore_timeout: 5
-        password: ((webdav_blobstore_password))
-        private_endpoint: https://blobstore.service.((internal_domain)):4443
-        public_endpoint: https://blobstore.system.((domain_name))
-        secret: ((blobstore_secret))
-        username: blobstore-username
+      blobstore_type: fog
+      buildpack_directory_key: ((packages_bucket))
+      fog_connection: *fog_s3_bucket_connection
     resource_pool:
-      blobstore_type: webdav
-      webdav_config:
-        blobstore_timeout: 5
-        password: ((webdav_blobstore_password))
-        private_endpoint: https://blobstore.service.((internal_domain)):4443
-        public_endpoint: https://blobstore.system.((domain_name))
-        secret: ((blobstore_secret))
-        username: blobstore-username
+      blobstore_type: fog
+      buildpack_directory_key: ((resource_bucket))
+      fog_connection: *fog_s3_bucket_connection
     bulk_api_password: ((bulk_api_password))
     db_encryption_key: ((db_encryption_secret))
     # public_networks for a running instance should be restricted to the bare essentials (eg Git repo server for Jenkins installs)
@@ -541,17 +525,17 @@ properties:
     agent_cert: ((consul_agent_crt))
     server_key: ((consul_server_key))
     agent_key: ((consul_agent_key))
-  blobstore:
-    admin_users:
-    - password: ((webdav_blobstore_password))
-      username: blobstore-username
-    secure_link:
-      secret: ((blobstore_secret))
-    tls:
-      # blobstore.service.$INTERNAL_DOMAIN
-      cert: ((blobstore_crt))
-      private_key: ((blobstore_key))
-      ca_cert: ((internal_ca_crt))
+#  blobstore:
+#    admin_users:
+#    - password: ((webdav_blobstore_password))
+#      username: blobstore-username
+#    secure_link:
+#      secret: ((blobstore_secret))
+#    tls:
+#      # blobstore.service.$INTERNAL_DOMAIN
+#      cert: ((blobstore_crt))
+#      private_key: ((blobstore_key))
+#      ca_cert: ((internal_ca_crt))
   databases:
     databases:
     - {name: ccdb, tag: cc, citext: true}
@@ -674,7 +658,7 @@ properties:
       cf-services:
         authorities: uaa.resource,oauth.service,clients.read,clients.write,clients.secret
         authorized-grant-types: client_credentials,implicit
-        redirect-uri: https://login.system.((domain_name))
+        redirect-uri: https://login.system.((domain_name))/uaa
         secret: ((uaa_cf_services_secret))
         override: true
         scope: openid,cloud_controller.read,cloud_controller.write
@@ -700,7 +684,7 @@ properties:
         authorized-grant-types: authorization_code
         autoapprove: true
         override: true
-        redirect-uri: /login
+        redirect-uri: https://login.system.((domain_name))/uaa
         scope: openid,cloud_controller.read,cloud_controller.write,cloud_controller.admin
         secret: ((uaa_ssh_proxy_secret))
       tcp_emitter:
