@@ -674,7 +674,7 @@ properties:
       cf-services:
         authorities: uaa.resource,oauth.service,clients.read,clients.write,clients.secret
         authorized-grant-types: client_credentials,implicit
-        redirect-uri: https://login.system.((domain_name))
+        redirect-uri: https://login.system.((domain_name))/uaa
         secret: ((uaa_cf_services_secret))
         override: true
         scope: openid,cloud_controller.read,cloud_controller.write
@@ -693,14 +693,14 @@ properties:
       login:
         authorities: oauth.login,scim.write,clients.read,notifications.write,critical_notifications.write,emails.write,scim.userids,password.write
         authorized-grant-types: authorization_code,client_credentials,refresh_token
-        redirect-uri: https://login.system.((domain_name))
+        redirect-uri: https://login.system.((domain_name))/uaa
         scope: openid,oauth.approvals
         secret: ((uaa_login_client_secret))
       ssh-proxy:
         authorized-grant-types: authorization_code
         autoapprove: true
         override: true
-        redirect-uri: /login
+        redirect-uri: https://login.system.((domain_name))/uaa
         scope: openid,cloud_controller.read,cloud_controller.write,cloud_controller.admin
         secret: ((uaa_ssh_proxy_secret))
       tcp_emitter:
