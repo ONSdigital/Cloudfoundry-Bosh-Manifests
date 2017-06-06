@@ -83,7 +83,7 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: t2.medium
-    iam_instance_profile: ((s3_bucket_access_role))
+    iam_instance_profile: ((s3_bucket_access_instance_profile))
 - name: large_compute
   network: cf_private
   stemcell:
