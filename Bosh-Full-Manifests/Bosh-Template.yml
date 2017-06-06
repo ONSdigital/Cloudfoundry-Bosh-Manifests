@@ -444,8 +444,7 @@ properties:
       fog_connection: &fog_s3_bucket_connection
         provider: AWS
         region: ((aws_region))
-        aws_access_key_id: ((s3_bucket_access_key_id))
-        aws_secret_access_key: ((s3_bucket_access_key))
+        use_iam_profile: true
     droplets:
       blobstore_type: fog
       buildpack_directory_key: ((droplet_bucket))
