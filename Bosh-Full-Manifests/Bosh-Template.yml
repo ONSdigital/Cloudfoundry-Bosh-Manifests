@@ -451,7 +451,7 @@ properties:
       fog_connection: *fog_s3_bucket_connection
     packages:
       blobstore_type: fog
-      app_package_directory_key: ((packages_bucket))
+      app_package_directory_key: ((package_bucket))
       fog_connection: *fog_s3_bucket_connection
     resource_pool:
       blobstore_type: fog
