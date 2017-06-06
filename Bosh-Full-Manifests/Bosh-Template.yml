@@ -447,15 +447,15 @@ properties:
         use_iam_profile: true
     droplets:
       blobstore_type: fog
-      buildpack_directory_key: ((droplet_bucket))
+      droplet_directory_key: ((droplet_bucket))
       fog_connection: *fog_s3_bucket_connection
     packages:
       blobstore_type: fog
-      buildpack_directory_key: ((packages_bucket))
+      app_package_directory_key: ((packages_bucket))
       fog_connection: *fog_s3_bucket_connection
     resource_pool:
       blobstore_type: fog
-      buildpack_directory_key: ((resource_bucket))
+      resource_directory_key: ((resource_bucket))
       fog_connection: *fog_s3_bucket_connection
     bulk_api_password: ((bulk_api_password))
     db_encryption_key: ((db_encryption_secret))
