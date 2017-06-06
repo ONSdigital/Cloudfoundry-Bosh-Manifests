@@ -356,7 +356,7 @@ jobs:
       zone: z1
     dropsonde: {enabled: true}
 
-- name: rabbitmq-haproxy
+- name: rabbitmq-mgnt
   instances: 1
   azs: [az1]
   resource_pool: micro_general
@@ -367,11 +367,11 @@ jobs:
   properties:
     route_registrar:
       routes:
-      - name: rabbitmq-haproxy
+      - name: rabbitmq-mgnt
         port: 15672
         registration_interval: 20s
         uris:
-        - rabbitmq-haproxy.system.((domain_name))
+        - rabbitmq-mgnt.system.((domain_name))
     consul:
       agent:
         services: {}
@@ -677,7 +677,7 @@ properties:
       login:
         authorities: oauth.login,scim.write,clients.read,notifications.write,critical_notifications.write,emails.write,scim.userids,password.write
         authorized-grant-types: authorization_code,client_credentials,refresh_token
-        redirect-uri: https://login.system.((domain_name))
+        redirect-uri: https://login.system.((domain_name))/uaa
         scope: openid,oauth.approvals
         secret: ((uaa_login_client_secret))
       ssh-proxy:
