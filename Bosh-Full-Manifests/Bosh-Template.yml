@@ -148,35 +148,6 @@ jobs:
       agent:
         services: {}
 
-#- name: blobstore
-#  instances: 1
-#  azs: [az1]
-#  persistent_disk: 102400
-#  resource_pool: small_general
-#  templates:
-#  - {name: blobstore, release: cf}
-#  - {name: metron_agent, release: cf}
-#  - {name: route_registrar, release: cf}
-#  - {name: consul_agent, release: cf}
-#  networks:
-#  - name: cf_private
-#  properties:
-#    metron_agent:
-#      zone: z1
-#    consul:
-#      agent:
-#        services:
-#          blobstore: {}
-#    route_registrar:
-#      routes:
-#      - name: blobstore
-#        port: 8080
-#        registration_interval: 20s
-#        tags:
-#          component: blobstore
-#        uris:
-#        - "blobstore.system.((domain_name))"
-
 - name: api
   instances: 1
   azs: [az1]
@@ -524,17 +495,6 @@ properties:
     agent_cert: ((consul_agent_crt))
     server_key: ((consul_server_key))
     agent_key: ((consul_agent_key))
-#  blobstore:
-#    admin_users:
-#    - password: ((webdav_blobstore_password))
-#      username: blobstore-username
-#    secure_link:
-#      secret: ((blobstore_secret))
-#    tls:
-#      # blobstore.service.$INTERNAL_DOMAIN
-#      cert: ((blobstore_crt))
-#      private_key: ((blobstore_key))
-#      ca_cert: ((internal_ca_crt))
   databases:
     databases:
     - {name: ccdb, tag: cc, citext: true}
