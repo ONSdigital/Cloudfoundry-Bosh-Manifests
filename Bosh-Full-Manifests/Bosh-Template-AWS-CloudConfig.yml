@@ -117,7 +117,7 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: c4.large
-    iam_instance_profile: ((s3_bucket_access_role))
+    iam_instance_profile: ((s3_bucket_access_instance_profile))
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
 - name: large_cc_compute_spot_fallback
@@ -127,7 +127,7 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: c4.large
-    iam_instance_profile: ((s3_bucket_access_role))
+    iam_instance_profile: ((s3_bucket_access_instance_profile))
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
     spot_ondemand_fallback: true
