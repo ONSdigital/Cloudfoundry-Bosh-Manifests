@@ -866,7 +866,7 @@ properties:
     enable_diego_auth: false
     diego_credentials: ""
     uaa_secret: ((uaa_ssh_proxy_secret))
-    uaa_token_url: https://uaa.system.((domain_name))/oauth/token
+    uaa_token_url: https://uaa.system.((domain_name))/uaa/oauth/token
   garden:
     graph_cleanup_threshold_in_mb: 0
     persistent_image_list: ["/var/vcap/packages/cflinuxfs2/rootfs"]
