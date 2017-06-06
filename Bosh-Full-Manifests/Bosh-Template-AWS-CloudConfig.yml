@@ -53,6 +53,7 @@ networks:
   type: vip
   cloud_properties: {}
 
+
 resource_pools:
 - name: micro_general
   network: cf_private
@@ -75,6 +76,14 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: t2.medium
+- name: medium_cc_general
+  network: cf_private
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    instance_type: t2.medium
+    iam_instance_profile: ((s3_bucket_access_role))
 - name: large_compute
   network: cf_private
   stemcell:
@@ -98,6 +107,27 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: c4.large
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+    spot_ondemand_fallback: true
+- name: large_cc_compute_spot
+  network: cf_private
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    instance_type: c4.large
+    iam_instance_profile: ((s3_bucket_access_role))
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+- name: large_cc_compute_spot_fallback
+  network: cf_private
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    instance_type: c4.large
+    iam_instance_profile: ((s3_bucket_access_role))
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
     spot_ondemand_fallback: true
@@ -127,7 +157,7 @@ resource_pools:
     # Ensure this is set to a sensible value
     spot_bid_price: 0.1
     spot_ondemand_fallback: true
-# Its probably better to use more large instances, and less xlarge instances - the cost is the same, the 
+# Its probably better to use more large instances, and less xlarge instances - the cost is the same, the
 # ram will be virtually the same, ignoring base OS overhead, but the availability will be better
 - name: large_ram_large_disk
   network: cf_private
