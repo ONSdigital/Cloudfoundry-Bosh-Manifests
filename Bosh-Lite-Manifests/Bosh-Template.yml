@@ -8,8 +8,8 @@ releases:
   # can use file:// URLs - then SHA1 not required
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=261.4
-  sha1: 4da9cedbcc8fbf11378ef439fb89de08300ad091
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=262
+  sha1: f05c06bfc122d2dd6160b178dc8bfdadf4825e25
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=65
@@ -31,8 +31,8 @@ resource_pools:
     #  CPI 'create_stemcell' method responded with error: CmdError{"type":"Unknown","message":"Connection refused - Connection refused - connect(2) for \"169.254.169.254\" port 80 (169.254.169.254:80)","ok_to_retry":false}
     #
     # Despite not having 'light' in the URL, this always seems to download the 'light' version' (2017/05/15)
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3421
-    sha1: 6a50f8aa672cdb0d9e0952e06df7f28e2e1dd4e5
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3421.4
+    sha1: dbf1dfe5613b67885401d00265f2689e5ed1dcb1
   cloud_properties:
     instance_type: m4.large
     ephemeral_disk: {size: 25_000, type: gp2}
