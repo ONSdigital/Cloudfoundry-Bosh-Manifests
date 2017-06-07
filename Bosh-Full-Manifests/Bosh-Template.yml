@@ -433,14 +433,16 @@ properties:
     # public_networks for a running instance should be restricted to the bare essentials (eg Git repo server for Jenkins installs)
     default_running_security_groups: [dns, postgres_networks, public_networks]
     default_staging_security_groups: [public_networks, dns]
+    # The buildpacks can, sometimes, be quite slow to download and install, so we list the ones that are used during deployment first - hopefully,
+    # the order is respected
     install_buildpacks:
+    - {name: staticfile_buildpack, package: staticfile-buildpack}
+    - {name: python_buildpack, package: python-buildpack}
+    - {name: go_buildpack, package: go-buildpack}
     - {name: java_buildpack, package: java-buildpack}
     - {name: ruby_buildpack, package: ruby-buildpack}
     - {name: nodejs_buildpack, package: nodejs-buildpack}
-    - {name: go_buildpack, package: go-buildpack}
-    - {name: python_buildpack, package: python-buildpack}
     - {name: php_buildpack, package: php-buildpack}
-    - {name: staticfile_buildpack, package: staticfile-buildpack}
     - {name: binary_buildpack, package: binary-buildpack}
     - {name: dotnet_core_buildpack, package: dotnet-core-buildpack}
     internal_api_password: ((internal_api_password))
