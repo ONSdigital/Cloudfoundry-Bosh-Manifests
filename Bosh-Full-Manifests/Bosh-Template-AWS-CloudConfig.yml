@@ -37,6 +37,9 @@ networks:
     cloud_properties:
       subnet: ((dmz_subnet))
       # AWS outputs an array
+      #security_groups: ((dmz_security_groups))
+      # AWS outputs an array
+      elbs: ((dmz_elbs))
       security_groups: ((dmz_security_groups))
 - name: cf_rabbitmq_services
   type: manual
@@ -69,6 +72,14 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: t2.small
+- name: small_dmz_lb_general
+  network: cf_private
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    instance_type: t2.small
+    elbs: ((dmz_elbs))
 - name: medium_general
   network: cf_private
   stemcell:
@@ -76,6 +87,14 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: t2.medium
+- name: medium_dmz_lb_general
+  network: cf_private
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    instance_type: t2.medium
+    elbs: ((dmz_elbs))
 - name: medium_cc_general
   network: cf_private
   stemcell:
