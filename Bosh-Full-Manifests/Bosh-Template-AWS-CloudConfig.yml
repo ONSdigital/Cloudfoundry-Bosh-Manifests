@@ -14,17 +14,17 @@ azs:
 #  name: az3
 
 networks:
-- name: cf_private
+- name: cf_private_az1
   type: manual
   subnets:
-  - range: ((private_cidr))
-    gateway: ((private_default_route))
+  - range: ((private_az1_cidr))
+    gateway: ((private_az1_default_route))
     dns: [((vpc_dns_ip))]
     az: az1
-    reserved: ["((private_cidr_prefix)).1 - ((private_cidr_prefix)).10"]
-    static: ["((private_cidr_prefix)).200 - ((private_cidr_prefix)).245"]
+    reserved: ["((private_az1_cidr_prefix)).1 - ((private_az1_cidr_prefix)).10"]
+    static: ["((private_az1_cidr_prefix)).200 - ((private_az1_cidr_prefix)).245"]
     cloud_properties:
-      subnet: ((private_subnet))
+      subnet: ((private_az1_subnet))
 - name: cf_rabbitmq_services
   type: manual
   subnets:
@@ -43,14 +43,12 @@ networks:
 
 resource_pools:
 - name: micro_general
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
   cloud_properties:
     instance_type: t2.micro
 - name: small_general
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -72,7 +70,6 @@ resource_pools:
   cloud_properties:
     instance_type: t2.medium
 - name: medium_lb_general
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -82,7 +79,6 @@ resource_pools:
     # AWS outputs an array
     security_groups: ((external_security_groups))
 - name: medium_cc_general
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -90,14 +86,12 @@ resource_pools:
     instance_type: t2.medium
     iam_instance_profile: ((s3_bucket_access_instance_profile))
 - name: large_compute
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
   cloud_properties:
     instance_type: c4.large
 - name: large_compute_spot
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -106,7 +100,6 @@ resource_pools:
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
 - name: large_compute_spot_fallback
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -116,7 +109,6 @@ resource_pools:
     spot_bid_price: 0.05
     spot_ondemand_fallback: true
 - name: large_cc_compute_spot
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -126,7 +118,6 @@ resource_pools:
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
 - name: large_cc_compute_spot_fallback
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -137,14 +128,12 @@ resource_pools:
     spot_bid_price: 0.05
     spot_ondemand_fallback: true
 - name: xlarge_compute
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
   cloud_properties:
     instance_type: c4.xlarge
 - name: xlarge_compute_spot
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -153,7 +142,6 @@ resource_pools:
     # Ensure this is set to a sensible value
     spot_bid_price: 0.1
 - name: xlarge_compute_spot_fallback
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -165,7 +153,6 @@ resource_pools:
 # Its probably better to use more large instances, and less xlarge instances - the cost is the same, the
 # ram will be virtually the same, ignoring base OS overhead, but the availability will be better
 - name: large_ram_large_disk
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -174,7 +161,6 @@ resource_pools:
     ephemeral_disk:
       size: 80000
 - name: large_ram_large_disk_spot
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -185,7 +171,6 @@ resource_pools:
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
 - name: large_ram_large_disk_spot_fallback
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -197,7 +182,6 @@ resource_pools:
     spot_bid_price: 0.05
     spot_ondemand_fallback: true
 - name: xlarge_ram_large_disk
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -206,7 +190,6 @@ resource_pools:
       size: 160000
     instance_type: r4.xlarge
 - name: xlarge_ram_large_disk_spot
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -217,7 +200,6 @@ resource_pools:
     # Ensure this is set to a sensible value
     spot_bid_price: 0.1
 - name: xlarge_ram_large_disk_spot_fallback
-  network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
@@ -231,7 +213,7 @@ resource_pools:
 
 compilation:
   workers: 10
-  network: cf_private
+  network: cf_private_az1
   reuse_compilation_vms: true
   az: az1
   cloud_properties:

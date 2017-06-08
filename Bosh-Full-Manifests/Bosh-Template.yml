@@ -28,8 +28,8 @@ jobs:
   - {name: nats_stream_forwarder, release: cf}
   - {name: metron_agent, release: cf}
   networks:
-  - name: cf_private
-    static_ips: [((private_cidr_prefix)).220]
+  - name: cf_private_az1
+    static_ips: [((private_az1_cidr_prefix)).220]
   properties:
     metron_agent:
       zone: z1
@@ -45,8 +45,8 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_private
-    static_ips: ["((private_cidr_prefix)).230"]
+  - name: cf_private_az1
+    static_ips: ["((private_az1_cidr_prefix)).230"]
     etcd_metrics_server:
       nats:
         machines: ["cf-etcd.service.((internal_domain))"]
@@ -70,8 +70,8 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_private
-    static_ips: ["((private_cidr_prefix)).240-((private_cidr_prefix)).242"]
+  - name: cf_private_az1
+    static_ips: ["((private_az1_cidr_prefix)).240-((private_az1_cidr_prefix)).242"]
   properties:
     metron_agent:
       zone: z1
@@ -90,8 +90,8 @@ jobs:
   - {name: postgres, release: cf}
   - {name: metron_agent, release: cf}
   networks:
-  - name: cf_private
-    static_ips: [((private_cidr_prefix)).201]
+  - name: cf_private_az1
+    static_ips: [((private_az1_cidr_prefix)).201]
   update:
     serial: true
   properties:
@@ -109,7 +109,7 @@ jobs:
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
   networks:
-  - name: cf_private
+  - name: cf_private_az1
   update:
     serial: true
     max_in_flight: 1
@@ -137,7 +137,7 @@ jobs:
   - { name: metron_agent, release: cf }
   persistent_disk: 20480
   networks:
-  - name: cf_private
+  - name: cf_private_az1
   update:
     serial: true
     max_in_flight: 1
@@ -170,7 +170,7 @@ jobs:
   - {name: dotnet-core-buildpack, release: cf}
   - {name: statsd_injector, release: cf}
   networks:
-  - name: cf_private
+  - name: cf_private_az1
   properties:
     metron_agent:
       zone: z1
@@ -207,7 +207,7 @@ jobs:
 #      ssl_pem: ((ha_proxy_key))((ha_proxy_crt))
 #    router:
 #      servers:
-#        - ((private_cidr_prefix)).210
+#        - ((private_az1_cidr_prefix)).210
 
 - name: doppler
   instances: 1
@@ -219,7 +219,7 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: syslog_drain_binder, release: cf}
   networks:
-  - name: cf_private
+  - name: cf_private_az1
   properties:
     metron_agent:
       zone: z1
@@ -240,7 +240,7 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
   networks:
-  - name: cf_private
+  - name: cf_private_az1
   properties:
     metron_agent:
       zone: z1
@@ -269,7 +269,7 @@ jobs:
   - {name: route_registrar, release: cf}
   - {name: statsd_injector, release: cf}
   networks:
-  - name: cf_private
+  - name: cf_private_az1
   properties:
     metron_agent:
       zone: z1
@@ -303,7 +303,7 @@ jobs:
       cc:
         client_secret: ((uaa_cc_client_secret))
     uaadb:
-      address: ((private_cidr_prefix)).201
+      address: ((private_az1_cidr_prefix)).201
       databases:
       - {name: uaadb, tag: uaa}
       db_scheme: postgresql
@@ -320,8 +320,8 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_private
-    static_ips: [((private_cidr_prefix)).210]
+  - name: cf_private_az1
+    static_ips: [((private_az1_cidr_prefix)).210]
   properties:
     metron_agent:
       zone: z1
@@ -389,7 +389,7 @@ properties:
     ssl_skip_validation: true
     status:
       password: ((router_status_password))
-  networks: {apps: cf_private}
+  networks: {apps: cf_private_az1}
   # https://docs.cloudfoundry.org/deploying/aws/cf-stub.html
   app_domains: [apps.((domain_name))]
   app_ssh:
@@ -472,7 +472,7 @@ properties:
     staging_upload_password: ((staging_upload_password))
     staging_upload_user: staging_upload_user
   ccdb:
-    address: ((private_cidr_prefix)).201
+    address: ((private_az1_cidr_prefix)).201
     databases:
     - {name: ccdb, tag: cc}
     db_scheme: postgres
@@ -485,9 +485,9 @@ properties:
       domain: ((internal_domain))
       servers:
         lan:
-        - ((private_cidr_prefix)).240
-        - ((private_cidr_prefix)).241
-        - ((private_cidr_prefix)).242
+        - ((private_az1_cidr_prefix)).240
+        - ((private_az1_cidr_prefix)).241
+        - ((private_az1_cidr_prefix)).242
     encrypt_keys:
     - ((consul_encrypt_keys_secret))
     ca_cert: ((internal_ca_crt))
@@ -586,7 +586,7 @@ properties:
     protocols:
     - udp
   nats:
-    machines: [((private_cidr_prefix)).220]
+    machines: [((private_az1_cidr_prefix)).220]
     password: ((nats_password))
     port: 4222
     user: nats
@@ -770,7 +770,7 @@ properties:
       server_key: ""
       sql:
         db_driver: postgres
-        db_host: ((private_cidr_prefix)).201
+        db_host: ((private_az1_cidr_prefix)).201
         db_port: 5524
         db_username: diego
         db_password: ((diego_db_password))
@@ -799,7 +799,7 @@ properties:
         client_key: ""
         require_ssl: false
       nats:
-        machines: [((private_cidr_prefix)).220]
+        machines: [((private_az1_cidr_prefix)).220]
         password: ((nats_password))
         port: 4222
         user: nats
