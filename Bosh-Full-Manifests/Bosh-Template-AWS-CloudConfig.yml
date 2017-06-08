@@ -25,22 +25,6 @@ networks:
     static: ["((private_cidr_prefix)).200 - ((private_cidr_prefix)).245"]
     cloud_properties:
       subnet: ((private_subnet))
-- name: cf_dmz
-  type: manual
-  subnets:
-  - range: ((dmz_cidr))
-    gateway: ((dmz_default_route))
-    dns: [((vpc_dns_ip))]
-    az: az1
-    reserved: ["((dmz_cidr_prefix)).1 - ((dmz_cidr_prefix)).10"]
-    static: ["((dmz_cidr_prefix)).200 - ((dmz_cidr_prefix)).245"]
-    cloud_properties:
-      subnet: ((dmz_subnet))
-      # AWS outputs an array
-      #security_groups: ((dmz_security_groups))
-      # AWS outputs an array
-      elbs: ((dmz_elbs))
-      security_groups: ((dmz_security_groups))
 - name: cf_rabbitmq_services
   type: manual
   subnets:
@@ -72,29 +56,31 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: t2.small
-- name: small_dmz_lb_general
-  network: cf_private
+- name: small_lb_general
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
   cloud_properties:
     instance_type: t2.small
-    elbs: ((dmz_elbs))
+    elbs: ((external_elbs))
+    # AWS outputs an array
+    security_groups: ((external_security_groups))
 - name: medium_general
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    instance_type: t2.medium
+- name: medium_lb_general
   network: cf_private
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     version: latest
   cloud_properties:
     instance_type: t2.medium
-- name: medium_dmz_lb_general
-  network: cf_private
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
-  cloud_properties:
-    instance_type: t2.medium
-    elbs: ((dmz_elbs))
+    elbs: ((external_elbs))
+    # AWS outputs an array
+    security_groups: ((external_security_groups))
 - name: medium_cc_general
   network: cf_private
   stemcell:

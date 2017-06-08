@@ -314,7 +314,7 @@ jobs:
 - name: router
   instances: 1
   azs: [az1]
-  resource_pool: small_dmz_lb_general
+  resource_pool: small_lb_general
   templates:
   - {name: gorouter, release: cf}
   - {name: metron_agent, release: cf}
