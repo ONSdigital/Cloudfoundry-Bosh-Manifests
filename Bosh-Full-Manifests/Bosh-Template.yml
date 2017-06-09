@@ -108,6 +108,7 @@ jobs:
   - { name: garden, release: garden-runc }
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
+  - { name: ssh_proxy, release: diego }
   networks:
   - name: cf_private
   update:
