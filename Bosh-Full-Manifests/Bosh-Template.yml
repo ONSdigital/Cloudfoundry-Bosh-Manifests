@@ -804,22 +804,22 @@ properties:
         password: ((nats_password))
         port: 4222
         user: nats
+    ssh_proxy:
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+      host_key: ((ssh_host_key))
+      enable_cf_auth: true
+      enable_diego_auth: false
+      diego_credentials: ""
+      uaa_secret: ((uaa_ssh_proxy_secret))
+      uaa_token_url: https://uaa.system.((domain_name))/oauth/token
+      healthcheck_listen_addr: 0.0.0.0:2223 
+      listen_addr: 0.0.0.0:2222
     ssl:
       skip_cert_verify: true
-  ssh_proxy:
-    bbs:
-      ca_cert: ""
-      client_cert: ""
-      client_key: ""
-      require_ssl: false
-    host_key: ((ssh_host_key))
-    enable_cf_auth: true
-    enable_diego_auth: false
-    diego_credentials: ""
-    uaa_secret: ((uaa_ssh_proxy_secret))
-    uaa_token_url: https://uaa.system.((domain_name))/oauth/token
-    healthcheck_listen_addr: 0.0.0.0:2223 
-    listen_addr: 0.0.0.0:2222
   garden:
     graph_cleanup_threshold_in_mb: 0
     persistent_image_list: ["/var/vcap/packages/cflinuxfs2/rootfs"]
