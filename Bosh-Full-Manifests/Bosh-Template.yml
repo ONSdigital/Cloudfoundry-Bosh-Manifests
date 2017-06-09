@@ -807,6 +807,11 @@ properties:
     ssl:
       skip_cert_verify: true
   ssh_proxy:
+    bbs:
+      ca_cert: ""
+      client_cert: ""
+      client_key: ""
+      require_ssl: false
     host_key: ((ssh_host_key))
     enable_cf_auth: true
     enable_diego_auth: false
