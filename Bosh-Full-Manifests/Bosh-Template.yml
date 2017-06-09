@@ -619,7 +619,7 @@ properties:
       cf-services:
         authorities: uaa.resource,oauth.service,clients.read,clients.write,clients.secret
         authorized-grant-types: client_credentials,implicit
-        redirect-uri: https://login.system.((domain_name))/uaa
+        redirect-uri: https://login.system.((domain_name))/login
         secret: ((uaa_cf_services_secret))
         override: true
         scope: openid,cloud_controller.read,cloud_controller.write
@@ -638,14 +638,14 @@ properties:
       login:
         authorities: oauth.login,scim.write,clients.read,notifications.write,critical_notifications.write,emails.write,scim.userids,password.write
         authorized-grant-types: authorization_code,client_credentials,refresh_token
-        redirect-uri: https://login.system.((domain_name))/uaa
+        redirect-uri: https://login.system.((domain_name))/login
         scope: openid,oauth.approvals
         secret: ((uaa_login_client_secret))
       ssh-proxy:
         authorized-grant-types: authorization_code
         autoapprove: true
         override: true
-        redirect-uri: https://login.system.((domain_name))/uaa
+        redirect-uri: https://login.system.((domain_name))/login
         scope: openid,cloud_controller.read,cloud_controller.write,cloud_controller.admin
         secret: ((uaa_ssh_proxy_secret))
       tcp_emitter:
@@ -811,7 +811,7 @@ properties:
     enable_diego_auth: false
     diego_credentials: ""
     uaa_secret: ((uaa_ssh_proxy_secret))
-    uaa_token_url: https://uaa.system.((domain_name))/uaa/oauth/token
+    uaa_token_url: https://uaa.system.((domain_name))/oauth/token
   garden:
     graph_cleanup_threshold_in_mb: 0
     persistent_image_list: ["/var/vcap/packages/cflinuxfs2/rootfs"]
