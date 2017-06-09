@@ -186,28 +186,28 @@ jobs:
         uris:
         - "api.system.((domain_name))"
 
-#- name: ha_proxy
-#  instances: 1
-#  azs: [az1]
-#  resource_pool: small_general
-#  templates:
-#  - {name: haproxy, release: cf}
-#  - {name: consul_agent, release: cf}
-#  - {name: metron_agent, release: cf}
-#  networks:
-#  - name: elastic
-#    static_ips: [((ha_proxy_ip))]
-#  - name: cf_dmz
-#    default: [gateway, dns]
-#  properties:
-#    metron_agent:
-#      zone: z1
-#    ha_proxy:
-#      # ha-proxy.$EXTERNAL_DOMAIN, altname *.$EXTERNAL_DOMAIN
-#      ssl_pem: ((ha_proxy_key))((ha_proxy_crt))
-#    router:
-#      servers:
-#        - ((private_az1_cidr_prefix)).210
+- name: ha_proxy
+  instances: ((external_ip_allocations))
+  azs: [az1]
+  resource_pool: small_general
+  templates:
+  - {name: haproxy, release: cf}
+  - {name: consul_agent, release: cf}
+  - {name: metron_agent, release: cf}
+  networks:
+  - name: elastic
+    static_ips: [((external_ip))]
+  - name: cf_dmz
+    default: [gateway, dns]
+  properties:
+    metron_agent:
+      zone: z1
+    ha_proxy:
+      # ha-proxy.$EXTERNAL_DOMAIN, altname *.$EXTERNAL_DOMAIN
+      ssl_pem: ((ha_proxy_key))((ha_proxy_crt))
+    router:
+      servers:
+        - ((private_az1_cidr_prefix)).210
 
 - name: doppler
   instances: 1
@@ -314,7 +314,7 @@ jobs:
 - name: router
   instances: 1
   azs: [az1]
-  resource_pool: small_lb_general
+  resource_pool: small_router_general
   templates:
   - {name: gorouter, release: cf}
   - {name: metron_agent, release: cf}
