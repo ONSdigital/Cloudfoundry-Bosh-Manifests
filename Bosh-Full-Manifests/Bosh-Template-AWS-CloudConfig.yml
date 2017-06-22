@@ -63,7 +63,7 @@ resource_pools:
     # Can Bosh handle an empty array?
     elbs: ((external_elbs))
     # AWS outputs an array
-    security_groups: ((external_security_groups))
+    security_groups: ((http_security_groups))
 - name: medium_general
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
@@ -78,7 +78,7 @@ resource_pools:
     instance_type: t2.medium
     elbs: ((external_elbs))
     # AWS outputs an array
-    security_groups: ((external_security_groups))
+    security_groups: ((http_security_groups))
 - name: medium_cc_general
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent

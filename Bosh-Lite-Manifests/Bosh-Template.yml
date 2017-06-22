@@ -53,7 +53,7 @@ networks:
     cloud_properties: {subnet: ((private_az1_subnet))}
     elbs: ((external_elbs))
     # AWS outputs an array
-    security_groups: ((external_security_groups))
+    security_groups: ((http_security_groups))
 - name: public
   type: vip
 
