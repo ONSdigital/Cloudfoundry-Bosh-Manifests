@@ -187,7 +187,7 @@ jobs:
         uris:
         - "api.system.((domain_name))"
 
-- name: ha_proxy_z1
+- name: ha_proxy
   instances: 1
   azs: [az1]
   resource_pool: small_general
