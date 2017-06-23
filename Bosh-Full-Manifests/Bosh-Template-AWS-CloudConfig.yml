@@ -19,7 +19,7 @@ networks:
   subnets:
   - range: ((private_az1_cidr))
     gateway: ((private_az1_default_route))
-    dns: [((vpc_dns_ip))]
+    dns: [((dns_ip))]
     az: az1
     reserved: ["((private_az1_cidr_prefix)).1 - ((private_az1_cidr_prefix)).10"]
     static: ["((private_az1_cidr_prefix)).200 - ((private_az1_cidr_prefix)).245"]
@@ -30,7 +30,7 @@ networks:
   subnets:
   - range: ((rabbitmq_services_cidr))
     gateway: ((rabbitmq_services_default_route))
-    dns: [((vpc_dns_ip))]
+    dns: [((dns_ip))]
     az: az1
     reserved: ["((rabbitmq_services_cidr_prefix)).1 - ((rabbitmq_services_cidr_prefix)).10"]
     static: ["((rabbitmq_services_cidr_prefix)).200 - ((rabbitmq_services_cidr_prefix)).245"]

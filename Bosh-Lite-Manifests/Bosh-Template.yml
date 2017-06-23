@@ -49,7 +49,7 @@ networks:
   subnets:
   - range: ((private_az1_cidr))
     gateway: ((private_az1_default_route))
-    dns: [((vpc_dns_ip))]
+    dns: [((dns_ip))]
     cloud_properties: {subnet: ((private_az1_subnet))}
     elbs: ((external_elbs))
     # AWS outputs an array
