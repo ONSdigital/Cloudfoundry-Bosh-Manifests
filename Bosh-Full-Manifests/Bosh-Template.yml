@@ -187,8 +187,8 @@ jobs:
         uris:
         - "api.system.((domain_name))"
 
-- name: ha_proxy
-  instances: ((external_ip_allocations))
+- name: ha_proxy_z1
+  instances: 1
   azs: [az1]
   resource_pool: small_general
   templates:
@@ -197,7 +197,7 @@ jobs:
   - {name: metron_agent, release: cf}
   networks:
   - name: elastic
-    static_ips: [((external_ip))]
+    static_ips: [((external_ip_az1))]
   - name: cf_dmz
     default: [gateway, dns]
   properties:
