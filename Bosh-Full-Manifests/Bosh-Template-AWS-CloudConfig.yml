@@ -58,7 +58,7 @@ resource_pools:
   cloud_properties:
     instance_type: t2.small
     # Can Bosh handle an empty array?
-    elbs: ((external_elbs))
+    elbs: [((external_elb))]
     # AWS outputs an array
     security_groups: ((http_security_groups))
 - name: medium_general
@@ -73,7 +73,7 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: t2.medium
-    elbs: ((external_elbs))
+    elbs: [((external_elb))]
     # AWS outputs an array
     security_groups: ((http_security_groups))
 - name: medium_cc_general
