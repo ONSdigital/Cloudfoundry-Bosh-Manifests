@@ -28,6 +28,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: small_general
+  stemcell: default
   templates:
   - {name: nats, release: cf}
   - {name: metron_agent, release: cf}
@@ -42,6 +43,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: micro_general
+  stemcell: default
   persistent_disk: 10240
   templates:
   - {name: etcd, release: cf}
@@ -70,6 +72,7 @@ jobs:
   azs: [az1]
   persistent_disk: 1024
   vm_type: small_general
+  stemcell: default
   templates:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
@@ -90,6 +93,7 @@ jobs:
   azs: [az1]
   persistent_disk: 10240
   vm_type: medium_general
+  stemcell: default
   templates:
   - {name: postgres, release: cf}
   - {name: metron_agent, release: cf}
@@ -106,6 +110,7 @@ jobs:
   instances: 2
   azs: [az1]
   vm_type: large_ram_large_disk
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -129,6 +134,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: small_general
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: bbs, release: diego }
@@ -157,6 +163,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: medium_cc_general
+  stemcell: default
   templates:
   - {name: cloud_controller_ng, release: cf}
   - {name: cloud_controller_worker, release: cf}
@@ -195,6 +202,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: small_general
+  stemcell: default
   templates:
   - {name: haproxy, release: cf}
   - {name: consul_agent, release: cf}
@@ -218,6 +226,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: small_general
+  stemcell: default
   templates:
   - {name: consul_agent, release: cf}
   - {name: doppler, release: cf}
@@ -239,6 +248,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: small_general
+  stemcell: default
   templates:
   - {name: consul_agent, release: cf}
   - {name: loggregator_trafficcontroller, release: cf}
@@ -267,6 +277,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: small_general
+  stemcell: default
   templates:
   - {name: consul_agent, release: cf}
   - {name: uaa, release: cf}
@@ -320,6 +331,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: small_router_general
+  stemcell: default
   templates:
   - {name: gorouter, release: cf}
   - {name: metron_agent, release: cf}
@@ -336,6 +348,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: micro_general
+  stemcell: default
   templates:
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
@@ -358,6 +371,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: micro_general
+  stemcell: default
   persistent_disk: 10240
   templates:
   - {name: rabbitmq-broker, release: cf-rabbitmq}
@@ -377,6 +391,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: small_general
+  stemcell: default
   persistent_disk: 10240
   templates:
   - {name: rabbitmq-server, release: cf-rabbitmq}
