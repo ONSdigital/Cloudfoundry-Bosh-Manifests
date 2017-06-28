@@ -38,23 +38,14 @@ networks:
   cloud_properties: {}
 
 
-resource_pools:
+vm_types:
 - name: micro_general
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: t2.micro
 - name: small_general
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: t2.small
 - name: small_router_general
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: t2.small
     # Can Bosh handle an empty array?
@@ -62,63 +53,39 @@ resource_pools:
     # AWS outputs an array
     security_groups: ((http_security_groups))
 - name: medium_general
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: t2.medium
 - name: medium_router_general
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: t2.medium
     elbs: [((external_elb))]
     # AWS outputs an array
     security_groups: ((http_security_groups))
 - name: medium_cc_general
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: t2.medium
     iam_instance_profile: ((s3_bucket_access_instance_profile))
 - name: large_compute
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: c4.large
 - name: large_compute_spot
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: c4.large
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
 - name: large_compute_spot_fallback
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: c4.large
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
     spot_ondemand_fallback: true
 - name: large_cc_compute_spot
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: c4.large
     iam_instance_profile: ((s3_bucket_access_instance_profile))
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
 - name: large_cc_compute_spot_fallback
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: c4.large
     iam_instance_profile: ((s3_bucket_access_instance_profile))
@@ -126,23 +93,14 @@ resource_pools:
     spot_bid_price: 0.05
     spot_ondemand_fallback: true
 - name: xlarge_compute
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: c4.xlarge
 - name: xlarge_compute_spot
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: c4.xlarge
     # Ensure this is set to a sensible value
     spot_bid_price: 0.1
 - name: xlarge_compute_spot_fallback
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: c4.xlarge
     # Ensure this is set to a sensible value
@@ -151,17 +109,11 @@ resource_pools:
 # Its probably better to use more large instances, and less xlarge instances - the cost is the same, the
 # ram will be virtually the same, ignoring base OS overhead, but the availability will be better
 - name: large_ram_large_disk
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: r4.large
     ephemeral_disk:
       size: 80000
 - name: large_ram_large_disk_spot
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     instance_type: r4.large
     ephemeral_disk:
@@ -169,9 +121,6 @@ resource_pools:
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
 - name: large_ram_large_disk_spot_fallback
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     ephemeral_disk:
       size: 80000
@@ -180,17 +129,11 @@ resource_pools:
     spot_bid_price: 0.05
     spot_ondemand_fallback: true
 - name: xlarge_ram_large_disk
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     ephemeral_disk:
       size: 160000
     instance_type: r4.xlarge
 - name: xlarge_ram_large_disk_spot
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     ephemeral_disk:
       size: 160000
@@ -198,9 +141,6 @@ resource_pools:
     # Ensure this is set to a sensible value
     spot_bid_price: 0.1
 - name: xlarge_ram_large_disk_spot_fallback
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
   cloud_properties:
     ephemeral_disk:
       size: 160000

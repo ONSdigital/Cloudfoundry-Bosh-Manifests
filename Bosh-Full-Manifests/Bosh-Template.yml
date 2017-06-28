@@ -11,6 +11,11 @@ releases:
 - {name: cflinuxfs2, version: latest}
 - {name: cf-rabbitmq, version: latest}
 
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
 update:
   canaries: 1
   max_in_flight: 1
@@ -22,7 +27,7 @@ jobs:
 - name: nats
   instances: 1
   azs: [az1]
-  resource_pool: small_general
+  vm_type: small_general
   templates:
   - {name: nats, release: cf}
   - {name: nats_stream_forwarder, release: cf}
@@ -37,7 +42,7 @@ jobs:
 - name: etcd
   instances: 1
   azs: [az1]
-  resource_pool: micro_general
+  vm_type: micro_general
   persistent_disk: 10240
   templates:
   - {name: etcd, release: cf}
@@ -65,7 +70,7 @@ jobs:
   instances: 3
   azs: [az1]
   persistent_disk: 1024
-  resource_pool: small_general
+  vm_type: small_general
   templates:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
@@ -85,7 +90,7 @@ jobs:
   instances: 1
   azs: [az1]
   persistent_disk: 10240
-  resource_pool: medium_general
+  vm_type: medium_general
   templates:
   - {name: postgres, release: cf}
   - {name: metron_agent, release: cf}
@@ -101,7 +106,7 @@ jobs:
 - name: diego_cell
   instances: 2
   azs: [az1]
-  resource_pool: large_ram_large_disk
+  vm_type: large_ram_large_disk
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -124,7 +129,7 @@ jobs:
 - name: diego_brain
   instances: 1
   azs: [az1]
-  resource_pool: small_general
+  vm_type: small_general
   templates:
   - { name: consul_agent, release: cf }
   - { name: bbs, release: diego }
@@ -152,7 +157,7 @@ jobs:
 - name: api
   instances: 1
   azs: [az1]
-  resource_pool: medium_cc_general
+  vm_type: medium_cc_general
   templates:
   - {name: cloud_controller_ng, release: cf}
   - {name: cloud_controller_worker, release: cf}
@@ -190,7 +195,7 @@ jobs:
 - name: ha_proxy
   instances: 1
   azs: [az1]
-  resource_pool: small_general
+  vm_type: small_general
   templates:
   - {name: haproxy, release: cf}
   - {name: consul_agent, release: cf}
@@ -213,7 +218,7 @@ jobs:
 - name: doppler
   instances: 1
   azs: [az1]
-  resource_pool: small_general
+  vm_type: small_general
   templates:
   - {name: consul_agent, release: cf}
   - {name: doppler, release: cf}
@@ -234,7 +239,7 @@ jobs:
 - name: loggregator_trafficcontroller
   instances: 1
   azs: [az1]
-  resource_pool: small_general
+  vm_type: small_general
   templates:
   - {name: consul_agent, release: cf}
   - {name: loggregator_trafficcontroller, release: cf}
@@ -262,7 +267,7 @@ jobs:
 - name: uaa
   instances: 1
   azs: [az1]
-  resource_pool: small_general
+  vm_type: small_general
   templates:
   - {name: consul_agent, release: cf}
   - {name: uaa, release: cf}
@@ -315,7 +320,7 @@ jobs:
 - name: router
   instances: 1
   azs: [az1]
-  resource_pool: small_router_general
+  vm_type: small_router_general
   templates:
   - {name: gorouter, release: cf}
   - {name: metron_agent, release: cf}
@@ -331,7 +336,7 @@ jobs:
 - name: rabbitmq-mgnt
   instances: 1
   azs: [az1]
-  resource_pool: micro_general
+  vm_type: micro_general
   templates:
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
@@ -353,7 +358,7 @@ jobs:
 - name: rabbitmq-broker
   instances: 1
   azs: [az1]
-  resource_pool: micro_general
+  vm_type: micro_general
   persistent_disk: 10240
   templates:
   - {name: rabbitmq-broker, release: cf-rabbitmq}
@@ -372,7 +377,7 @@ jobs:
 - name: rabbitmq-node
   instances: 1
   azs: [az1]
-  resource_pool: small_general
+  vm_type: small_general
   persistent_disk: 10240
   templates:
   - {name: rabbitmq-server, release: cf-rabbitmq}
