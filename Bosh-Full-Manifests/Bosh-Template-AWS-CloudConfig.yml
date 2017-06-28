@@ -9,9 +9,6 @@ azs:
 - name: az2
   cloud_properties:
     availability_zone: ((aws_availability_zone2))
-#  cloud_properties:
-#     availability_zone: ((az3))
-#  name: az3
 
 networks:
 - name: cf_private_az1
