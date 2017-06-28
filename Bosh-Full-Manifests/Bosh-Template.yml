@@ -30,7 +30,6 @@ jobs:
   vm_type: small_general
   templates:
   - {name: nats, release: cf}
-  - {name: nats_stream_forwarder, release: cf}
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private_az1
