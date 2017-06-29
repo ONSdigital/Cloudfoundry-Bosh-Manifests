@@ -152,7 +152,7 @@ jobs:
 - name: api
   instances: 1
   azs: [az1]
-  resource_pool: large_cc_compute
+  resource_pool: large_cc_memory
   templates:
   - {name: cloud_controller_ng, release: cf}
   - {name: cloud_controller_worker, release: cf}

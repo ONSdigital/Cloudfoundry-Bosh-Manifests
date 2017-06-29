@@ -84,6 +84,14 @@ resource_pools:
   cloud_properties:
     instance_type: t2.medium
     iam_instance_profile: ((s3_bucket_access_instance_profile))
+- name: large_cc_memory
+  network: cf_private
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    version: latest
+  cloud_properties:
+    instance_type: m4.large
+    iam_instance_profile: ((s3_bucket_access_instance_profile))
 - name: large_compute
   network: cf_private
   stemcell:
@@ -91,14 +99,6 @@ resource_pools:
     version: latest
   cloud_properties:
     instance_type: c4.large
-- name: large_cc_compute
-  network: cf_private
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
-  cloud_properties:
-    instance_type: c4.large
-    iam_instance_profile: ((s3_bucket_access_instance_profile))
 - name: large_compute_spot
   network: cf_private
   stemcell:
