@@ -16,7 +16,7 @@ releases:
   sha1: 26b3a5c43e6f82594a373309a495660d6db26254
 
 resource_pools:
-- name: vms
+- name: bosh_vm
   network: cf_dmz_az1
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
@@ -37,6 +37,7 @@ resource_pools:
     instance_type: m4.large
     ephemeral_disk: {size: 25_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
+    security_groups: [((director_security_group))]
 
 disk_pools:
 - name: disks
@@ -52,8 +53,7 @@ networks:
     dns: [((dns_ip))]
     cloud_properties: {subnet: ((dmz_az1_subnet))}
     elbs: [((external_elb))]
-    # AWS outputs an array
-    security_groups: [((director_security_group))]
+    security_groups: [((dmz_security_group))]
 - name: public
   type: vip
 
@@ -70,7 +70,7 @@ jobs:
   - {name: registry, release: bosh}
   - {name: aws_cpi, release: bosh-aws-cpi}
 
-  resource_pool: vms
+  resource_pool: bosh_vm
   persistent_disk_pool: disks
 
   networks:
