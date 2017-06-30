@@ -365,7 +365,7 @@ jobs:
       agent:
         services: {}
   networks:
-  - name: cf_rabbitmq_services
+  - name: cf_rabbitmq_services_az1
 
 - name: rabbitmq-broker
   instances: 1
@@ -377,7 +377,7 @@ jobs:
   - {name: rabbitmq-broker, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
   networks:
-  - name: cf_rabbitmq_services
+  - name: cf_rabbitmq_services_az1
   properties:
     route_registrar:
       routes:
@@ -397,7 +397,7 @@ jobs:
   - {name: rabbitmq-server, release: cf-rabbitmq}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_rabbitmq_services
+  - name: cf_rabbitmq_services_az1
   properties:
     consul:
       agent:
