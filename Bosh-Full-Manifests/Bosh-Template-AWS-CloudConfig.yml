@@ -11,6 +11,17 @@ azs:
     availability_zone: ((aws_availability_zone2))
 
 networks:
+- name: cf_dmz_az1
+  type: manual
+  subnets:
+  - range: ((dmz_az1_cidr))
+    gateway: ((dmz_az1_default_route))
+    dns: [((dns_ip))]
+    az: az1
+    reserved: ["((dmz_az1_cidr_prefix)).1 - ((dmz_az1_cidr_prefix)).10"]
+    static: ["((dmz_az1_cidr_prefix)).200 - ((dmz_az1_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((dmz_az1_subnet))
 - name: cf_private_az1
   type: manual
   subnets:
@@ -22,7 +33,7 @@ networks:
     static: ["((private_az1_cidr_prefix)).200 - ((private_az1_cidr_prefix)).245"]
     cloud_properties:
       subnet: ((private_az1_subnet))
-- name: cf_rabbitmq_services
+- name: cf_rabbitmq_services_az1
   type: manual
   subnets:
   - range: ((rabbitmq_services_az1_cidr))

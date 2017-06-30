@@ -17,7 +17,7 @@ releases:
 
 resource_pools:
 - name: vms
-  network: private
+  network: cf_dmz_az1
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     # Sometimes the version stays the same but the hash changes
@@ -44,13 +44,13 @@ disk_pools:
   cloud_properties: {type: gp2}
 
 networks:
-- name: private
+- name: cf_dmz_az1
   type: manual
   subnets:
-  - range: ((private_az1_cidr))
-    gateway: ((private_az1_default_route))
+  - range: ((dmz_az1_cidr))
+    gateway: ((dmz_az1_default_route))
     dns: [((dns_ip))]
-    cloud_properties: {subnet: ((private_az1_subnet))}
+    cloud_properties: {subnet: ((dmz_az1_subnet))}
     elbs: [((external_elb))]
     # AWS outputs an array
     security_groups: ((http_security_groups))
@@ -74,8 +74,8 @@ jobs:
   persistent_disk_pool: disks
 
   networks:
-  - name: private 
-    static_ips: [((private_az1_cidr_prefix)).6]
+  - name: cf_dmz_az1
+    static_ips: [((dmz_az1_cidr_prefix)).6]
     default: [dns, gateway]
   - name: public
     static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
@@ -95,8 +95,8 @@ jobs:
       adapter: postgres
 
     registry:
-      address: ((private_az1_cidr_prefix)).6
-      host: ((private_az1_cidr_prefix)).6
+      address: ((dmz_az1_cidr_prefix)).6
+      host: ((dmz_az1_cidr_prefix)).6
       db: *db
       http:
         user: admin
@@ -107,7 +107,7 @@ jobs:
       port: 25777
 
     blobstore:
-      address: ((private_az1_cidr_prefix)).6
+      address: ((dmz_az1_cidr_prefix)).6
       port: 25250
       provider: dav
       director:
@@ -145,10 +145,10 @@ jobs:
       secret_access_key: ((aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
       # AWS outputs an array
-      default_security_groups: ((private_security_groups))
+      default_security_groups: ((dmz_security_groups))
       region: ((aws_region))
 
-    agent: {mbus: "nats://nats:((nats_password))@((private_az1_cidr_prefix)).6:4222"}
+    agent: {mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"}
 
     ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
 

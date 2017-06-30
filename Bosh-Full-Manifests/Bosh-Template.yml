@@ -210,7 +210,7 @@ jobs:
 #  networks:
 #  - name: elastic
 #    static_ips: [((external_ip_az1))]
-#  - name: cf_private_az1
+#  - name: cf_dmz_az1
 #    default: [gateway, dns]
 #  properties:
 #    metron_agent:
