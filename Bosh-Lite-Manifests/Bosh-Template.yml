@@ -35,7 +35,7 @@ resource_pools:
     sha1: dbf1dfe5613b67885401d00265f2689e5ed1dcb1
   cloud_properties:
     instance_type: m4.large
-    ephemeral_disk: {size: 25_000, type: gp2}
+    ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
 
 disk_pools:
