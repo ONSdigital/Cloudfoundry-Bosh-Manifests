@@ -37,7 +37,7 @@ resource_pools:
     instance_type: m4.large
     ephemeral_disk: {size: 25_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
-    security_groups: [((director_security_group))]
+    security_groups: [((director_security_group)),((dmz_security_group))]
 
 disk_pools:
 - name: disks
