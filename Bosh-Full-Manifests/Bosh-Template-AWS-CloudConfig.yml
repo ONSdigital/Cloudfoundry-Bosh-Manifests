@@ -172,3 +172,4 @@ compilation:
       size: 160000
     spot_bid_price: 0.2
     spot_ondemand_fallback: true
+    security_groups: [((private_security_group))]
