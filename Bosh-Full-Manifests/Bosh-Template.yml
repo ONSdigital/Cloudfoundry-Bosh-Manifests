@@ -154,7 +154,7 @@ jobs:
 - name: diego_cell_2xlarge_spot_az1
   instances: 1
   azs: [az1]
-  resource_pool: 2xlarge_ram_2xlarge_disk_spot
+  resource_pool: 2xlarge_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -176,7 +176,7 @@ jobs:
 - name: diego_cell_4xlarge_spot_az1
   instances: 1
   azs: [az1]
-  resource_pool: 4xlarge_ram_4xlarge_disk_spot
+  resource_pool: 4xlarge_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
