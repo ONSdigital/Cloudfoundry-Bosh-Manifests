@@ -52,8 +52,6 @@ networks:
     gateway: ((dmz_az1_default_route))
     dns: [((dns_ip))]
     cloud_properties: {subnet: ((dmz_az1_subnet))}
-    elbs: [((external_elb))]
-    security_groups: [((dmz_security_group))]
 - name: public
   type: vip
 
@@ -144,8 +142,6 @@ jobs:
       access_key_id: ((aws_access_key_id))
       secret_access_key: ((aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
-      # AWS outputs an array
-      default_security_groups: [((director_security_group))]
       region: ((aws_region))
 
     agent: {mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"}
