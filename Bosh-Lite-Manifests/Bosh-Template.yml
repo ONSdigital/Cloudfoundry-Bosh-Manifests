@@ -51,7 +51,9 @@ networks:
   - range: ((dmz_az1_cidr))
     gateway: ((dmz_az1_default_route))
     dns: [((dns_ip))]
-    cloud_properties: {subnet: ((dmz_az1_subnet))}
+    cloud_properties:
+      subnet: ((dmz_az1_subnet))
+      security_groups: [((dmz_security_group))]
 - name: public
   type: vip
 
@@ -143,6 +145,7 @@ jobs:
       secret_access_key: ((aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
       region: ((aws_region))
+      default_security_groups: [((dmz_security_group))]
 
     agent: {mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"}
 
