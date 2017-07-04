@@ -49,7 +49,7 @@ networks:
   subnets:
   - range: ((dmz_cidr))
     gateway: ((dmz_default_route))
-    dns: [((vpc_dns_ip))]
+    dns: [((dns_ip))]
     cloud_properties: {subnet: ((dmz_subnet))}
 - name: public
   type: vip
