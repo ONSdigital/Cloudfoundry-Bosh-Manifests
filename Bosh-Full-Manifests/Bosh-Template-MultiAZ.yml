@@ -215,7 +215,7 @@ jobs:
 - name: diego_cell_large_spot_az1
   instances: 2
   azs: [az1]
-  resource_pool: large_ram_large_disk_spot
+  vm_type: large_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -236,7 +236,7 @@ jobs:
 - name: diego_cell_large_spot_az2
   instances: 2
   azs: [az2]
-  resource_pool: large_ram_large_disk_spot
+  vm_type: large_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -258,7 +258,7 @@ jobs:
 - name: diego_cell_xlarge_spot_az1
   instances: 2
   azs: [az1]
-  resource_pool: xlarge_ram_large_disk_spot
+  vm_type: xlarge_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -279,7 +279,7 @@ jobs:
 - name: diego_cell_xlarge_spot_az2
   instances: 2
   azs: [az2]
-  resource_pool: xlarge_ram_large_disk_spot
+  vm_type: xlarge_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -301,7 +301,7 @@ jobs:
 - name: diego_cell_2xlarge_spot_az1
   instances: 1
   azs: [az1]
-  resource_pool: 2xlarge_ram_large_disk_spot
+  vm_type: 2xlarge_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -322,7 +322,7 @@ jobs:
 - name: diego_cell_2xlarge_spot_az2
   instances: 1
   azs: [az2]
-  resource_pool: 2xlarge_ram_large_disk_spot
+  vm_type: 2xlarge_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -344,7 +344,7 @@ jobs:
 - name: diego_cell_4xlarge_spot_az1
   instances: 1
   azs: [az1]
-  resource_pool: 4xlarge_ram_large_disk_spot
+  vm_type: 4xlarge_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -365,7 +365,7 @@ jobs:
 - name: diego_cell_4xlarge_spot_az2
   instances: 1
   azs: [az2]
-  resource_pool: 4xlarge_ram_large_disk_spot
+  vm_type: 4xlarge_ram_large_disk_spot
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
