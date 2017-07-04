@@ -1,0 +1,211 @@
+# vim: set autoindent expandtab shiftwidth=2 softtabstop=2
+#
+---
+
+azs:
+- name: az1
+  cloud_properties:
+    availability_zone: ((aws_availability_zone1))
+- name: az2
+  cloud_properties:
+    availability_zone: ((aws_availability_zone2))
+
+networks:
+- name: cf_dmz_az1
+  type: manual
+  subnets:
+  - range: ((dmz_az1_cidr))
+    gateway: ((dmz_az1_default_route))
+    dns: [((dns_ip))]
+    az: az1
+    reserved: ["((dmz_az1_cidr_prefix)).1 - ((dmz_az1_cidr_prefix)).10"]
+    static: ["((dmz_az1_cidr_prefix)).200 - ((dmz_az1_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((dmz_az1_subnet))
+- name: cf_dmz_az2
+  type: manual
+  subnets:
+  - range: ((dmz_az2_cidr))
+    gateway: ((dmz_az2_default_route))
+    dns: [((dns_ip))]
+    az: az2
+    reserved: ["((dmz_az2_cidr_prefix)).1 - ((dmz_az2_cidr_prefix)).10"]
+    static: ["((dmz_az2_cidr_prefix)).200 - ((dmz_az2_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((dmz_az2_subnet))
+
+- name: cf_private_az1
+  type: manual
+  subnets:
+  - range: ((private_az1_cidr))
+    gateway: ((private_az1_default_route))
+    dns: [((dns_ip))]
+    az: az1
+    reserved: ["((private_az1_cidr_prefix)).1 - ((private_az1_cidr_prefix)).10"]
+    static: ["((private_az1_cidr_prefix)).200 - ((private_az1_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((private_az1_subnet))
+- name: cf_private_az2
+  type: manual
+  subnets:
+  - range: ((private_az2_cidr))
+    gateway: ((private_az2_default_route))
+    dns: [((dns_ip))]
+    az: az2
+    reserved: ["((private_az2_cidr_prefix)).1 - ((private_az2_cidr_prefix)).10"]
+    static: ["((private_az2_cidr_prefix)).200 - ((private_az2_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((private_az2_subnet))
+
+- name: cf_rabbitmq_services_az1
+  type: manual
+  subnets:
+  - range: ((rabbitmq_services_az1_cidr))
+    gateway: ((rabbitmq_services_az1_default_route))
+    dns: [((dns_ip))]
+    az: az1
+    reserved: ["((rabbitmq_services_az1_cidr_prefix)).1 - ((rabbitmq_services_az1_cidr_prefix)).10"]
+    static: ["((rabbitmq_services_az1_cidr_prefix)).200 - ((rabbitmq_services_az1_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((rabbitmq_services_az1_subnet))
+- name: cf_rabbitmq_services_az1
+  type: manual
+  subnets:
+  - range: ((rabbitmq_services_az1_cidr))
+    gateway: ((rabbitmq_services_az1_default_route))
+    dns: [((dns_ip))]
+    az: az1
+    reserved: ["((rabbitmq_services_az1_cidr_prefix)).1 - ((rabbitmq_services_az1_cidr_prefix)).10"]
+    static: ["((rabbitmq_services_az1_cidr_prefix)).200 - ((rabbitmq_services_az1_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((rabbitmq_services_az1_subnet))
+
+- name: elastic
+  type: vip
+  cloud_properties: {}
+
+
+vm_types:
+- name: micro_general
+  cloud_properties:
+    instance_type: t2.micro
+- name: small_general
+  cloud_properties:
+    instance_type: t2.small
+- name: small_router_general
+  cloud_properties:
+    instance_type: t2.small
+    # Can Bosh handle an empty array?
+    elbs: [((external_elb))]
+    # AWS outputs an array
+    security_groups: [((lb_security_group))]
+- name: medium_general
+  cloud_properties:
+    instance_type: t2.medium
+- name: medium_router_general
+  cloud_properties:
+    instance_type: t2.medium
+    elbs: [((external_elb))]
+    # AWS outputs an array
+    security_groups: [((lb_security_groups))]
+- name: medium_cc_general
+  cloud_properties:
+    instance_type: t2.medium
+    iam_instance_profile: ((s3_bucket_access_instance_profile))
+- name: large_compute
+  cloud_properties:
+    instance_type: c4.large
+- name: large_compute_spot
+  cloud_properties:
+    instance_type: c4.large
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+- name: large_compute_spot_fallback
+  cloud_properties:
+    instance_type: c4.large
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+    spot_ondemand_fallback: true
+- name: large_cc_compute_spot
+  cloud_properties:
+    instance_type: c4.large
+    iam_instance_profile: ((s3_bucket_access_instance_profile))
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+- name: large_cc_compute_spot_fallback
+  cloud_properties:
+    instance_type: c4.large
+    iam_instance_profile: ((s3_bucket_access_instance_profile))
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+    spot_ondemand_fallback: true
+- name: xlarge_compute
+  cloud_properties:
+    instance_type: c4.xlarge
+- name: xlarge_compute_spot
+  cloud_properties:
+    instance_type: c4.xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+- name: xlarge_compute_spot_fallback
+  cloud_properties:
+    instance_type: c4.xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+    spot_ondemand_fallback: true
+# Its probably better to use more large instances, and less xlarge instances - the cost is the same, the
+# ram will be virtually the same, ignoring base OS overhead, but the availability will be better
+- name: large_ram_large_disk
+  cloud_properties:
+    instance_type: r4.large
+    ephemeral_disk:
+      size: 80000
+- name: large_ram_large_disk_spot
+  cloud_properties:
+    instance_type: r4.large
+    ephemeral_disk:
+      size: 80000
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+- name: large_ram_large_disk_spot_fallback
+  cloud_properties:
+    ephemeral_disk:
+      size: 80000
+    instance_type: r4.large
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+    spot_ondemand_fallback: true
+- name: xlarge_ram_large_disk
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.xlarge
+- name: xlarge_ram_large_disk_spot
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+- name: xlarge_ram_large_disk_spot_fallback
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+    spot_ondemand_fallback: true
+
+compilation:
+  workers: 10
+  network: cf_private_az1
+  reuse_compilation_vms: true
+  az: az1
+  cloud_properties:
+    # Using large VMs decreases initial deployment time massively
+    instance_type: m4.4xlarge
+    ephemeral_disk:
+      size: 160000
+    spot_bid_price: 0.2
+    spot_ondemand_fallback: true
+    security_groups: [((private_security_group))]
