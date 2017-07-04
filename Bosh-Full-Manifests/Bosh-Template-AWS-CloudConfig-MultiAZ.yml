@@ -226,14 +226,14 @@ vm_types:
       size: 160000
     instance_type: r4.4xlarge
     # Ensure this is set to a sensible value
-    spot_bid_price: 0.1
+    spot_bid_price: 0.15
 - name: 4xlarge_ram_large_disk_spot_fallback
   cloud_properties:
     ephemeral_disk:
       size: 160000
     instance_type: r4.4xlarge
     # Ensure this is set to a sensible value
-    spot_bid_price: 0.1
+    spot_bid_price: 0.15
     spot_ondemand_fallback: true
 
 compilation:
@@ -246,6 +246,7 @@ compilation:
     instance_type: m4.4xlarge
     ephemeral_disk:
       size: 160000
-    spot_bid_price: 0.2
-    spot_ondemand_fallback: true
+    # Spot instances can take longer to come up and if no capacity is available things may time out before the fallback starts
+    #spot_bid_price: 0.2
+    #spot_ondemand_fallback: true
     security_groups: [((private_security_group))]

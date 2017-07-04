@@ -298,6 +298,92 @@ jobs:
       rep:
         zone: z2
 
+- name: diego_cell_2xlarge_spot_az1
+  instances: 1
+  azs: [az1]
+  resource_pool: 2xlarge_ram_large_disk_spot
+  templates:
+  - { name: consul_agent, release: cf }
+  - { name: rep, release: diego }
+  - { name: garden, release: garden-runc }
+  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
+  - { name: metron_agent, release: cf }
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z1
+    diego:
+      rep:
+        zone: z1
+- name: diego_cell_2xlarge_spot_az2
+  instances: 1
+  azs: [az2]
+  resource_pool: 2xlarge_ram_large_disk_spot
+  templates:
+  - { name: consul_agent, release: cf }
+  - { name: rep, release: diego }
+  - { name: garden, release: garden-runc }
+  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
+  - { name: metron_agent, release: cf }
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z2
+    diego:
+      rep:
+        zone: z2
+
+- name: diego_cell_4xlarge_spot_az1
+  instances: 1
+  azs: [az1]
+  resource_pool: 4xlarge_ram_large_disk_spot
+  templates:
+  - { name: consul_agent, release: cf }
+  - { name: rep, release: diego }
+  - { name: garden, release: garden-runc }
+  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
+  - { name: metron_agent, release: cf }
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z1
+    diego:
+      rep:
+        zone: z1
+- name: diego_cell_4xlarge_spot_az2
+  instances: 1
+  azs: [az2]
+  resource_pool: 4xlarge_ram_large_disk_spot
+  templates:
+  - { name: consul_agent, release: cf }
+  - { name: rep, release: diego }
+  - { name: garden, release: garden-runc }
+  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
+  - { name: metron_agent, release: cf }
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z2
+    diego:
+      rep:
+        zone: z2
+
 - name: diego_brain_az1
   instances: 2
   azs: [az1]
