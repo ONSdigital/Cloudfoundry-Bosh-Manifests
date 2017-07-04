@@ -216,6 +216,7 @@ jobs:
   instances: 2
   azs: [az1]
   vm_type: large_ram_large_disk_spot
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -237,6 +238,7 @@ jobs:
   instances: 2
   azs: [az2]
   vm_type: large_ram_large_disk_spot
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -259,6 +261,7 @@ jobs:
   instances: 2
   azs: [az1]
   vm_type: xlarge_ram_large_disk_spot
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -280,6 +283,7 @@ jobs:
   instances: 2
   azs: [az2]
   vm_type: xlarge_ram_large_disk_spot
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -302,6 +306,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: 2xlarge_ram_large_disk_spot
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -323,6 +328,7 @@ jobs:
   instances: 1
   azs: [az2]
   vm_type: 2xlarge_ram_large_disk_spot
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -345,6 +351,7 @@ jobs:
   instances: 1
   azs: [az1]
   vm_type: 4xlarge_ram_large_disk_spot
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
@@ -366,6 +373,7 @@ jobs:
   instances: 1
   azs: [az2]
   vm_type: 4xlarge_ram_large_disk_spot
+  stemcell: default
   templates:
   - { name: consul_agent, release: cf }
   - { name: rep, release: diego }
