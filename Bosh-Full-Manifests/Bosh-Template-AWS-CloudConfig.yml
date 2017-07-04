@@ -207,7 +207,7 @@ compilation:
   az: az1
   cloud_properties:
     # Using large VMs decreases initial deployment time massively
-    instance_type: m4.4xlarge
+    instance_type: m4.2xlarge
     ephemeral_disk:
       size: 160000
     # Spot instances can take longer to come up and if no capacity is available things may time out before the fallback starts
