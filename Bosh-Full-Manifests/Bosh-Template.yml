@@ -130,7 +130,7 @@ jobs:
       rep:
         zone: z1
 - name: diego_cell_large_spot_az1
-  instances: 2
+  instances: 0
   azs: [az1]
   vm_type: large_ram_large_disk_spot
   stemcell: default
@@ -153,7 +153,7 @@ jobs:
         zone: z1
 
 - name: diego_cell_2xlarge_spot_az1
-  instances: 1
+  instances: 0
   azs: [az1]
   vm_type: 2xlarge_ram_large_disk_spot
   stemcell: default
@@ -176,7 +176,7 @@ jobs:
         zone: z1
 
 - name: diego_cell_4xlarge_spot_az1
-  instances: 1
+  instances: 0
   azs: [az1]
   vm_type: 4xlarge_ram_large_disk_spot
   stemcell: default
