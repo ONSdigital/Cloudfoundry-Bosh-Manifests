@@ -121,7 +121,7 @@ jobs:
         zone: z1
 
 - name: diego_cell_large_spot
-  instances: 2
+  instances: 0
   azs: [az1]
   resource_pool: large_ram_large_disk_spot
   templates:
@@ -143,7 +143,7 @@ jobs:
         zone: z1
 
 - name: diego_cell_xlarge_spot
-  instances: 2
+  instances: 0
   azs: [az1]
   resource_pool: xlarge_ram_large_disk_spot
   templates:
