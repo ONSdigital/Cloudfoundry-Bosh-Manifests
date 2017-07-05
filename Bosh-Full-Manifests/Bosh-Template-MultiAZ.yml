@@ -24,38 +24,28 @@ update:
   update_watch_time: 5000-600000
 
 jobs:
-- name: nats_az1
-  instances: 2
-  azs: [az1]
+- name: nats
+  instances: 4
+  azs: [az1,az2]
   vm_type: small_general
   stemcell: default
   templates:
   - {name: nats, release: cf}
   - {name: metron_agent, release: cf}
   networks:
-  - name: cf_private_az1
-    static_ips: [((private_az1_cidr_prefix)).220-((private_az1_cidr_prefix)).221]
+  - name: cf_private
+    static_ips:
+    - ((private_az1_cidr_prefix)).220
+    - ((private_az1_cidr_prefix)).221
+    - ((private_az2_cidr_prefix)).220
+    - ((private_az2_cidr_prefix)).221
   properties:
     metron_agent:
       zone: z1
-- name: nats_az2
-  instances: 2
-  azs: [az2]
-  vm_type: small_general
-  stemcell: default
-  templates:
-  - {name: nats, release: cf}
-  - {name: metron_agent, release: cf}
-  networks:
-  - name: cf_private_az2
-    static_ips: [((private_az2_cidr_prefix)).220-((private_az2_cidr_prefix)).221]
-  properties:
-    metron_agent:
-      zone: z2
 
-- name: etcd_az1
+- name: etcd
   instances: 3
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
@@ -65,8 +55,12 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_private_az1
-    static_ips: [((private_az1_cidr_prefix)).230-((private_az1_cidr_prefix)).232]
+  - name: cf_private
+    static_ips:
+    - ((private_az1_cidr_prefix)).230
+    - ((private_az1_cidr_prefix)).232
+    - ((private_az2_cidr_prefix)).230
+    - ((private_az2_cidr_prefix)).232
     etcd_metrics_server:
       nats:
         machines: ["cf-etcd.service.((internal_domain))"]
@@ -80,55 +74,10 @@ jobs:
         services:
           etcd:
             name: cf-etcd
-- name: etcd_az2
-  instances: 3
-  azs: [az2]
-  vm_type: micro_general
-  stemcell: default
-  persistent_disk: 10240
-  templates:
-  - {name: etcd, release: cf}
-  - {name: etcd_metrics_server, release: cf}
-  - {name: metron_agent, release: cf}
-  - {name: consul_agent, release: cf}
-  networks:
-  - name: cf_private_az2
-    static_ips: [((private_az2_cidr_prefix)).230-((private_az2_cidr_prefix)).232]
-    etcd_metrics_server:
-      nats:
-        machines: ["cf-etcd.service.((internal_domain))"]
-        password: ((nats_password))
-        username: nats
-  properties:
-    metron_agent:
-      zone: z2
-    consul:
-      agent:
-        services:
-          etcd:
-            name: cf-etcd
 
-- name: consul_az1
-  instances: 3
-  azs: [az1]
-  persistent_disk: 1024
-  vm_type: small_general
-  stemcell: default
-  templates:
-  - {name: metron_agent, release: cf}
-  - {name: consul_agent, release: cf}
-  networks:
-  - name: cf_private_az1
-    static_ips: [((private_az1_cidr_prefix)).240-((private_az1_cidr_prefix)).242]
-  properties:
-    metron_agent:
-      zone: z1
-    consul:
-      agent:
-        mode: server
 - name: consul
   instances: 3
-  azs: [az2]
+  azs: [az1,az2]
   persistent_disk: 1024
   vm_type: small_general
   stemcell: default
@@ -136,11 +85,17 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_private_az2
-    static_ips: [((private_az2_cidr_prefix)).240-((private_az2_cidr_prefix)).242]
+  - name: cf_private
+    static_ips:
+    - ((private_az1_cidr_prefix)).240
+    - ((private_az1_cidr_prefix)).241
+    - ((private_az1_cidr_prefix)).242
+    - ((private_az2_cidr_prefix)).240
+    - ((private_az2_cidr_prefix)).241
+    - ((private_az2_cidr_prefix)).242
   properties:
     metron_agent:
-      zone: z2
+      zone: z1
     consul:
       agent:
         mode: server
@@ -157,7 +112,7 @@ jobs:
   - {name: postgres, release: cf}
   - {name: metron_agent, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
     static_ips: [((private_az1_cidr_prefix)).201]
   update:
     serial: true
@@ -165,9 +120,9 @@ jobs:
     metron_agent:
       zone: z1
 
-- name: diego_cell_az1
+- name: diego_cell
   instances: 2
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: large_ram_large_disk
   stemcell: default
   templates:
@@ -178,7 +133,7 @@ jobs:
   - { name: metron_agent, release: cf }
   - { name: ssh_proxy, release: diego }
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -188,33 +143,10 @@ jobs:
     diego:
       rep:
         zone: z1
-- name: diego_cell_az2
-  instances: 2
-  azs: [az2]
-  vm_type: large_ram_large_disk
-  stemcell: default
-  templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
-  - { name: ssh_proxy, release: diego }
-  networks:
-  - name: cf_private_az2
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z2
-    diego:
-      rep:
-        zone: z2
 
-- name: diego_cell_large_spot_az1
+- name: diego_cell_large_spot
   instances: 0
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: large_ram_large_disk_spot
   stemcell: default
   templates:
@@ -224,7 +156,7 @@ jobs:
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -234,32 +166,10 @@ jobs:
     diego:
       rep:
         zone: z1
-- name: diego_cell_large_spot_az2
-  instances: 0
-  azs: [az2]
-  vm_type: large_ram_large_disk_spot
-  stemcell: default
-  templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
-  networks:
-  - name: cf_private_az2
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z2
-    diego:
-      rep:
-        zone: z2
 
-- name: diego_cell_xlarge_spot_az1
+- name: diego_cell_xlarge_spot
   instances: 0
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: xlarge_ram_large_disk_spot
   stemcell: default
   templates:
@@ -269,7 +179,7 @@ jobs:
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -279,32 +189,10 @@ jobs:
     diego:
       rep:
         zone: z1
-- name: diego_cell_xlarge_spot_az2
-  instances: 0
-  azs: [az2]
-  vm_type: xlarge_ram_large_disk_spot
-  stemcell: default
-  templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
-  networks:
-  - name: cf_private_az2
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z2
-    diego:
-      rep:
-        zone: z2
 
-- name: diego_cell_2xlarge_spot_az1
+- name: diego_cell_2xlarge_spot
   instances: 0
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: 2xlarge_ram_large_disk_spot
   stemcell: default
   templates:
@@ -314,7 +202,7 @@ jobs:
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -324,32 +212,10 @@ jobs:
     diego:
       rep:
         zone: z1
-- name: diego_cell_2xlarge_spot_az2
-  instances: 0
-  azs: [az2]
-  vm_type: 2xlarge_ram_large_disk_spot
-  stemcell: default
-  templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
-  networks:
-  - name: cf_private_az2
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z2
-    diego:
-      rep:
-        zone: z2
 
-- name: diego_cell_4xlarge_spot_az1
+- name: diego_cell_4xlarge_spot
   instances: 0
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: 4xlarge_ram_large_disk_spot
   stemcell: default
   templates:
@@ -359,7 +225,7 @@ jobs:
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -369,32 +235,10 @@ jobs:
     diego:
       rep:
         zone: z1
-- name: diego_cell_4xlarge_spot_az2
-  instances: 0
-  azs: [az2]
-  vm_type: 4xlarge_ram_large_disk_spot
-  stemcell: default
-  templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
-  networks:
-  - name: cf_private_az2
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z2
-    diego:
-      rep:
-        zone: z2
 
-- name: diego_brain_az1
-  instances: 2
-  azs: [az1]
+- name: diego_brain
+  instances: 3
+  azs: [az1,az2]
   vm_type: small_general
   stemcell: default
   templates:
@@ -410,7 +254,7 @@ jobs:
   - { name: metron_agent, release: cf }
   persistent_disk: 20480
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -420,38 +264,10 @@ jobs:
     consul:
       agent:
         services: {}
-- name: diego_brain_az2
-  instances: 2
-  azs: [az2]
-  vm_type: small_general
-  stemcell: default
-  templates:
-  - { name: consul_agent, release: cf }
-  - { name: bbs, release: diego }
-  - { name: auctioneer, release: diego }
-  - { name: stager, release: cf }
-  - { name: nsync, release: cf }
-  - { name: tps, release: cf }
-  - { name: cc_uploader, release: cf }
-  - { name: file_server, release: diego }
-  - { name: route_emitter, release: diego }
-  - { name: metron_agent, release: cf }
-  persistent_disk: 20480
-  networks:
-  - name: cf_private_az2
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z2
-    consul:
-      agent:
-        services: {}
 
-- name: api_az1
+- name: api
   instances: 2
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: medium_cc_general
   stemcell: default
   templates:
@@ -472,7 +288,7 @@ jobs:
   - {name: dotnet-core-buildpack, release: cf}
   - {name: statsd_injector, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   properties:
     metron_agent:
       zone: z1
@@ -487,46 +303,8 @@ jobs:
         port: 9022
         uris:
         - "api.system.((domain_name))"
-- name: api_az2
-  instances: 2
-  azs: [az2]
-  vm_type: medium_cc_general
-  stemcell: default
-  templates:
-  - {name: cloud_controller_ng, release: cf}
-  - {name: cloud_controller_worker, release: cf}
-  - {name: cloud_controller_clock, release: cf}
-  - {name: metron_agent, release: cf}
-  - {name: route_registrar, release: cf}
-  - {name: consul_agent, release: cf}
-  - {name: go-buildpack, release: cf}
-  - {name: binary-buildpack, release: cf}
-  - {name: nodejs-buildpack, release: cf}
-  - {name: ruby-buildpack, release: cf}
-  - {name: java-buildpack, release: cf}
-  - {name: php-buildpack, release: cf}
-  - {name: python-buildpack, release: cf}
-  - {name: staticfile-buildpack, release: cf}
-  - {name: dotnet-core-buildpack, release: cf}
-  - {name: statsd_injector, release: cf}
-  networks:
-  - name: cf_private_az2
-  properties:
-    metron_agent:
-      zone: z2
-    consul:
-      agent:
-        services:
-          cloud_controller_ng: {}
-    route_registrar:
-      routes:
-      - name: api
-        registration_interval: 20s
-        port: 9022
-        uris:
-        - "api.system.((domain_name))"
 
-#- name: ha_proxy_az1
+#- name: ha_proxy
 #  instances: 0
 #  azs: [az1]
 #  vm_type: small_general
@@ -550,9 +328,9 @@ jobs:
 #      servers:
 #        - ((private_az1_cidr_prefix)).210
 
-- name: doppler_az1
+- name: doppler
   instances: 2
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: small_general
   stemcell: default
   templates:
@@ -561,41 +339,20 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: syslog_drain_binder, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   properties:
     metron_agent:
       zone: z1
     doppler:
       zone: z1
-    consul:
-      agent:
-        services:
-          doppler: {}
-- name: doppler_az2
-  instances: 2
-  azs: [az2]
-  vm_type: small_general
-  stemcell: default
-  templates:
-  - {name: consul_agent, release: cf}
-  - {name: doppler, release: cf}
-  - {name: metron_agent, release: cf}
-  - {name: syslog_drain_binder, release: cf}
-  networks:
-  - name: cf_private_az2
-  properties:
-    metron_agent:
-      zone: z2
-    doppler:
-      zone: z2
     consul:
       agent:
         services:
           doppler: {}
 
-- name: loggregator_trafficcontroller_az1
+- name: loggregator_trafficcontroller
   instances: 2
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: small_general
   stemcell: default
   templates:
@@ -604,7 +361,7 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   properties:
     metron_agent:
       zone: z1
@@ -621,38 +378,10 @@ jobs:
         port: 8080
         uris:
         - "loggregator.system.((domain_name))"
-- name: loggregator_trafficcontroller_az2
-  instances: 2
-  azs: [az2]
-  vm_type: small_general
-  stemcell: default
-  templates:
-  - {name: consul_agent, release: cf}
-  - {name: loggregator_trafficcontroller, release: cf}
-  - {name: metron_agent, release: cf}
-  - {name: route_registrar, release: cf}
-  networks:
-  - name: cf_private_az2
-  properties:
-    metron_agent:
-      zone: z2
-    traffic_controller: {zone: z2}
-    route_registrar:
-      routes:
-      - name: doppler
-        registration_interval: 20s
-        port: 8081
-        uris:
-        - "doppler.system.((domain_name))"
-      - name: loggregator
-        registration_interval: 20s
-        port: 8080
-        uris:
-        - "loggregator.system.((domain_name))"
 
-- name: uaa_az1
+- name: uaa
   instances: 2
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: small_general
   stemcell: default
   templates:
@@ -662,7 +391,7 @@ jobs:
   - {name: route_registrar, release: cf}
   - {name: statsd_injector, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   properties:
     metron_agent:
       zone: z1
@@ -703,63 +432,10 @@ jobs:
       port: 5524
       roles:
       - {name: uaaadmin, password: ((uaa_db_admin_password)), tag: admin}
-- name: uaa_az2
-  instances: 2
-  azs: [az2]
-  vm_type: small_general
-  stemcell: default
-  templates:
-  - {name: consul_agent, release: cf}
-  - {name: uaa, release: cf}
-  - {name: metron_agent, release: cf}
-  - {name: route_registrar, release: cf}
-  - {name: statsd_injector, release: cf}
-  networks:
-  - name: cf_private_az2
-  properties:
-    metron_agent:
-      zone: z2
-    consul:
-      agent:
-        services:
-          uaa: {}
-    login:
-      saml:
-        serviceProviderKey: ((uaa_key))
-        serviceProviderKeyPassword: ""
-        # uaa.service.((internal_domain))
-        serviceProviderCertificate: ((uaa_crt))
-      catalina_opts: -Xmx768m -XX:MaxPermSize=256m
-    route_registrar:
-      routes:
-      - name: uaa
-        registration_interval: 20s
-        port: 8080
-        uris:
-        - "uaa.system.((domain_name))"
-        - "*.uaa.system.((domain_name))"
-        - "login.system.((domain_name))"
-        - "*.login.system.((domain_name))"
-    uaa:
-      admin:
-        client_secret: ((uaa_admin_client_secret))
-      batch:
-        password: ((uaa_batch_password))
-        username: batch_user
-      cc:
-        client_secret: ((uaa_cc_client_secret))
-    uaadb:
-      address: ((private_az2_cidr_prefix)).201
-      databases:
-      - {name: uaadb, tag: uaa}
-      db_scheme: postgresql
-      port: 5524
-      roles:
-      - {name: uaaadmin, password: ((uaa_db_admin_password)), tag: admin}
 
-- name: router_az1
+- name: router
   instances: 2
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: small_router_general
   stemcell: default
   templates:
@@ -767,32 +443,16 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
     static_ips: [((private_az1_cidr_prefix)).210-((private_az1_cidr_prefix)).211]
   properties:
     metron_agent:
       zone: z1
     dropsonde: {enabled: true}
-- name: router_az2
+
+- name: rabbitmq-mgnt
   instances: 2
-  azs: [az2]
-  vm_type: small_router_general
-  stemcell: default
-  templates:
-  - {name: gorouter, release: cf}
-  - {name: metron_agent, release: cf}
-  - {name: consul_agent, release: cf}
-  networks:
-  - name: cf_private_az2
-    static_ips: [((private_az2_cidr_prefix)).210-((private_az2_cidr_prefix)).211]
-  properties:
-    metron_agent:
-      zone: z2
-    dropsonde: {enabled: true}
-
-- name: rabbitmq-mgnt_az1
-  instances: 1
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: micro_general
   stemcell: default
   templates:
@@ -811,33 +471,11 @@ jobs:
       agent:
         services: {}
   networks:
-  - name: cf_rabbitmq_services_az1
-- name: rabbitmq-mgnt_az2
-  instances: 1
-  azs: [az2]
-  vm_type: micro_general
-  stemcell: default
-  templates:
-  - {name: rabbitmq-haproxy, release: cf-rabbitmq}
-  - {name: route_registrar, release: cf}
-  - {name: consul_agent, release: cf}
-  properties:
-    route_registrar:
-      routes:
-      - name: rabbitmq-mgnt
-        port: 15672
-        registration_interval: 20s
-        uris:
-        - rabbitmq-mgnt.system.((domain_name))
-    consul:
-      agent:
-        services: {}
-  networks:
-  - name: cf_rabbitmq_services_az2
+  - name: cf_rabbitmq_services
 
-- name: rabbitmq-broker_az1
-  instances: 1
-  azs: [az1]
+- name: rabbitmq-broker
+  instances: 2
+  azs: [az1,az2]
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
@@ -845,26 +483,7 @@ jobs:
   - {name: rabbitmq-broker, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
   networks:
-  - name: cf_rabbitmq_services_az1
-  properties:
-    route_registrar:
-      routes:
-      - name: rabbitmq-broker
-        port: 4567
-        registration_interval: 20s
-        uris:
-        - rabbitmq-broker.system.((domain_name))
-- name: rabbitmq-broker_az2
-  instances: 1
-  azs: [az2]
-  vm_type: micro_general
-  stemcell: default
-  persistent_disk: 10240
-  templates:
-  - {name: rabbitmq-broker, release: cf-rabbitmq}
-  - {name: route_registrar, release: cf}
-  networks:
-  - name: cf_rabbitmq_services_az2
+  - name: cf_rabbitmq_services
   properties:
     route_registrar:
       routes:
@@ -874,9 +493,9 @@ jobs:
         uris:
         - rabbitmq-broker.system.((domain_name))
 
-- name: rabbitmq-node_az1
+- name: rabbitmq-node
   instances: 3
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: small_general
   stemcell: default
   persistent_disk: 10240
@@ -884,22 +503,7 @@ jobs:
   - {name: rabbitmq-server, release: cf-rabbitmq}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_rabbitmq_services_az1
-  properties:
-    consul:
-      agent:
-        services: {}
-- name: rabbitmq-node_az2
-  instances: 3
-  azs: [az2]
-  vm_type: small_general
-  stemcell: default
-  persistent_disk: 10240
-  templates:
-  - {name: rabbitmq-server, release: cf-rabbitmq}
-  - {name: consul_agent, release: cf}
-  networks:
-  - name: cf_rabbitmq_services_az2
+  - name: cf_rabbitmq_services
   properties:
     consul:
       agent:
@@ -911,7 +515,7 @@ properties:
     ssl_skip_validation: true
     status:
       password: ((router_status_password))
-  networks: {apps: cf_private_az1}
+  networks: {apps: cf_private}
   # https://docs.cloudfoundry.org/deploying/aws/cf-stub.html
   app_domains: [apps.((domain_name))]
   app_ssh:
@@ -1107,15 +711,6 @@ properties:
     dropsonde_incoming_port: 3457
     protocols:
     - udp
-  nats:
-    machines:
-    - ((private_az1_cidr_prefix)).220
-    - ((private_az1_cidr_prefix)).221
-    - ((private_az2_cidr_prefix)).220
-    - ((private_az2_cidr_prefix)).221
-    password: ((nats_password))
-    port: 4222
-    user: nats
   ssl:
     skip_cert_verify: true
   system_domain: system.((domain_name))
