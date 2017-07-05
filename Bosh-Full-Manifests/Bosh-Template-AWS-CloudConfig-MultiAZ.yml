@@ -74,7 +74,7 @@ networks:
   - range: ((rabbitmq_services_az1_cidr))
     gateway: ((rabbitmq_services_az1_default_route))
     dns: [((dns_ip))]
-    az: az1
+    az: az2
     reserved: ["((rabbitmq_services_az1_cidr_prefix)).1 - ((rabbitmq_services_az1_cidr_prefix)).10"]
     static: ["((rabbitmq_services_az1_cidr_prefix)).200 - ((rabbitmq_services_az1_cidr_prefix)).245"]
     cloud_properties:
