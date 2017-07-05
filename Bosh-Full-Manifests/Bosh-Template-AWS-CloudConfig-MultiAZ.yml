@@ -68,7 +68,7 @@ networks:
     static: ["((rabbitmq_services_az1_cidr_prefix)).200 - ((rabbitmq_services_az1_cidr_prefix)).245"]
     cloud_properties:
       subnet: ((rabbitmq_services_az1_subnet))
-- name: cf_rabbitmq_services_az1
+- name: cf_rabbitmq_services_az2
   type: manual
   subnets:
   - range: ((rabbitmq_services_az1_cidr))

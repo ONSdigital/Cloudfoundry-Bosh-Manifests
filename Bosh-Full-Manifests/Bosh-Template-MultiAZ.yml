@@ -34,7 +34,7 @@ jobs:
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private_az1
-    static_ips: [((private_az1_cidr_prefix)).220]
+    static_ips: [((private_az1_cidr_prefix)).220-((private_az1_cidr_prefix)).221]
   properties:
     metron_agent:
       zone: z1
@@ -48,7 +48,7 @@ jobs:
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private_az2
-    static_ips: [((private_az2_cidr_prefix)).220]
+    static_ips: [((private_az2_cidr_prefix)).220-((private_az2_cidr_prefix)).221]
   properties:
     metron_agent:
       zone: z2
@@ -66,7 +66,7 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private_az1
-    static_ips: ["((private_az1_cidr_prefix)).230"]
+    static_ips: [((private_az1_cidr_prefix)).230-((private_az1_cidr_prefix)).232]
     etcd_metrics_server:
       nats:
         machines: ["cf-etcd.service.((internal_domain))"]
@@ -93,7 +93,7 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private_az2
-    static_ips: ["((private_az2_cidr_prefix)).230"]
+    static_ips: [((private_az2_cidr_prefix)).230-((private_az2_cidr_prefix)).232]
     etcd_metrics_server:
       nats:
         machines: ["cf-etcd.service.((internal_domain))"]
@@ -119,7 +119,7 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private_az1
-    static_ips: ["((private_az1_cidr_prefix)).240-((private_az1_cidr_prefix)).242"]
+    static_ips: [((private_az1_cidr_prefix)).240-((private_az1_cidr_prefix)).242]
   properties:
     metron_agent:
       zone: z1
@@ -137,7 +137,7 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private_az2
-    static_ips: ["((private_az2_cidr_prefix)).240-((private_az2_cidr_prefix)).242"]
+    static_ips: [((private_az2_cidr_prefix)).240-((private_az2_cidr_prefix)).242]
   properties:
     metron_agent:
       zone: z2
@@ -768,7 +768,7 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private_az1
-    static_ips: [((private_az1_cidr_prefix)).210]
+    static_ips: [((private_az1_cidr_prefix)).210-((private_az1_cidr_prefix)).211]
   properties:
     metron_agent:
       zone: z1
@@ -784,7 +784,7 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private_az2
-    static_ips: [((private_az2_cidr_prefix)).210]
+    static_ips: [((private_az2_cidr_prefix)).210-((private_az2_cidr_prefix)).211]
   properties:
     metron_agent:
       zone: z2
@@ -1108,7 +1108,11 @@ properties:
     protocols:
     - udp
   nats:
-    machines: [((private_az1_cidr_prefix)).220]
+    machines:
+    - ((private_az1_cidr_prefix)).220
+    - ((private_az1_cidr_prefix)).221
+    - ((private_az2_cidr_prefix)).220
+    - ((private_az2_cidr_prefix)).221
     password: ((nats_password))
     port: 4222
     user: nats
@@ -1331,7 +1335,11 @@ properties:
         client_key: ""
         require_ssl: false
       nats:
-        machines: [((private_az1_cidr_prefix)).220]
+        machines:
+        - ((private_az1_cidr_prefix)).220
+        - ((private_az1_cidr_prefix)).221
+        - ((private_az2_cidr_prefix)).220
+        - ((private_az2_cidr_prefix)).221
         password: ((nats_password))
         port: 4222
         user: nats
