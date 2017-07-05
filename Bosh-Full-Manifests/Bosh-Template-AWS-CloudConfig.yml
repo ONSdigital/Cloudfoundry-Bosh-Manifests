@@ -242,5 +242,5 @@ compilation:
     instance_type: m4.4xlarge
     ephemeral_disk:
       size: 160000
-    spot_bid_price: 0.2
-    spot_ondemand_fallback: true
+    #spot_bid_price: 0.2
+    #spot_ondemand_fallback: true
