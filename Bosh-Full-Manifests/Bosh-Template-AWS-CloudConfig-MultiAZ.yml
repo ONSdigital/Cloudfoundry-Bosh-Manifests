@@ -50,6 +50,14 @@ networks:
     static: ["((private_az2_cidr_prefix)).200 - ((private_az2_cidr_prefix)).245"]
     cloud_properties:
       subnet: ((private_az2_subnet))
+  - range: ((private_az3_cidr))
+    gateway: ((private_az3_default_route))
+    dns: [((dns_ip))]
+    az: az3
+    reserved: ["((private_az3_cidr_prefix)).1 - ((private_az3_cidr_prefix)).10"]
+    static: ["((private_az3_cidr_prefix)).200 - ((private_az3_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((private_az3_subnet))
 
 - name: cf_rabbitmq_services
   type: manual

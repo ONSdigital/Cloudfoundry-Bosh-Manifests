@@ -25,8 +25,8 @@ update:
 
 jobs:
 - name: nats
-  instances: 4
-  azs: [az1,az2]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
@@ -36,16 +36,15 @@ jobs:
   - name: cf_private
     static_ips:
     - ((private_az1_cidr_prefix)).220
-    - ((private_az1_cidr_prefix)).221
     - ((private_az2_cidr_prefix)).220
-    - ((private_az2_cidr_prefix)).221
+    - ((private_az3_cidr_prefix)).220
   properties:
     metron_agent:
       zone: z1
 
 - name: etcd
   instances: 3
-  azs: [az1,az2]
+  azs: [az1,az2,az3]
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
@@ -58,9 +57,8 @@ jobs:
   - name: cf_private
     static_ips:
     - ((private_az1_cidr_prefix)).230
-    - ((private_az1_cidr_prefix)).232
     - ((private_az2_cidr_prefix)).230
-    - ((private_az2_cidr_prefix)).232
+    - ((private_az3_cidr_prefix)).230
     etcd_metrics_server:
       nats:
         machines: ["cf-etcd.service.((internal_domain))"]
@@ -76,8 +74,8 @@ jobs:
             name: cf-etcd
 
 - name: consul
-  instances: 3
-  azs: [az1,az2]
+  instances: 9
+  azs: [az1,az2,az3]
   persistent_disk: 1024
   vm_type: small_general
   stemcell: default
@@ -93,6 +91,9 @@ jobs:
     - ((private_az2_cidr_prefix)).240
     - ((private_az2_cidr_prefix)).241
     - ((private_az2_cidr_prefix)).242
+    - ((private_az3_cidr_prefix)).240
+    - ((private_az3_cidr_prefix)).241
+    - ((private_az3_cidr_prefix)).242
   properties:
     metron_agent:
       zone: z1
@@ -238,7 +239,7 @@ jobs:
 
 - name: diego_brain
   instances: 3
-  azs: [az1,az2]
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
@@ -266,8 +267,8 @@ jobs:
         services: {}
 
 - name: api
-  instances: 2
-  azs: [az1,az2]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: medium_cc_general
   stemcell: default
   templates:
@@ -329,8 +330,8 @@ jobs:
 #        - ((private_az1_cidr_prefix)).210
 
 - name: doppler
-  instances: 2
-  azs: [az1,az2]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
@@ -351,8 +352,8 @@ jobs:
           doppler: {}
 
 - name: loggregator_trafficcontroller
-  instances: 2
-  azs: [az1,az2]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
@@ -380,8 +381,8 @@ jobs:
         - "loggregator.system.((domain_name))"
 
 - name: uaa
-  instances: 2
-  azs: [az1,az2]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
@@ -453,7 +454,7 @@ jobs:
 - name: rabbitmq-mgnt
   instances: 2
   azs: [az1,az2]
-  vm_type: micro_general
+  vm_type: small_general
   stemcell: default
   templates:
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
@@ -494,7 +495,7 @@ jobs:
         - rabbitmq-broker.system.((domain_name))
 
 - name: rabbitmq-node
-  instances: 3
+  instances: 4
   azs: [az1,az2]
   vm_type: small_general
   stemcell: default
@@ -932,9 +933,8 @@ properties:
       nats:
         machines:
         - ((private_az1_cidr_prefix)).220
-        - ((private_az1_cidr_prefix)).221
         - ((private_az2_cidr_prefix)).220
-        - ((private_az2_cidr_prefix)).221
+        - ((private_az3_cidr_prefix)).220
         password: ((nats_password))
         port: 4222
         user: nats
