@@ -516,7 +516,7 @@ properties:
     bulk_api_password: ((bulk_api_password))
     db_encryption_key: ((db_encryption_secret))
     # public_networks for a running instance should be restricted to the bare essentials (eg Git repo server for Jenkins installs)
-    default_running_security_groups: [dns, postgres_networks, public_networks]
+    default_running_security_groups: [dns, postgres_networks, rabbitmq_networks, redis_networks, public_networks]
     default_staging_security_groups: [public_networks, dns]
     # The buildpacks can, sometimes, be quite slow to download and install, so we list the ones that are used during deployment first - hopefully,
     # the order is respected
@@ -549,6 +549,19 @@ properties:
       rules:
       - {destination: ((rds_services_az1_cidr)), ports: '5432', protocol: tcp }
       - {destination: ((rds_services_az2_cidr)), ports: '5432', protocol: tcp }
+    - name: rabbitmq_networks
+      rules:
+      - {destination: ((rabbitmq_services_cidr)), ports: '1883', protocol: tcp }
+      - {destination: ((rabbitmq_services_cidr)), ports: '8883', protocol: tcp }
+      - {destination: ((rabbitmq_services_cidr)), ports: '5671', protocol: tcp }
+      - {destination: ((rabbitmq_services_cidr)), ports: '5672', protocol: tcp }
+      - {destination: ((rabbitmq_services_cidr)), ports: '61613', protocol: tcp }
+      - {destination: ((rabbitmq_services_cidr)), ports: '61614', protocol: tcp }
+      - {destination: ((rabbitmq_services_cidr)), ports: '15672', protocol: tcp }
+      - {destination: ((rabbitmq_services_cidr)), ports: '15674', protocol: tcp }
+    - name: redis_networks
+      rules:
+      - {destination: ((elasti_cache_services_az_cidr)), ports: '6379', protocol: tcp }
     - name: dns
       rules:
       - {destination: 0.0.0.0/0, ports: '53', protocol: tcp}
