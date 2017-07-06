@@ -45,6 +45,7 @@ networks:
     reserved: ["((private_az1_cidr_prefix)).1 - ((private_az1_cidr_prefix)).10"]
     static: ["((private_az1_cidr_prefix)).200 - ((private_az1_cidr_prefix)).245"]
     cloud_properties:
+      security_groups: [((private_security_group))]
       subnet: ((private_az1_subnet))
   - range: ((private_az2_cidr))
     gateway: ((private_az2_default_route))
@@ -53,6 +54,7 @@ networks:
     reserved: ["((private_az2_cidr_prefix)).1 - ((private_az2_cidr_prefix)).10"]
     static: ["((private_az2_cidr_prefix)).200 - ((private_az2_cidr_prefix)).245"]
     cloud_properties:
+      security_groups: [((private_security_group))]
       subnet: ((private_az2_subnet))
   - range: ((private_az3_cidr))
     gateway: ((private_az3_default_route))
@@ -61,6 +63,7 @@ networks:
     reserved: ["((private_az3_cidr_prefix)).1 - ((private_az3_cidr_prefix)).10"]
     static: ["((private_az3_cidr_prefix)).200 - ((private_az3_cidr_prefix)).245"]
     cloud_properties:
+      security_groups: [((private_security_group))]
       subnet: ((private_az3_subnet))
 
 - name: cf_rabbitmq_services
@@ -73,6 +76,7 @@ networks:
     reserved: ["((rabbitmq_services_az1_cidr_prefix)).1 - ((rabbitmq_services_az1_cidr_prefix)).10"]
     static: ["((rabbitmq_services_az1_cidr_prefix)).200 - ((rabbitmq_services_az1_cidr_prefix)).245"]
     cloud_properties:
+      security_groups: [((rabbitmq_services_security_group))]
       subnet: ((rabbitmq_services_az1_subnet))
   - range: ((rabbitmq_services_az2_cidr))
     gateway: ((rabbitmq_services_az2_default_route))
@@ -81,6 +85,7 @@ networks:
     reserved: ["((rabbitmq_services_az2_cidr_prefix)).1 - ((rabbitmq_services_az2_cidr_prefix)).10"]
     static: ["((rabbitmq_services_az2_cidr_prefix)).200 - ((rabbitmq_services_az2_cidr_prefix)).245"]
     cloud_properties:
+      security_groups: [((rabbitmq_services_security_group))]
       subnet: ((rabbitmq_services_az2_subnet))
 
 - name: elastic

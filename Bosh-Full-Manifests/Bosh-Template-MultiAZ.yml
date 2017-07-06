@@ -55,10 +55,6 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips:
-    - ((private_az1_cidr_prefix)).230
-    - ((private_az2_cidr_prefix)).230
-    - ((private_az3_cidr_prefix)).230
     etcd_metrics_server:
       nats:
         machines: ["cf-etcd.service.((internal_domain))"]
@@ -84,16 +80,6 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips:
-    - ((private_az1_cidr_prefix)).240
-    - ((private_az1_cidr_prefix)).241
-    - ((private_az1_cidr_prefix)).242
-    - ((private_az2_cidr_prefix)).240
-    - ((private_az2_cidr_prefix)).241
-    - ((private_az2_cidr_prefix)).242
-    - ((private_az3_cidr_prefix)).240
-    - ((private_az3_cidr_prefix)).241
-    - ((private_az3_cidr_prefix)).242
   properties:
     metron_agent:
       zone: z1
@@ -712,6 +698,14 @@ properties:
     dropsonde_incoming_port: 3457
     protocols:
     - udp
+  nats:
+    machines:
+    - ((private_az1_cidr_prefix)).220
+    - ((private_az2_cidr_prefix)).220
+    - ((private_az3_cidr_prefix)).220
+    password: ((nats_password))
+    port: 4222
+    user: nats
   ssl:
     skip_cert_verify: true
   system_domain: system.((domain_name))
