@@ -55,12 +55,12 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
+  properties:
     etcd_metrics_server:
       nats:
         machines: ["cf-etcd.service.((internal_domain))"]
         password: ((nats_password))
         username: nats
-  properties:
     metron_agent:
       zone: z1
     consul:
@@ -601,6 +601,12 @@ properties:
         - ((private_az1_cidr_prefix)).240
         - ((private_az1_cidr_prefix)).241
         - ((private_az1_cidr_prefix)).242
+        - ((private_az2_cidr_prefix)).240
+        - ((private_az2_cidr_prefix)).241
+        - ((private_az2_cidr_prefix)).242
+        - ((private_az3_cidr_prefix)).240
+        - ((private_az3_cidr_prefix)).241
+        - ((private_az3_cidr_prefix)).242
     encrypt_keys:
     - ((consul_encrypt_keys_secret))
     ca_cert: ((internal_ca_crt))

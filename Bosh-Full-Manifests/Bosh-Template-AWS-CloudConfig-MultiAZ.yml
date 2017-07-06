@@ -106,7 +106,7 @@ vm_types:
     # Can Bosh handle an empty array?
     elbs: [((external_elb))]
     # AWS outputs an array
-    security_groups: [((lb_security_group))]
+    security_groups: [((lb_security_group)),((dmz_security_group))]
 - name: medium_general
   cloud_properties:
     instance_type: t2.medium
@@ -115,7 +115,7 @@ vm_types:
     instance_type: t2.medium
     elbs: [((external_elb))]
     # AWS outputs an array
-    security_groups: [((lb_security_groups))]
+    security_groups: [((lb_security_group)),((dmz_security_group))]
 - name: medium_cc_general
   cloud_properties:
     instance_type: t2.medium
