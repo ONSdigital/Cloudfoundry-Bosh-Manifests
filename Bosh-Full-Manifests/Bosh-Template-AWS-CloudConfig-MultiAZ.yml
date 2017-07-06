@@ -9,6 +9,10 @@ azs:
 - name: az2
   cloud_properties:
     availability_zone: ((aws_availability_zone2))
+- name: az3
+  cloud_properties:
+    availability_zone: ((aws_availability_zone3))
+
 
 networks:
 - name: cf_dmz
@@ -70,14 +74,14 @@ networks:
     static: ["((rabbitmq_services_az1_cidr_prefix)).200 - ((rabbitmq_services_az1_cidr_prefix)).245"]
     cloud_properties:
       subnet: ((rabbitmq_services_az1_subnet))
-  - range: ((rabbitmq_services_az1_cidr))
-    gateway: ((rabbitmq_services_az1_default_route))
+  - range: ((rabbitmq_services_az2_cidr))
+    gateway: ((rabbitmq_services_az2_default_route))
     dns: [((dns_ip))]
     az: az2
-    reserved: ["((rabbitmq_services_az1_cidr_prefix)).1 - ((rabbitmq_services_az1_cidr_prefix)).10"]
-    static: ["((rabbitmq_services_az1_cidr_prefix)).200 - ((rabbitmq_services_az1_cidr_prefix)).245"]
+    reserved: ["((rabbitmq_services_az2_cidr_prefix)).1 - ((rabbitmq_services_az2_cidr_prefix)).10"]
+    static: ["((rabbitmq_services_az2_cidr_prefix)).200 - ((rabbitmq_services_az2_cidr_prefix)).245"]
     cloud_properties:
-      subnet: ((rabbitmq_services_az1_subnet))
+      subnet: ((rabbitmq_services_az2_subnet))
 
 - name: elastic
   type: vip
