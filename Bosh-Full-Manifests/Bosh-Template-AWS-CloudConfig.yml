@@ -22,7 +22,7 @@ networks:
     static: ["((dmz_az1_cidr_prefix)).200 - ((dmz_az1_cidr_prefix)).245"]
     cloud_properties:
       subnet: ((dmz_az1_subnet))
-- name: cf_private_az1
+- name: cf_private
   type: manual
   subnets:
   - range: ((private_az1_cidr))
@@ -202,7 +202,7 @@ vm_types:
 
 compilation:
   workers: 10
-  network: cf_private_az1
+  network: cf_private
   reuse_compilation_vms: true
   az: az1
   cloud_properties:

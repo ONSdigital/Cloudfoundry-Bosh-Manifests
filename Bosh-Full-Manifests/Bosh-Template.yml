@@ -48,7 +48,7 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
     static_ips: ["((private_az1_cidr_prefix)).230"]
     etcd_metrics_server:
       nats:
@@ -74,7 +74,7 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
     static_ips: ["((private_az1_cidr_prefix)).240-((private_az1_cidr_prefix)).242"]
   properties:
     metron_agent:
@@ -95,7 +95,7 @@ jobs:
   - {name: postgres, release: cf}
   - {name: metron_agent, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
     static_ips: [((private_az1_cidr_prefix)).201]
   update:
     serial: true
@@ -116,7 +116,7 @@ jobs:
   - { name: metron_agent, release: cf }
   - { name: ssh_proxy, release: diego }
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -138,7 +138,7 @@ jobs:
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -161,7 +161,7 @@ jobs:
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -184,7 +184,7 @@ jobs:
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -213,7 +213,7 @@ jobs:
   - { name: metron_agent, release: cf }
   persistent_disk: 20480
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   update:
     serial: true
     max_in_flight: 1
@@ -247,7 +247,7 @@ jobs:
   - {name: dotnet-core-buildpack, release: cf}
   - {name: statsd_injector, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   properties:
     metron_agent:
       zone: z1
@@ -298,7 +298,7 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: syslog_drain_binder, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   properties:
     metron_agent:
       zone: z1
@@ -320,7 +320,7 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   properties:
     metron_agent:
       zone: z1
@@ -350,7 +350,7 @@ jobs:
   - {name: route_registrar, release: cf}
   - {name: statsd_injector, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
   properties:
     metron_agent:
       zone: z1
@@ -402,7 +402,7 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_private_az1
+  - name: cf_private
     static_ips: [((private_az1_cidr_prefix)).210]
   properties:
     metron_agent:
@@ -474,7 +474,7 @@ properties:
     ssl_skip_validation: true
     status:
       password: ((router_status_password))
-  networks: {apps: cf_private_az1}
+  networks: {apps: cf_private}
   # https://docs.cloudfoundry.org/deploying/aws/cf-stub.html
   app_domains: [apps.((domain_name))]
   app_ssh:
