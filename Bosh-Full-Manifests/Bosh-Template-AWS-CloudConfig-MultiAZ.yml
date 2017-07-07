@@ -79,7 +79,7 @@ networks:
       security_groups: [((rabbitmq_services_security_group))]
       subnet: ((rabbitmq_services_az1_subnet))
   - range: ((rabbitmq_services_az2_cidr))
-    gateway: ((rabbitmq_services_az1_cidr_prefix)).1
+    gateway: ((rabbitmq_services_az2_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az2
     reserved: ["((rabbitmq_services_az2_cidr_prefix)).1 - ((rabbitmq_services_az2_cidr_prefix)).10"]
