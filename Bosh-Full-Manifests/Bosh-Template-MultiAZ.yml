@@ -441,7 +441,9 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips: [((private_az1_cidr_prefix)).210-((private_az1_cidr_prefix)).211]
+    static_ips:
+    - ((private_az1_cidr_prefix)).210
+    - ((private_az2_cidr_prefix)).210
   properties:
     metron_agent:
       zone: z1
