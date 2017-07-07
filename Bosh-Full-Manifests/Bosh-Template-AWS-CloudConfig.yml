@@ -15,7 +15,7 @@ networks:
   type: manual
   subnets:
   - range: ((dmz_az1_cidr))
-    gateway: ((dmz_az1_default_route))
+    gateway: ((dmz_az1_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az1
     reserved: ["((dmz_az1_cidr_prefix)).1 - ((dmz_az1_cidr_prefix)).10"]
@@ -26,7 +26,7 @@ networks:
   type: manual
   subnets:
   - range: ((private_az1_cidr))
-    gateway: ((private_az1_default_route))
+    gateway: ((private_az1_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az1
     reserved: ["((private_az1_cidr_prefix)).1 - ((private_az1_cidr_prefix)).10"]
@@ -37,7 +37,7 @@ networks:
   type: manual
   subnets:
   - range: ((rabbitmq_services_az1_cidr))
-    gateway: ((rabbitmq_services_az1_default_route))
+    gateway: ((rabbitmq_services_az1_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az1
     reserved: ["((rabbitmq_services_az1_cidr_prefix)).1 - ((rabbitmq_services_az1_cidr_prefix)).10"]

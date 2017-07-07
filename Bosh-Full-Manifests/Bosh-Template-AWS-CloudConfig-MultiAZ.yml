@@ -19,7 +19,7 @@ networks:
   type: manual
   subnets:
   - range: ((dmz_az1_cidr))
-    gateway: ((dmz_az1_default_route))
+    gateway: ((dmz_az1_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az1
     reserved: ["((dmz_az1_cidr_prefix)).1 - ((dmz_az1_cidr_prefix)).10"]
@@ -27,7 +27,7 @@ networks:
     cloud_properties:
       subnet: ((dmz_az1_subnet))
   - range: ((dmz_az2_cidr))
-    gateway: ((dmz_az2_default_route))
+    gateway: ((dmz_az2_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az2
     reserved: ["((dmz_az2_cidr_prefix)).1 - ((dmz_az2_cidr_prefix)).10"]
@@ -39,7 +39,7 @@ networks:
   type: manual
   subnets:
   - range: ((private_az1_cidr))
-    gateway: ((private_az1_default_route))
+    gateway: ((private_az1_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az1
     reserved: ["((private_az1_cidr_prefix)).1 - ((private_az1_cidr_prefix)).10"]
@@ -48,7 +48,7 @@ networks:
       security_groups: [((private_security_group))]
       subnet: ((private_az1_subnet))
   - range: ((private_az2_cidr))
-    gateway: ((private_az2_default_route))
+    gateway: ((private_az2_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az2
     reserved: ["((private_az2_cidr_prefix)).1 - ((private_az2_cidr_prefix)).10"]
@@ -57,7 +57,7 @@ networks:
       security_groups: [((private_security_group))]
       subnet: ((private_az2_subnet))
   - range: ((private_az3_cidr))
-    gateway: ((private_az3_default_route))
+    gateway: ((private_az3_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az3
     reserved: ["((private_az3_cidr_prefix)).1 - ((private_az3_cidr_prefix)).10"]
@@ -70,7 +70,7 @@ networks:
   type: manual
   subnets:
   - range: ((rabbitmq_services_az1_cidr))
-    gateway: ((rabbitmq_services_az1_default_route))
+    gateway: ((rabbitmq_services_az1_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az1
     reserved: ["((rabbitmq_services_az1_cidr_prefix)).1 - ((rabbitmq_services_az1_cidr_prefix)).10"]
@@ -79,7 +79,7 @@ networks:
       security_groups: [((rabbitmq_services_security_group))]
       subnet: ((rabbitmq_services_az1_subnet))
   - range: ((rabbitmq_services_az2_cidr))
-    gateway: ((rabbitmq_services_az2_default_route))
+    gateway: ((rabbitmq_services_az1_cidr_prefix)).1
     dns: [((dns_ip))]
     az: az2
     reserved: ["((rabbitmq_services_az2_cidr_prefix)).1 - ((rabbitmq_services_az2_cidr_prefix)).10"]

@@ -49,7 +49,7 @@ networks:
   type: manual
   subnets:
   - range: ((dmz_az1_cidr))
-    gateway: ((dmz_az1_default_route))
+    gateway: ((dmz_az1_cidr_prefix)).1
     dns: [((dns_ip))]
     cloud_properties:
       subnet: ((dmz_az1_subnet))
