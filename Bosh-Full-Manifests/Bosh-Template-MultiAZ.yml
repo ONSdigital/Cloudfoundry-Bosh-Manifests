@@ -99,23 +99,23 @@ jobs:
 
 # Should move to using RDS - but be careful, we currently login this box to allow us to
 # create the initial database for use by the RDS-broker
-#- name: postgres
-#  instances: 1
-#  azs: [az1]
-#  persistent_disk: 10240
-#  vm_type: medium_general
-#  stemcell: default
-#  templates:
-#  - {name: postgres, release: cf}
-#  - {name: metron_agent, release: cf}
-#  networks:
-#  - name: cf_private
-#    static_ips: [((private_az1_cidr_prefix)).201]
-#  update:
-#    serial: true
-#  properties:
-#    metron_agent:
-#      zone: z1
+- name: postgres
+  instances: 1
+  azs: [az1]
+  persistent_disk: 10240
+  vm_type: medium_general
+  stemcell: default
+  templates:
+  - {name: postgres, release: cf}
+  - {name: metron_agent, release: cf}
+  networks:
+  - name: cf_private
+    static_ips: [((private_az1_cidr_prefix)).201]
+  update:
+    serial: true
+  properties:
+    metron_agent:
+      zone: z1
 
 - name: diego_cell
   instances: 2
@@ -422,8 +422,10 @@ jobs:
       cc:
         client_secret: ((uaa_cc_client_secret))
     uaadb:
-      address: ((rds_cf_instance_address))
-      port: ((rds_cf_instance_port))
+      #address: ((rds_cf_instance_address))
+      #port: ((rds_cf_instance_port))
+      address: ((private_az1_cidr_prefix)).201
+      port: 5524
       databases:
       - {name: uaadb, tag: uaa}
       roles:
@@ -610,8 +612,10 @@ properties:
     staging_upload_user: staging_upload_user
   ccdb:
     db_scheme: postgres
-    address: ((rds_cf_instance_address))
-    port: ((rds_cf_instance_port))
+    #address: ((rds_cf_instance_address))
+    #port: ((rds_cf_instance_port))
+    address: ((private_az1_cidr_prefix)).201
+    port: 5524
     databases:
     - {name: ccdb, tag: cc}
     roles:
@@ -647,7 +651,8 @@ properties:
     - {name: ccdb, tag: cc, citext: true}
     - {name: uaadb, tag: uaa, citext: true}
     - {name: diego, tag: diego, citext: true}
-    port: ((rds_cf_instance_port))
+    #port: ((rds_cf_instance_port))
+    port: 5524
     roles:
     - {name: ccadmin, password: ((cc_db_admin_password)), tag: admin}
     - {name: uaaadmin, password: ((uaa_db_admin_password)), tag: admin}
@@ -928,8 +933,10 @@ properties:
       server_key: ""
       sql:
         db_driver: postgres
-        db_host: ((rds_cf_instance_address))
-        db_port: ((rds_cf_instance_port))
+        #db_host: ((rds_cf_instance_address))
+        #db_port: ((rds_cf_instance_port))
+        db_host: ((private_az1_cidr_prefix)).201
+        db_port: 5524
         db_schema: diego
         db_username: diego
         db_password: ((diego_db_password))
