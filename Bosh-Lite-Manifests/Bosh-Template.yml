@@ -45,11 +45,11 @@ disk_pools:
   cloud_properties: {type: gp2}
 
 networks:
-- name: cf_dmz_az1
+- name: cf_dmz
   type: manual
   subnets:
   - range: ((dmz_az1_cidr))
-    gateway: ((dmz_az1_cidr_prefix)).1
+    gateway: ((dmz_az1_default_route))
     dns: [((dns_ip))]
     cloud_properties:
       subnet: ((dmz_az1_subnet))
