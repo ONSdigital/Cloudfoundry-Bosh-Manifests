@@ -425,6 +425,7 @@ jobs:
       #address: ((rds_cf_instance_address))
       #port: ((rds_cf_instance_port))
       address: ((private_az1_cidr_prefix)).201
+      db_scheme: postgresql
       port: 5524
       databases:
       - {name: uaadb, tag: uaa}
