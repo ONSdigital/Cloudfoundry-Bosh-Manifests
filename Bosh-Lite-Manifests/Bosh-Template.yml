@@ -17,7 +17,7 @@ releases:
 
 resource_pools:
 - name: bosh_vm
-  network: cf_dmz_az1
+  network: cf_dmz
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     # Sometimes the version stays the same but the hash changes
