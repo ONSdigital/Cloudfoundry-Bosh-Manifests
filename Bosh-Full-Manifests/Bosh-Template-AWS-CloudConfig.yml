@@ -36,8 +36,8 @@ networks:
 - name: cf_rabbitmq_az1
   type: manual
   subnets:
-  - range: ((rabbitmqg_az1_cidr))
-    gateway: ((rabbitmqg_az1_default_route))
+  - range: ((rabbitmq_az1_cidr))
+    gateway: ((rabbitmq_az1_default_route))
     dns: [((dns_ip))]
     az: az1
     reserved: ["((rabbitmq_az1_cidr_prefix)).1 - ((rabbitmq_az1_cidr_prefix)).10"]

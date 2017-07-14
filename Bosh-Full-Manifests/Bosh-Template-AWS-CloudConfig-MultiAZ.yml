@@ -39,7 +39,7 @@ networks:
   type: manual
   subnets:
   - range: ((private_az1_cidr))
-    gateway: ((private_az1_defaut_route))
+    gateway: ((private_az1_default_route))
     dns: [((dns_ip))]
     az: az1
     reserved: ["((private_az1_cidr_prefix)).1 - ((private_az1_cidr_prefix)).10"]

@@ -471,7 +471,7 @@ jobs:
       agent:
         services: {}
   networks:
-  - name: cf_rabbitmqg
+  - name: cf_rabbitmq
 
 - name: rabbitmq-broker
   instances: 2
@@ -483,7 +483,7 @@ jobs:
   - {name: rabbitmq-broker, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
   networks:
-  - name: cf_rabbitmqg
+  - name: cf_rabbitmq
   properties:
     route_registrar:
       routes:
@@ -503,7 +503,7 @@ jobs:
   - {name: rabbitmq-server, release: cf-rabbitmq}
   - {name: consul_agent, release: cf}
   networks:
-  - name: cf_rabbitmqg
+  - name: cf_rabbitmq
   properties:
     consul:
       agent:
@@ -592,14 +592,14 @@ properties:
       - {destination: ((rdsg_az2_cidr)), ports: '5432', protocol: tcp }
     - name: rabbitmq_networks
       rules:
-      - {destination: ((rabbitmqg_cidr)), ports: '1883', protocol: tcp }
-      - {destination: ((rabbitmqg_cidr)), ports: '8883', protocol: tcp }
-      - {destination: ((rabbitmqg_cidr)), ports: '5671', protocol: tcp }
-      - {destination: ((rabbitmqg_cidr)), ports: '5672', protocol: tcp }
-      - {destination: ((rabbitmqg_cidr)), ports: '61613', protocol: tcp }
-      - {destination: ((rabbitmqg_cidr)), ports: '61614', protocol: tcp }
-      - {destination: ((rabbitmqg_cidr)), ports: '15672', protocol: tcp }
-      - {destination: ((rabbitmqg_cidr)), ports: '15674', protocol: tcp }
+      - {destination: ((rabbitmq_cidr)), ports: '1883', protocol: tcp }
+      - {destination: ((rabbitmq_cidr)), ports: '8883', protocol: tcp }
+      - {destination: ((rabbitmq_cidr)), ports: '5671', protocol: tcp }
+      - {destination: ((rabbitmq_cidr)), ports: '5672', protocol: tcp }
+      - {destination: ((rabbitmq_cidr)), ports: '61613', protocol: tcp }
+      - {destination: ((rabbitmq_cidr)), ports: '61614', protocol: tcp }
+      - {destination: ((rabbitmq_cidr)), ports: '15672', protocol: tcp }
+      - {destination: ((rabbitmq_cidr)), ports: '15674', protocol: tcp }
     - name: redis_networks
       rules:
       - {destination: ((elasti_cacheg_az_cidr)), ports: '6379', protocol: tcp }
