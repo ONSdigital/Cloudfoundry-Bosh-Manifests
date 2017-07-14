@@ -74,7 +74,7 @@ jobs:
   persistent_disk_pool: disks
 
   networks:
-  - name: cf_dmz_az1
+  - name: cf_dmz
     static_ips: [((dmz_az1_cidr_prefix)).6]
     default: [dns, gateway]
   - name: public
