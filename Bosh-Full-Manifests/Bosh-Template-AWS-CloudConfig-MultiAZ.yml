@@ -73,8 +73,8 @@ networks:
     gateway: ((rabbitmq_az1_default_route))
     dns: [((dns_ip))]
     az: az1
-    reserved: ["((rabbitmq_az1_cidr_prefix)).1 - ((rabbitmq_services_az1_cidr_prefix)).10"]
-    static: ["((rabbitmq_az1_cidr_prefix)).200 - ((rabbitmq_services_az1_cidr_prefix)).245"]
+    reserved: ["((rabbitmq_az1_cidr_prefix)).1 - ((rabbitmq_az1_cidr_prefix)).10"]
+    static: ["((rabbitmq_az1_cidr_prefix)).200 - ((rabbitmq_az1_cidr_prefix)).245"]
     cloud_properties:
       security_groups: [((rabbitmq_security_group))]
       subnet: ((rabbitmq_az1_subnet))
@@ -82,8 +82,8 @@ networks:
     gateway: ((rabbitmq_az2_default_route))
     dns: [((dns_ip))]
     az: az2
-    reserved: ["((rabbitmq_az2_cidr_prefix)).1 - ((rabbitmq_services_az2_cidr_prefix)).10"]
-    static: ["((rabbitmq_az2_cidr_prefix)).200 - ((rabbitmq_services_az2_cidr_prefix)).245"]
+    reserved: ["((rabbitmq_az2_cidr_prefix)).1 - ((rabbitmq_az2_cidr_prefix)).10"]
+    static: ["((rabbitmq_az2_cidr_prefix)).200 - ((rabbitmq_az2_cidr_prefix)).245"]
     cloud_properties:
       security_groups: [((rabbitmq_security_group))]
       subnet: ((rabbitmq_az2_subnet))
