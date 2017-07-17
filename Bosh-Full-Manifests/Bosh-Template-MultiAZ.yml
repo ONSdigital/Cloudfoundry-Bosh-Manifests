@@ -561,8 +561,8 @@ properties:
     bulk_api_password: ((bulk_api_password))
     db_encryption_key: ((db_encryption_secret))
     # public_networks for a running instance should be restricted to the bare essentials (eg Git repo server for Jenkins installs)
-    default_running_security_groups: [dns, postgres_networks, rabbitmq_networks, redis_networks, public_networks]
-    default_staging_security_groups: [public_networks, dns]
+    default_running_security_groups: [dns, public_networks, postgres_networks, rabbitmq_networks, redis_networks]
+    default_staging_security_groups: [dns, public_networks]
     # The buildpacks can, sometimes, be quite slow to download and install, so we list the ones that are used during deployment first - hopefully,
     # the order is respected
     install_buildpacks:
@@ -592,8 +592,8 @@ properties:
       - {destination: 192.169.0.0-255.255.255.255, protocol: all}
     - name: postgres_networks
       rules:
-      - {destination: ((rdsg_az1_cidr)), ports: '5432', protocol: tcp }
-      - {destination: ((rdsg_az2_cidr)), ports: '5432', protocol: tcp }
+      - {destination: ((rds_az1_cidr)), ports: '5432', protocol: tcp }
+      - {destination: ((rds_az2_cidr)), ports: '5432', protocol: tcp }
     - name: rabbitmq_networks
       rules:
       - {destination: ((rabbitmq_cidr)), ports: '1883', protocol: tcp }

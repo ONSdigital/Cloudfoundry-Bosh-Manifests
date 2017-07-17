@@ -519,8 +519,8 @@ properties:
     bulk_api_password: ((bulk_api_password))
     db_encryption_key: ((db_encryption_secret))
     # public_networks for a running instance should be restricted to the bare essentials (eg Git repo server for Jenkins installs)
-    default_running_security_groups: [dns, postgres_networks, rabbitmq_networks, redis_networks, public_networks]
-    default_staging_security_groups: [public_networks, dns]
+    default_running_security_groups: [dns, public_networks, postgres_networks, rabbitmq_networks, redis_networks]
+    default_staging_security_groups: [dns, public_networks]
     # The buildpacks can, sometimes, be quite slow to download and install, so we list the ones that are used during deployment first - hopefully,
     # the order is respected
     install_buildpacks:
