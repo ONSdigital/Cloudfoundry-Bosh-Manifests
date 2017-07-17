@@ -85,13 +85,17 @@ jobs:
       mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"
       blobstore:
         s3_region: ((aws_region))
-        access_key_id: ((s3_bosh_bucket_access_key_id))
-        secret_access_key: ((s3_bosh_bucket_access_key))
+        env_or_profile: ((s3_bosh_bucket_access_instance_profile))
+    aws: &aws
+      default_iam_instance_profile: ((s3_bosh_bucket_access_instance_profile))
+      access_key_id: ((aws_access_key_id))
+      secret_access_key: ((aws_secret_access_key))
+      default_key_name: ((bosh_ssh_key_name))
+      region: ((aws_region))
+      default_security_groups: [((dmz_security_group))]
     blobstore:
       provider: s3
       s3_region: ((aws_region))
-      access_key_id: ((s3_bosh_bucket_access_key_id))
-      secret_access_key: ((s3_bosh_bucket_access_key))
       bucket_name: ((bosh_blobstore_bucket))
       director:
         user: director
@@ -103,8 +107,6 @@ jobs:
       provider: s3
       options:
         s3_region: ((aws_region))
-        access_key_id: ((s3_bosh_bucket_access_key_id))
-        secret_access_key: ((s3_bosh_bucket_access_key))
         bucket_name: ((bosh_compiled_package_cache))
     director:
       name: ((bosh_name))
@@ -113,8 +115,6 @@ jobs:
         provider: s3
         options:
           s3_region: ((aws_region))
-          access_key_id: ((s3_bosh_bucket_access_key_id))
-          secret_access_key: ((s3_bosh_bucket_access_key))
           bucket_name: ((bosh_director_backup_bucket))
       cpi_job: aws_cpi
       db: *db
@@ -137,12 +137,23 @@ jobs:
           - {name: director, password: ((director_password))}
           - {name: hm, password: ((hm_password))}
       workers: 8
-
+    hm:
+      cloud_watch_enabled: true
+      director_account:
+        user: hm
+        password: ((hm_password))
+      http:
+        port: 25923
+      resurrector_enabled: true
     nats:
       address: 127.0.0.1
       user: nats
       password: ((nats_password))
-
+    ntp: &ntp
+    - 0.amazon.pool.ntp.org
+    - 1.amazon.pool.ntp.org
+    - 2.amazon.pool.ntp.org
+    - 3.amazon.pool.ntp.org
     postgres: &db
       listen_address: 127.0.0.1
       host: 127.0.0.1
@@ -150,7 +161,6 @@ jobs:
       password: ((postgres_password))
       database: bosh
       adapter: postgres
-
     registry:
       address: ((dmz_az1_cidr_prefix)).6
       host: ((dmz_az1_cidr_prefix)).6
@@ -163,39 +173,18 @@ jobs:
       password: ((registry_password))
       port: 25777
 
-
-    hm:
-      cloud_watch_enabled: true
-      director_account:
-        user: hm
-        password: ((hm_password))
-      http:
-        port: 25923
-      resurrector_enabled: true
-
-    aws: &aws
-      access_key_id: ((aws_access_key_id))
-      secret_access_key: ((aws_secret_access_key))
-      default_key_name: ((bosh_ssh_key_name))
-      region: ((aws_region))
-      default_security_groups: [((dmz_security_group))]
-
-
-    ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
-
 cloud_provider:
-  template: {name: aws_cpi, release: bosh-aws-cpi}
-
+  mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
   ssh_tunnel:
     host: ((bosh_lite_public_ip))
     port: 22
     user: vcap
     private_key: ((bosh_ssh_key_file))
-
-  mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
-
+  template: {name: aws_cpi, release: bosh-aws-cpi}
   properties:
     aws: *aws
     agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
-    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    blobstore:
+      provider: s3
+      bucket_name: ((bosh_blobstore_bucket))
     ntp: *ntp
