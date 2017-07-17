@@ -1,5 +1,5 @@
 # TODO
-#       Update sha1 hashes
+# 	Template URLs & hashes
 
 ---
 name: ((bosh_deployment))

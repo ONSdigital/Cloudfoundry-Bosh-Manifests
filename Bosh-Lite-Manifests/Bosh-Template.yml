@@ -1,5 +1,5 @@
 # TODO
-#       Update sha1 hashes
+# 	Template URLs & hashes
 
 ---
 name: ((bosh_deployment))
@@ -60,7 +60,6 @@ networks:
 jobs:
 - name: ((deployment_name))-boshlite
   instances: 1
-
   templates:
   - {name: nats, release: bosh}
   - {name: postgres-9.4, release: bosh}
@@ -69,43 +68,22 @@ jobs:
   - {name: health_monitor, release: bosh}
   - {name: registry, release: bosh}
   - {name: aws_cpi, release: bosh-aws-cpi}
-
   resource_pool: bosh_vm
   persistent_disk_pool: disks
-
   networks:
   - name: cf_dmz
     static_ips: [((dmz_az1_cidr_prefix)).6]
     default: [dns, gateway]
   - name: public
     static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
-
   properties:
-    nats:
-      address: 127.0.0.1
-      user: nats
-      password: ((nats_password))
-
-    postgres: &db
-      listen_address: 127.0.0.1
-      host: 127.0.0.1
-      user: postgres
-      password: ((postgres_password))
-      database: bosh
-      adapter: postgres
-
-    registry:
-      address: ((dmz_az1_cidr_prefix)).6
-      host: ((dmz_az1_cidr_prefix)).6
-      db: *db
-      http:
-        user: admin
-        password: ((http_password))
-        port: 25777
-      username: admin
-      password: ((registry_password))
-      port: 25777
-
+    agent: {mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"}
+    aws: &aws
+      access_key_id: ((aws_access_key_id))
+      secret_access_key: ((aws_secret_access_key))
+      default_key_name: ((bosh_ssh_key_name))
+      region: ((aws_region))
+      default_security_groups: [((dmz_security_group))]
     blobstore:
       address: ((dmz_az1_cidr_prefix)).6
       port: 25250
@@ -116,7 +94,6 @@ jobs:
       agent:
         user: agent
         password: ((agent_blobstore_password))
-
     director:
       address: 127.0.0.1
       name: ((bosh_name))
@@ -133,35 +110,43 @@ jobs:
           users:
           - {name: director, password: ((director_password))}
           - {name: hm, password: ((hm_password))}
-
     hm:
       director_account:
         user: hm
         password: ((hm_password))
       resurrector_enabled: true
-
-    aws: &aws
-      access_key_id: ((aws_access_key_id))
-      secret_access_key: ((aws_secret_access_key))
-      default_key_name: ((bosh_ssh_key_name))
-      region: ((aws_region))
-      default_security_groups: [((dmz_security_group))]
-
-    agent: {mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"}
-
+    nats:
+      address: 127.0.0.1
+      user: nats
+      password: ((nats_password))
     ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+    postgres: &db
+      listen_address: 127.0.0.1
+      host: 127.0.0.1
+      user: postgres
+      password: ((postgres_password))
+      database: bosh
+      adapter: postgres
+    registry:
+      address: ((dmz_az1_cidr_prefix)).6
+      host: ((dmz_az1_cidr_prefix)).6
+      db: *db
+      http:
+        user: admin
+        password: ((http_password))
+        port: 25777
+      username: admin
+      password: ((registry_password))
+      port: 25777
 
 cloud_provider:
-  template: {name: aws_cpi, release: bosh-aws-cpi}
-
+  mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
   ssh_tunnel:
     host: ((bosh_lite_public_ip))
     port: 22
     user: vcap
     private_key: ((bosh_ssh_key_file))
-
-  mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
-
+  template: {name: aws_cpi, release: bosh-aws-cpi}
   properties:
     aws: *aws
     agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
