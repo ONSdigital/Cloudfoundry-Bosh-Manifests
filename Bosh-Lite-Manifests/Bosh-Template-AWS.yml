@@ -38,6 +38,7 @@ resource_pools:
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_security_group)),((dmz_security_group))]
+    iam_instance_profile: ((s3_bosh_bucket_access_instance_profile))
 
 disk_pools:
 - name: disks
@@ -85,9 +86,8 @@ jobs:
       mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"
       blobstore:
         s3_region: ((aws_region))
-        env_or_profile: ((s3_bosh_bucket_access_instance_profile))
+        env_or_profile: env_or_profile
     aws: &aws
-      default_iam_instance_profile: ((s3_bosh_bucket_access_instance_profile))
       access_key_id: ((aws_access_key_id))
       secret_access_key: ((aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
@@ -96,7 +96,7 @@ jobs:
     blobstore:
       provider: s3
       s3_region: ((aws_region))
-      bucket_name: ((bosh_blobstore_bucket))
+      bucket_name: ((s3_bosh_blobstore_bucket))
       director:
         user: director
         password: ((director_blobstore_password))
@@ -107,15 +107,17 @@ jobs:
       provider: s3
       options:
         s3_region: ((aws_region))
-        bucket_name: ((bosh_compiled_package_cache))
+        env_or_profile: env_or_profile
+        bucket_name: ((s3_bosh_compiled_package_cache_bucket))
     director:
       name: ((bosh_name))
       address: 127.0.0.1
-      backup_destination: s3
+      backup_destination:
         provider: s3
         options:
           s3_region: ((aws_region))
-          bucket_name: ((bosh_director_backup_bucket))
+          env_or_profile: env_or_profile
+          bucket_name: ((s3_bosh_director_backup_bucket))
       cpi_job: aws_cpi
       db: *db
       enable_dedicated_status_worker: true
@@ -186,5 +188,5 @@ cloud_provider:
     agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
     blobstore:
       provider: s3
-      bucket_name: ((bosh_blobstore_bucket))
+      bucket_name: ((s3_bosh_blobstore_bucket))
     ntp: *ntp
