@@ -481,6 +481,7 @@ properties:
     host_key_fingerprint: ((ssh_host_key_fingerprint))
     oauth_client_id: ssh-proxy
   cc:
+    disable_custom_buildpacks: true
     # https://github.com/cloudfoundry/cloud_controller_ng/blob/master/bosh/jobs/cloud_controller_ng/spec
     # quota_definitions & default_quota_definition
     maximum_app_disk_in_mb: 8192
