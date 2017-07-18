@@ -579,9 +579,9 @@ properties:
     quota_definitions:
       default:
         memory_limit: 102400
-        non_basicg_allowed: true
+        non_basic_services_allowed: true
         total_routes: 1000
-        totalg: -1
+        total_services: -1
     security_group_definitions:
     - name: public_networks
       rules:
