@@ -61,7 +61,6 @@ networks:
 jobs:
 - name: ((deployment_name))-boshlite
   instances: 1
-
   templates:
   - {name: nats, release: bosh}
   - {name: postgres-9.4, release: bosh}
@@ -70,10 +69,8 @@ jobs:
   - {name: health_monitor, release: bosh}
   - {name: registry, release: bosh}
   - {name: aws_cpi, release: bosh-aws-cpi}
-
   resource_pool: bosh_vm
   persistent_disk_pool: disks
-
   networks:
   - name: cf_dmz
     static_ips: [((dmz_az1_cidr_prefix)).6]
@@ -86,7 +83,7 @@ jobs:
       mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"
       blobstore:
         s3_region: ((aws_region))
-        env_or_profile: env_or_profile
+        credentials_source: env_or_profile 
     aws: &aws
       access_key_id: ((aws_access_key_id))
       secret_access_key: ((aws_secret_access_key))
@@ -97,17 +94,12 @@ jobs:
       provider: s3
       s3_region: ((aws_region))
       bucket_name: ((s3_bosh_blobstore_bucket))
-      director:
-        user: director
-        password: ((director_blobstore_password))
-      agent:
-        user: agent
-        password: ((agent_blobstore_password))
+      credentials_source: env_or_profile
     compiled_package_cache:
       provider: s3
       options:
         s3_region: ((aws_region))
-        env_or_profile: env_or_profile
+        credentials_source: env_or_profile
         bucket_name: ((s3_bosh_compiled_package_cache_bucket))
     director:
       name: ((bosh_name))
@@ -116,7 +108,7 @@ jobs:
         provider: s3
         options:
           s3_region: ((aws_region))
-          env_or_profile: env_or_profile
+          credentials_source: env_or_profile
           bucket_name: ((s3_bosh_director_backup_bucket))
       cpi_job: aws_cpi
       db: *db
@@ -188,5 +180,7 @@ cloud_provider:
     agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
     blobstore:
       provider: s3
+      s3_region: ((aws_region))
       bucket_name: ((s3_bosh_blobstore_bucket))
+      credentials_source: env_or_profile
     ntp: *ntp
