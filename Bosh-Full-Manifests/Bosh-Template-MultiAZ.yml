@@ -535,8 +535,8 @@ properties:
       private_key: ((cloud_controller_ng_key))
     allow_app_ssh_access: true
     default_to_diego_backend: true
-    default_app_memory: 128
-    default_app_disk_in_mb: 256
+    default_app_memory: 64
+    default_app_disk_in_mb: 128
     internal_api_user: internal_user
     external_port: 9022
     buildpacks:
