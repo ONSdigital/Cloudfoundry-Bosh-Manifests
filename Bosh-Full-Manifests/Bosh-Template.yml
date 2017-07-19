@@ -534,12 +534,12 @@ properties:
     - {name: binary_buildpack, package: binary-buildpack}
     - {name: dotnet_core_buildpack, package: dotnet-core-buildpack}
     internal_api_password: ((internal_api_password))
-    quota_definitions:
-      default:
-        memory_limit: 102400
-        non_basic_services_allowed: true
-        total_routes: 1000
-        total_services: -1
+    #quota_definitions:
+    #  default:
+    #    memory_limit: 102400
+    #    non_basic_services_allowed: true
+    #    total_routes: 1000
+    #    total_services: -1
     security_group_definitions:
     - name: public_networks
       rules:
