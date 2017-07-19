@@ -85,8 +85,8 @@ jobs:
         s3_region: ((aws_region))
         credentials_source: env_or_profile 
     aws: &aws
-      access_key_id: ((aws_access_key_id))
-      secret_access_key: ((aws_secret_access_key))
+      access_key_id: ((bosh_aws_access_key_id))
+      secret_access_key: ((bosh_aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
       region: ((aws_region))
       default_security_groups: [((dmz_security_group))]

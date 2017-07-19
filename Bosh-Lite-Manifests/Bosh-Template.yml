@@ -79,8 +79,8 @@ jobs:
   properties:
     agent: {mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"}
     aws: &aws
-      access_key_id: ((aws_access_key_id))
-      secret_access_key: ((aws_secret_access_key))
+      access_key_id: ((bosh_aws_access_key_id))
+      secret_access_key: ((bosh_aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
       region: ((aws_region))
       default_security_groups: [((dmz_security_group))]
@@ -111,6 +111,7 @@ jobs:
           - {name: director, password: ((director_password))}
           - {name: hm, password: ((hm_password))}
     hm:
+      cloud_watch_enabled: true
       director_account:
         user: hm
         password: ((hm_password))
