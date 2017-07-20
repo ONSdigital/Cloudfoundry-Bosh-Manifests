@@ -103,9 +103,9 @@ vm_types:
 - name: small_router_general
   cloud_properties:
     instance_type: t2.small
-    # Can Bosh handle an empty array?
-    elbs: [((external_elb))]
-    # AWS outputs an array
+    lb_target_groups:
+    - ((elb_target_group_80))
+    - ((elb_target_group_443))
     security_groups: [((lb_security_group)),((dmz_security_group))]
 - name: medium_general
   cloud_properties:
@@ -113,8 +113,9 @@ vm_types:
 - name: medium_router_general
   cloud_properties:
     instance_type: t2.medium
-    elbs: [((external_elb))]
-    # AWS outputs an array
+    lb_target_groups:
+    - ((elb_target_group_80))
+    - ((elb_target_group_443))
     security_groups: [((lb_security_group)),((dmz_security_group))]
 - name: medium_cc_general
   cloud_properties:

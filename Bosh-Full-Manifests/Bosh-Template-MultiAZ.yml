@@ -512,10 +512,13 @@ jobs:
 
 properties:
   router:
-    routeg_secret: ((router_route_services_secret))
+    route_services_secret: ((router_route_services_secret))
     ssl_skip_validation: true
     status:
       password: ((router_status_password))
+    #enable_ssl: true
+    #ssl_cert: ((router_crt))
+    #ssl_key: ((router_key))
   networks: {apps: cf_private}
   # https://docs.cloudfoundry.org/deploying/aws/cf-stub.html
   app_domains: [apps.((domain_name))]
