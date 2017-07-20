@@ -26,7 +26,7 @@ update:
 jobs:
 - name: nats
   instances: 1
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: small_general
   stemcell: default
   templates:
