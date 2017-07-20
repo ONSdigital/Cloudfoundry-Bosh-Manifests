@@ -60,8 +60,8 @@ vm_types:
   cloud_properties:
     instance_type: t2.small
     lb_target_groups:
-    - ((elb_target_group_80))
-    - ((elb_target_group_443))
+    - ((elb_target_group80))
+    - ((elb_target_group443))
     security_groups: [((lb_security_group))]
 - name: medium_general
   cloud_properties:
@@ -70,8 +70,8 @@ vm_types:
   cloud_properties:
     instance_type: t2.medium
     lb_target_groups:
-    - ((elb_target_group_80))
-    - ((elb_target_group_443))
+    - ((elb_target_group80))
+    - ((elb_target_group443))
     security_groups: [((lb_security_groups))]
 - name: medium_cc_general
   cloud_properties:
