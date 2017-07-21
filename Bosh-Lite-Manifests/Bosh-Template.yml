@@ -141,9 +141,9 @@ jobs:
       port: 25777
 
 cloud_provider:
-  mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
+  mbus: "https://mbus:((mbus_password))@((bosh_lite_ip)):6868"
   ssh_tunnel:
-    host: ((bosh_lite_public_ip))
+    host: ((bosh_lite_ip))
     port: 22
     user: vcap
     private_key: ((bosh_ssh_key_file))
