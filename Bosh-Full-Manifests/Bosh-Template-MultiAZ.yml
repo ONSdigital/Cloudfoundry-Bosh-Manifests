@@ -97,10 +97,9 @@ jobs:
       agent:
         mode: server
 
-# Should move to using RDS - but be careful, we currently login this box to allow us to
-# create the initial database for use by the RDS-broker
 - name: postgres
   instances: 1
+  #instances: ((required_non_rds_cf_postgres_instances))
   azs: [az1]
   persistent_disk: 10240
   vm_type: medium_general

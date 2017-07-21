@@ -86,6 +86,7 @@ jobs:
 # Should move to using RDS - but be careful, we currently login this box to allow us to
 # create the initial database for use by the RDS-broker
 - name: postgres
+  #instances: ((required_non_rds_cf_postgres_instances))
   instances: 1
   azs: [az1]
   persistent_disk: 10240
