@@ -545,6 +545,10 @@ properties:
         total_routes: 1000
         total_services: -1
     security_group_definitions:
+    - name: dns
+      rules:
+      - {destination: 0.0.0.0/0, ports: '53', protocol: tcp}
+      - {destination: 0.0.0.0/0, ports: '53', protocol: udp}
     - name: public_networks
       rules:
       - {destination: 0.0.0.0-9.255.255.255, protocol: all}
@@ -569,10 +573,6 @@ properties:
     - name: redis_networks
       rules:
       - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp }
-    - name: dns
-      rules:
-      - {destination: 0.0.0.0/0, ports: '53', protocol: tcp}
-      - {destination: 0.0.0.0/0, ports: '53', protocol: udp}
     srv_api_uri: https://api.system.((domain_name))
     staging_upload_password: ((staging_upload_password))
     staging_upload_user: staging_upload_user

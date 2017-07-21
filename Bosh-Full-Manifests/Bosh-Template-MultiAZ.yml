@@ -585,6 +585,10 @@ properties:
         total_routes: 1000
         total_services: -1
     security_group_definitions:
+    - name: dns
+      rules:
+      - {destination: 0.0.0.0/0, ports: '53', protocol: tcp}
+      - {destination: 0.0.0.0/0, ports: '53', protocol: udp}
     - name: public_networks
       rules:
       - {destination: 0.0.0.0-9.255.255.255, protocol: all}
@@ -598,21 +602,25 @@ properties:
       - {destination: ((rds_az2_cidr)), ports: '5432', protocol: tcp }
     - name: rabbitmq_networks
       rules:
-      - {destination: ((rabbitmq_cidr)), ports: '1883', protocol: tcp }
-      - {destination: ((rabbitmq_cidr)), ports: '8883', protocol: tcp }
-      - {destination: ((rabbitmq_cidr)), ports: '5671', protocol: tcp }
-      - {destination: ((rabbitmq_cidr)), ports: '5672', protocol: tcp }
-      - {destination: ((rabbitmq_cidr)), ports: '61613', protocol: tcp }
-      - {destination: ((rabbitmq_cidr)), ports: '61614', protocol: tcp }
-      - {destination: ((rabbitmq_cidr)), ports: '15672', protocol: tcp }
-      - {destination: ((rabbitmq_cidr)), ports: '15674', protocol: tcp }
+      - {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp }
+      - {destination: ((rabbitmq_az1_cidr)), ports: '8883', protocol: tcp }
+      - {destination: ((rabbitmq_az1_cidr)), ports: '5671', protocol: tcp }
+      - {destination: ((rabbitmq_az1_cidr)), ports: '5672', protocol: tcp }
+      - {destination: ((rabbitmq_az1_cidr)), ports: '61613', protocol: tcp }
+      - {destination: ((rabbitmq_az1_cidr)), ports: '61614', protocol: tcp }
+      - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp }
+      - {destination: ((rabbitmq_az1_cidr)), ports: '15674', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '1883', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '8883', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '5671', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '5672', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '61613', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '61614', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '15672', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '15674', protocol: tcp }
     - name: redis_networks
       rules:
       - {destination: ((elasti_cacheg_az_cidr)), ports: '6379', protocol: tcp }
-    - name: dns
-      rules:
-      - {destination: 0.0.0.0/0, ports: '53', protocol: tcp}
-      - {destination: 0.0.0.0/0, ports: '53', protocol: udp}
     srv_api_uri: https://api.system.((domain_name))
     staging_upload_password: ((staging_upload_password))
     staging_upload_user: staging_upload_user
