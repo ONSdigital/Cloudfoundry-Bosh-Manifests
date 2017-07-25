@@ -74,8 +74,8 @@ jobs:
   - name: cf_dmz
     static_ips: [((dmz_az1_cidr_prefix)).6]
     default: [dns, gateway]
-  - name: public
-    static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
+  #- name: public
+  #  static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
   properties:
     agent: {mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"}
     aws: &aws

@@ -38,6 +38,7 @@ resource_pools:
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_security_group)),((dmz_security_group))]
+    iam_instance_profile: ((s3_bosh_bucket_access_instance_profile))
 
 disk_pools:
 - name: disks
@@ -76,8 +77,15 @@ jobs:
     default: [dns, gateway]
   - name: public
     static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
+
   properties:
-    agent: {mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"}
+    agent:
+      mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"
+      blobstore:
+        properties:
+          s3_region: ((aws_region))
+          credentials_source: env_or_profile 
+          bucket_name: ((s3_bosh_blobstore_bucket))
     aws: &aws
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
@@ -85,22 +93,39 @@ jobs:
       region: ((aws_region))
       default_security_groups: [((dmz_security_group))]
     blobstore:
-      address: ((dmz_az1_cidr_prefix)).6
-      port: 25250
-      provider: dav
-      director:
-        user: director
-        password: ((director_blobstore_password))
-      agent:
-        user: agent
-        password: ((agent_blobstore_password))
+      provider: s3
+      s3_region: ((aws_region))
+      credentials_source: env_or_profile
+      bucket_name: ((s3_bosh_blobstore_bucket))
+    compiled_package_cache:
+      provider: s3
+      options:
+        s3_region: ((aws_region))
+        credentials_source: env_or_profile
+        bucket_name: ((s3_bosh_compiled_package_cache_bucket))
+    default_ssh_options:
+      gateway_host: ((bosh_lite_public_ip))
     director:
-      address: 127.0.0.1
       name: ((bosh_name))
-      #generate_vm_passwords: true
-      db: *db
+      address: 127.0.0.1
+      backup_destination:
+        provider: s3
+        options:
+          s3_region: ((aws_region))
+          credentials_source: env_or_profile
+          bucket_name: ((s3_bosh_director_backup_bucket))
       cpi_job: aws_cpi
+      db: *db
+      enable_dedicated_status_worker: true
+      enable_nats_delivered_templates: true
+      enable_post_deploy: true
+      enable_snapshots: true
+      encryption: true
+      #generate_vm_passwords: true
       max_threads: 10
+      nginx:
+        workers: 4
+      #remove_dev_tools: true
       ssl:
         key: ((director_key))
         cert: ((director_crt))
@@ -110,17 +135,24 @@ jobs:
           users:
           - {name: director, password: ((director_password))}
           - {name: hm, password: ((hm_password))}
+      workers: 8
     hm:
       cloud_watch_enabled: true
       director_account:
         user: hm
         password: ((hm_password))
+      http:
+        port: 25923
       resurrector_enabled: true
     nats:
       address: 127.0.0.1
       user: nats
       password: ((nats_password))
-    ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+    ntp: &ntp
+    - 0.amazon.pool.ntp.org
+    - 1.amazon.pool.ntp.org
+    - 2.amazon.pool.ntp.org
+    - 3.amazon.pool.ntp.org
     postgres: &db
       listen_address: 127.0.0.1
       host: 127.0.0.1
@@ -141,15 +173,24 @@ jobs:
       port: 25777
 
 cloud_provider:
-  mbus: "https://mbus:((mbus_password))@((bosh_lite_ip)):6868"
+  mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
   ssh_tunnel:
-    host: ((bosh_lite_ip))
+    host: ((bosh_lite_public_ip))
     port: 22
     user: vcap
     private_key: ((bosh_ssh_key_file))
   template: {name: aws_cpi, release: bosh-aws-cpi}
   properties:
     aws: *aws
-    agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
-    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    agent:
+      mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"
+      blobstore:
+        s3_region: ((aws_region))
+        credentials_source: env_or_profile 
+        bucket_name: ((s3_bosh_blobstore_bucket))
+    blobstore:
+      provider: s3
+      s3_region: ((aws_region))
+      bucket_name: ((s3_bosh_blobstore_bucket))
+      credentials_source: env_or_profile
     ntp: *ntp

@@ -25,20 +25,26 @@ update:
 
 jobs:
 - name: nats
-  instances: 1
-  azs: [az1]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
   - {name: nats, release: cf}
   - {name: metron_agent, release: cf}
+  networks:
+  - name: cf_private
+    static_ips:
+    - ((private_az1_cidr_prefix)).220
+    - ((private_az2_cidr_prefix)).220
+    - ((private_az3_cidr_prefix)).220
   properties:
     metron_agent:
       zone: z1
 
 - name: etcd
-  instances: 1
-  azs: [az1]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
@@ -49,13 +55,12 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips: ["((private_az1_cidr_prefix)).230"]
+  properties:
     etcd_metrics_server:
       nats:
         machines: ["cf-etcd.service.((internal_domain))"]
         password: ((nats_password))
         username: nats
-  properties:
     metron_agent:
       zone: z1
     consul:
@@ -65,8 +70,8 @@ jobs:
             name: cf-etcd
 
 - name: consul
-  instances: 3
-  azs: [az1]
+  instances: 9
+  azs: [az1,az2,az3]
   persistent_disk: 1024
   vm_type: small_general
   stemcell: default
@@ -75,7 +80,16 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips: ["((private_az1_cidr_prefix)).240-((private_az1_cidr_prefix)).242"]
+    static_ips:
+    - ((private_az1_cidr_prefix)).240
+    - ((private_az1_cidr_prefix)).241
+    - ((private_az1_cidr_prefix)).242
+    - ((private_az2_cidr_prefix)).240
+    - ((private_az2_cidr_prefix)).241
+    - ((private_az2_cidr_prefix)).242
+    - ((private_az3_cidr_prefix)).240
+    - ((private_az3_cidr_prefix)).241
+    - ((private_az3_cidr_prefix)).242
   properties:
     metron_agent:
       zone: z1
@@ -83,11 +97,9 @@ jobs:
       agent:
         mode: server
 
-# Should move to using RDS - but be careful, we currently login this box to allow us to
-# create the initial database for use by the RDS-broker
 - name: postgres
-  #instances: ((required_non_rds_cf_postgres_instances))
   instances: 1
+  #instances: ((required_non_rds_cf_postgres_instances))
   azs: [az1]
   persistent_disk: 10240
   vm_type: medium_general
@@ -105,8 +117,8 @@ jobs:
       zone: z1
 
 - name: diego_cell
-  instances: 12
-  azs: [az1]
+  instances: 2
+  azs: [az1,az2]
   vm_type: large_ram_large_disk
   stemcell: default
   templates:
@@ -127,9 +139,10 @@ jobs:
     diego:
       rep:
         zone: z1
-- name: diego_cell_large_spot_az1
+
+- name: diego_cell_large_spot
   instances: 0
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: large_ram_large_disk_spot
   stemcell: default
   templates:
@@ -150,9 +163,32 @@ jobs:
       rep:
         zone: z1
 
-- name: diego_cell_2xlarge_spot_az1
+- name: diego_cell_xlarge_spot
   instances: 0
-  azs: [az1]
+  azs: [az1,az2]
+  vm_type: xlarge_ram_large_disk_spot
+  stemcell: default
+  templates:
+  - { name: consul_agent, release: cf }
+  - { name: rep, release: diego }
+  - { name: garden, release: garden-runc }
+  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
+  - { name: metron_agent, release: cf }
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z1
+    diego:
+      rep:
+        zone: z1
+
+- name: diego_cell_2xlarge_spot
+  instances: 0
+  azs: [az1,az2]
   vm_type: 2xlarge_ram_large_disk_spot
   stemcell: default
   templates:
@@ -173,9 +209,9 @@ jobs:
       rep:
         zone: z1
 
-- name: diego_cell_4xlarge_spot_az1
+- name: diego_cell_4xlarge_spot
   instances: 0
-  azs: [az1]
+  azs: [az1,az2]
   vm_type: 4xlarge_ram_large_disk_spot
   stemcell: default
   templates:
@@ -196,53 +232,9 @@ jobs:
       rep:
         zone: z1
 
-- name: diego_cell_large_spot
-  instances: 0
-  azs: [az1]
-  resource_pool: large_ram_large_disk_spot
-  templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
-  networks:
-  - name: cf_private
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z1
-    diego:
-      rep:
-        zone: z1
-
-- name: diego_cell_xlarge_spot
-  instances: 0
-  azs: [az1]
-  resource_pool: xlarge_ram_large_disk_spot
-  templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
-  networks:
-  - name: cf_private
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z1
-    diego:
-      rep:
-        zone: z1
-
 - name: diego_brain
-  instances: 1
-  azs: [az1]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
@@ -270,9 +262,9 @@ jobs:
         services: {}
 
 - name: api
-  instances: 1
-  azs: [az1]
-  vm_type: large_cc_general
+  instances: 3
+  azs: [az1,az2,az3]
+  vm_type: medium_cc_general
   stemcell: default
   templates:
   - {name: cloud_controller_ng, release: cf}
@@ -333,8 +325,8 @@ jobs:
 #        - ((private_az1_cidr_prefix)).210
 
 - name: doppler
-  instances: 1
-  azs: [az1]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
@@ -355,8 +347,8 @@ jobs:
           doppler: {}
 
 - name: loggregator_trafficcontroller
-  instances: 1
-  azs: [az1]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
@@ -384,8 +376,8 @@ jobs:
         - "loggregator.system.((domain_name))"
 
 - name: uaa
-  instances: 1
-  azs: [az1]
+  instances: 3
+  azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
   templates:
@@ -429,17 +421,19 @@ jobs:
       cc:
         client_secret: ((uaa_cc_client_secret))
     uaadb:
+      #address: ((rds_cf_instance_address))
+      #port: ((rds_cf_instance_port))
       address: ((private_az1_cidr_prefix)).201
-      databases:
-      - {name: uaadb, tag: uaa}
       db_scheme: postgresql
       port: 5524
+      databases:
+      - {name: uaadb, tag: uaa}
       roles:
       - {name: uaaadmin, password: ((uaa_db_admin_password)), tag: admin}
 
 - name: router
-  instances: 1
-  azs: [az1]
+  instances: 2
+  azs: [az1,az2]
   vm_type: small_router_general
   stemcell: default
   templates:
@@ -448,16 +442,18 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips: [((private_az1_cidr_prefix)).210]
+    static_ips:
+    - ((private_az1_cidr_prefix)).210
+    - ((private_az2_cidr_prefix)).210
   properties:
     metron_agent:
       zone: z1
     dropsonde: {enabled: true}
 
 - name: rabbitmq-mgnt
-  instances: 1
-  azs: [az1]
-  vm_type: micro_general
+  instances: 2
+  azs: [az1,az2]
+  vm_type: small_general
   stemcell: default
   templates:
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
@@ -478,8 +474,8 @@ jobs:
   - name: cf_rabbitmq
 
 - name: rabbitmq-broker
-  instances: 1
-  azs: [az1]
+  instances: 2
+  azs: [az1,az2]
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
@@ -498,8 +494,8 @@ jobs:
         - rabbitmq-broker.system.((domain_name))
 
 - name: rabbitmq-node
-  instances: 1
-  azs: [az1]
+  instances: 4
+  azs: [az1,az2]
   vm_type: small_general
   stemcell: default
   persistent_disk: 10240
@@ -614,18 +610,29 @@ properties:
       - {destination: ((rabbitmq_az1_cidr)), ports: '61614', protocol: tcp }
       - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp }
       - {destination: ((rabbitmq_az1_cidr)), ports: '15674', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '1883', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '8883', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '5671', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '5672', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '61613', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '61614', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '15672', protocol: tcp }
+      - {destination: ((rabbitmq_az2_cidr)), ports: '15674', protocol: tcp }
     - name: redis_networks
       rules:
       - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp }
+      - {destination: ((elasti_cache_az2_cidr)), ports: '6379', protocol: tcp }
     srv_api_uri: https://api.system.((domain_name))
     staging_upload_password: ((staging_upload_password))
     staging_upload_user: staging_upload_user
   ccdb:
+    db_scheme: postgres
+    #address: ((rds_cf_instance_address))
+    #port: ((rds_cf_instance_port))
     address: ((private_az1_cidr_prefix)).201
+    port: 5524
     databases:
     - {name: ccdb, tag: cc}
-    db_scheme: postgres
-    port: 5524
     roles:
     - {name: ccadmin, password: ((cc_db_admin_password)), tag: admin}
   consul:
@@ -637,6 +644,12 @@ properties:
         - ((private_az1_cidr_prefix)).240
         - ((private_az1_cidr_prefix)).241
         - ((private_az1_cidr_prefix)).242
+        - ((private_az2_cidr_prefix)).240
+        - ((private_az2_cidr_prefix)).241
+        - ((private_az2_cidr_prefix)).242
+        - ((private_az3_cidr_prefix)).240
+        - ((private_az3_cidr_prefix)).241
+        - ((private_az3_cidr_prefix)).242
     encrypt_keys:
     - ((consul_encrypt_keys_secret))
     ca_cert: ((internal_ca_crt))
@@ -647,10 +660,13 @@ properties:
     server_key: ((consul_server_key))
     agent_key: ((consul_agent_key))
   databases:
+    # RDS require uuid-ossp, pgcrypto, and citext
+    # Apps RDS requires pgcrypto
     databases:
     - {name: ccdb, tag: cc, citext: true}
     - {name: uaadb, tag: uaa, citext: true}
     - {name: diego, tag: diego, citext: true}
+    #port: ((rds_cf_instance_port))
     port: 5524
     roles:
     - {name: ccadmin, password: ((cc_db_admin_password)), tag: admin}
@@ -735,7 +751,10 @@ properties:
     protocols:
     - udp
   nats:
-    machines: [((private_az1_cidr_prefix)).220]
+    machines:
+    - ((private_az1_cidr_prefix)).220
+    - ((private_az2_cidr_prefix)).220
+    - ((private_az3_cidr_prefix)).220
     password: ((nats_password))
     port: 4222
     user: nats
@@ -843,13 +862,13 @@ properties:
   password:
     policy:
       global:
-        expirePasswordInMonths: 3
+        expirePasswordInMonths: 0
         maxLength: 255
-        minLength: 8
-        requireDigit: 1
-        requireLowerCaseCharacter: 1
-        requireSpecialCharacter: 1
-        requireUpperCaseCharacter: 1
+        minLength: 0
+        requireDigit: 0
+        requireLowerCaseCharacter: 0
+        requireSpecialCharacter: 0
+        requireUpperCaseCharacter: 0
   capi:
     cc_uploader:
       mutual_tls:
@@ -929,12 +948,14 @@ properties:
       server_key: ""
       sql:
         db_driver: postgres
+        #db_host: ((rds_cf_instance_address))
+        #db_port: ((rds_cf_instance_port))
         db_host: ((private_az1_cidr_prefix)).201
         db_port: 5524
+        db_schema: diego
         db_username: diego
         db_password: ((diego_db_password))
-        db_schema: diego
-        max_open_connections: 500
+        max_open_connections: 50
     converger:
       bbs:
         ca_cert: ""
@@ -958,7 +979,10 @@ properties:
         client_key: ""
         require_ssl: false
       nats:
-        machines: [((private_az1_cidr_prefix)).220]
+        machines:
+        - ((private_az1_cidr_prefix)).220
+        - ((private_az2_cidr_prefix)).220
+        - ((private_az3_cidr_prefix)).220
         password: ((nats_password))
         port: 4222
         user: nats
@@ -997,11 +1021,11 @@ properties:
       url: http://rabbitmq-broker.system.((domain_name))
     rabbitmq:
       hosts: rabbitmq-node.service.((internal_domain))
-#      operator_set_policy:
-#        enabled: true
-#        policy_name: "operator_set_policy"
-#        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
-#        policy_priority: 50
+      operator_set_policy:
+        enabled: true
+        policy_name: "operator_set_policy"
+        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
+        policy_priority: 50
       management_domain: rabbitmq-mgnt.system.((domain_name))
       ssl: false
       administrator:

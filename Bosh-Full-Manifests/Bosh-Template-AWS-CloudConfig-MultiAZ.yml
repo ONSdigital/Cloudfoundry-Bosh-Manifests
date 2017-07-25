@@ -9,6 +9,10 @@ azs:
 - name: az2
   cloud_properties:
     availability_zone: ((aws_availability_zone2))
+- name: az3
+  cloud_properties:
+    availability_zone: ((aws_availability_zone3))
+
 
 networks:
 - name: cf_dmz
@@ -22,6 +26,15 @@ networks:
     static: ["((dmz_az1_cidr_prefix)).200 - ((dmz_az1_cidr_prefix)).245"]
     cloud_properties:
       subnet: ((dmz_az1_subnet))
+  - range: ((dmz_az2_cidr))
+    gateway: ((dmz_az2_default_route))
+    dns: [((dns_ip))]
+    az: az2
+    reserved: ["((dmz_az2_cidr_prefix)).1 - ((dmz_az2_cidr_prefix)).10"]
+    static: ["((dmz_az2_cidr_prefix)).200 - ((dmz_az2_cidr_prefix)).245"]
+    cloud_properties:
+      subnet: ((dmz_az2_subnet))
+
 - name: cf_private
   type: manual
   subnets:
@@ -32,7 +45,27 @@ networks:
     reserved: ["((private_az1_cidr_prefix)).1 - ((private_az1_cidr_prefix)).10"]
     static: ["((private_az1_cidr_prefix)).200 - ((private_az1_cidr_prefix)).245"]
     cloud_properties:
+      security_groups: [((private_security_group))]
       subnet: ((private_az1_subnet))
+  - range: ((private_az2_cidr))
+    gateway: ((private_az2_default_route))
+    dns: [((dns_ip))]
+    az: az2
+    reserved: ["((private_az2_cidr_prefix)).1 - ((private_az2_cidr_prefix)).10"]
+    static: ["((private_az2_cidr_prefix)).200 - ((private_az2_cidr_prefix)).245"]
+    cloud_properties:
+      security_groups: [((private_security_group))]
+      subnet: ((private_az2_subnet))
+  - range: ((private_az3_cidr))
+    gateway: ((private_az3_default_route))
+    dns: [((dns_ip))]
+    az: az3
+    reserved: ["((private_az3_cidr_prefix)).1 - ((private_az3_cidr_prefix)).10"]
+    static: ["((private_az3_cidr_prefix)).200 - ((private_az3_cidr_prefix)).245"]
+    cloud_properties:
+      security_groups: [((private_security_group))]
+      subnet: ((private_az3_subnet))
+
 - name: cf_rabbitmq
   type: manual
   subnets:
@@ -43,7 +76,18 @@ networks:
     reserved: ["((rabbitmq_az1_cidr_prefix)).1 - ((rabbitmq_az1_cidr_prefix)).10"]
     static: ["((rabbitmq_az1_cidr_prefix)).200 - ((rabbitmq_az1_cidr_prefix)).245"]
     cloud_properties:
+      security_groups: [((rabbitmq_security_group))]
       subnet: ((rabbitmq_az1_subnet))
+  - range: ((rabbitmq_az2_cidr))
+    gateway: ((rabbitmq_az2_default_route))
+    dns: [((dns_ip))]
+    az: az2
+    reserved: ["((rabbitmq_az2_cidr_prefix)).1 - ((rabbitmq_az2_cidr_prefix)).10"]
+    static: ["((rabbitmq_az2_cidr_prefix)).200 - ((rabbitmq_az2_cidr_prefix)).245"]
+    cloud_properties:
+      security_groups: [((rabbitmq_security_group))]
+      subnet: ((rabbitmq_az2_subnet))
+
 - name: elastic
   type: vip
   cloud_properties: {}
@@ -62,7 +106,7 @@ vm_types:
     lb_target_groups:
     - ((elb_target_group80))
     - ((elb_target_group443))
-    security_groups: [((lb_security_group))]
+    security_groups: [((lb_security_group)),((dmz_security_group))]
 - name: medium_general
   cloud_properties:
     instance_type: t2.medium
@@ -72,18 +116,10 @@ vm_types:
     lb_target_groups:
     - ((elb_target_group80))
     - ((elb_target_group443))
-    security_groups: [((lb_security_groups))]
+    security_groups: [((lb_security_group)),((dmz_security_group))]
 - name: medium_cc_general
   cloud_properties:
     instance_type: t2.medium
-    iam_instance_profile: ((s3_bucket_access_instance_profile))
-- name: large_cc_memory
-  network: cf_private
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
-  cloud_properties:
-    instance_type: m4.large
     iam_instance_profile: ((s3_bucket_access_instance_profile))
 - name: large_compute
   cloud_properties:
