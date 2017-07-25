@@ -82,8 +82,10 @@ jobs:
     agent:
       mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"
       blobstore:
-        s3_region: ((aws_region))
-        credentials_source: env_or_profile 
+        properties:
+          s3_region: ((aws_region))
+          credentials_source: env_or_profile 
+          bucket_name: ((s3_bosh_blobstore_bucket))
     aws: &aws
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
@@ -93,14 +95,16 @@ jobs:
     blobstore:
       provider: s3
       s3_region: ((aws_region))
-      bucket_name: ((s3_bosh_blobstore_bucket))
       credentials_source: env_or_profile
+      bucket_name: ((s3_bosh_blobstore_bucket))
     compiled_package_cache:
       provider: s3
       options:
         s3_region: ((aws_region))
         credentials_source: env_or_profile
         bucket_name: ((s3_bosh_compiled_package_cache_bucket))
+    default_ssh_options:
+      gateway_host: ((bosh_lite_public_ip))
     director:
       name: ((bosh_name))
       address: 127.0.0.1
@@ -116,6 +120,7 @@ jobs:
       enable_nats_delivered_templates: true
       enable_post_deploy: true
       enable_snapshots: true
+      encryption: true
       #generate_vm_passwords: true
       max_threads: 10
       nginx:
@@ -177,7 +182,12 @@ cloud_provider:
   template: {name: aws_cpi, release: bosh-aws-cpi}
   properties:
     aws: *aws
-    agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
+    agent:
+      mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"
+      blobstore:
+        s3_region: ((aws_region))
+        credentials_source: env_or_profile 
+        bucket_name: ((s3_bosh_blobstore_bucket))
     blobstore:
       provider: s3
       s3_region: ((aws_region))
