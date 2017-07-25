@@ -85,7 +85,7 @@ jobs:
       default_key_name: ((bosh_ssh_key_name))
       region: ((aws_region))
       default_security_groups: [((dmz_security_group))]
-      default_iam_instance_profile: blobstore_bucket_access_instance_profile
+      default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
     blobstore:
       address: ((dmz_az1_cidr_prefix)).6
       provider: s3
