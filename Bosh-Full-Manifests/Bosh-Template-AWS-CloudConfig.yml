@@ -223,3 +223,4 @@ compilation:
     #spot_bid_price: 0.2
     #spot_ondemand_fallback: true
     security_groups: [((private_security_group))]
+    iam_instance_profile: ((s3_bosh_compile_nodes_bucket_access_instance_profile))
