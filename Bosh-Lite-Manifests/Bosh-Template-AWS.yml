@@ -38,7 +38,7 @@ resource_pools:
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_security_group)),((dmz_security_group))]
-    iam_instance_profile: ((s3_bosh_bucket_access_instance_profile))
+    iam_instance_profile: ((director_bucket_access_instance_profile))
 
 disk_pools:
 - name: disks
@@ -85,7 +85,7 @@ jobs:
         properties:
           s3_region: ((aws_region))
           credentials_source: env_or_profile 
-          bucket_name: ((s3_bosh_blobstore_bucket))
+          bucket_name: ((blobstore_bucket))
     aws: &aws
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
@@ -96,13 +96,13 @@ jobs:
       provider: s3
       s3_region: ((aws_region))
       credentials_source: env_or_profile
-      bucket_name: ((s3_bosh_blobstore_bucket))
+      bucket_name: ((blobstore_bucket))
     compiled_package_cache:
       provider: s3
       options:
         s3_region: ((aws_region))
         credentials_source: env_or_profile
-        bucket_name: ((s3_bosh_compiled_package_cache_bucket))
+        bucket_name: ((compiled_package_cache_bucket))
     default_ssh_options:
       gateway_host: ((bosh_lite_public_ip))
     director:
@@ -113,7 +113,7 @@ jobs:
         options:
           s3_region: ((aws_region))
           credentials_source: env_or_profile
-          bucket_name: ((s3_bosh_director_backup_bucket))
+          bucket_name: ((director_backup_bucket))
       cpi_job: aws_cpi
       db: *db
       enable_dedicated_status_worker: true
@@ -187,10 +187,10 @@ cloud_provider:
       blobstore:
         s3_region: ((aws_region))
         credentials_source: env_or_profile 
-        bucket_name: ((s3_bosh_blobstore_bucket))
+        bucket_name: ((blobstore_bucket))
     blobstore:
       provider: s3
       s3_region: ((aws_region))
-      bucket_name: ((s3_bosh_blobstore_bucket))
+      bucket_name: ((blobstore_bucket))
       credentials_source: env_or_profile
     ntp: *ntp

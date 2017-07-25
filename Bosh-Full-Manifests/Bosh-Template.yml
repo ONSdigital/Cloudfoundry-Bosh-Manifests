@@ -547,22 +547,22 @@ properties:
     external_port: 9022
     buildpacks:
       blobstore_type: fog
-      buildpack_directory_key: ((s3_blobstore_bucket))
+      buildpack_directory_key: ((buildpack_bucket))
       fog_connection: &fog_s3_bucket_connection
         provider: AWS
         region: ((aws_region))
         use_iam_profile: true
     droplets:
       blobstore_type: fog
-      droplet_directory_key: ((s3_droplet_bucket))
+      droplet_directory_key: ((droplet_bucket))
       fog_connection: *fog_s3_bucket_connection
     packages:
       blobstore_type: fog
-      app_package_directory_key: ((s3_package_bucket))
+      app_package_directory_key: ((package_bucket))
       fog_connection: *fog_s3_bucket_connection
     resource_pool:
       blobstore_type: fog
-      resource_directory_key: ((s3_resource_bucket))
+      resource_directory_key: ((resource_bucket))
       fog_connection: *fog_s3_bucket_connection
     bulk_api_password: ((bulk_api_password))
     db_encryption_key: ((db_encryption_secret))

@@ -120,7 +120,7 @@ vm_types:
 - name: medium_cc_general
   cloud_properties:
     instance_type: t2.medium
-    iam_instance_profile: ((s3_bucket_access_instance_profile))
+    iam_instance_profile: ((cc_bucket_access_instance_profile))
 - name: large_compute
   cloud_properties:
     instance_type: c4.large
@@ -138,13 +138,13 @@ vm_types:
 - name: large_cc_compute_spot
   cloud_properties:
     instance_type: c4.large
-    iam_instance_profile: ((s3_bucket_access_instance_profile))
+    iam_instance_profile: ((cc_bucket_access_instance_profile))
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
 - name: large_cc_compute_spot_fallback
   cloud_properties:
     instance_type: c4.large
-    iam_instance_profile: ((s3_bucket_access_instance_profile))
+    iam_instance_profile: ((cc_bucket_access_instance_profile))
     # Ensure this is set to a sensible value
     spot_bid_price: 0.05
     spot_ondemand_fallback: true
@@ -259,4 +259,4 @@ compilation:
     #spot_bid_price: 0.2
     #spot_ondemand_fallback: true
     security_groups: [((private_security_group))]
-    iam_instance_profile: ((s3_bosh_compile_nodes_bucket_access_instance_profile))
+    iam_instance_profile: ((compile_nodes_bucket_access_instance_profile))
