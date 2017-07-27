@@ -53,9 +53,17 @@ vm_types:
 - name: micro_general
   cloud_properties:
     instance_type: t2.micro
+- name: micro_general_errand
+  cloud_properties:
+    instance_type: t2.micro
+    iam_instance_profile: ((blobstore_bucket_rw_access_instance_profile))
 - name: small_general
   cloud_properties:
     instance_type: t2.small
+- name: small_general_errand
+  cloud_properties:
+    instance_type: t2.small
+    iam_instance_profile: ((blobstore_bucket_rw_access_instance_profile))
 - name: small_router_general
   cloud_properties:
     instance_type: t2.small
