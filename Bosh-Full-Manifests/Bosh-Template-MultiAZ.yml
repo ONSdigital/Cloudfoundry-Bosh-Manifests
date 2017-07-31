@@ -140,24 +140,25 @@ jobs:
       agent:
         mode: server
 
-- name: postgres
-  #instances: 1
-  instances: ((required_non_rds_cf_postgres_instances))
-  azs: [az1]
-  persistent_disk: 10240
-  vm_type: medium_general
-  stemcell: default
-  templates:
-  - {name: postgres, release: cf}
-  - {name: metron_agent, release: cf}
-  networks:
-  - name: cf_private
-    static_ips: [((private_az1_cidr_prefix)).201]
-  update:
-    serial: true
-  properties:
-    metron_agent:
-      zone: z1
+#- name: postgres
+#  #instances: 1
+#  instances: ((required_non_rds_cf_postgres_instances))
+#  azs: [az1]
+#  persistent_disk: 10240
+#  vm_type: medium_general
+#  stemcell: default
+#  templates:
+#  - {name: postgres, release: cf}
+#  - {name: metron_agent, release: cf}
+#  - {name: consul_agent, release: cf}
+#  networks:
+#  - name: cf_private
+#    static_ips: [((private_az1_cidr_prefix)).201]
+#  update:
+#    serial: true
+#  properties:
+#    metron_agent:
+#      zone: z1
 
 - name: diego_cell
   instances: 2
@@ -467,6 +468,7 @@ jobs:
       #address: ((rds_cf_instance_address))
       #port: ((rds_cf_instance_port))
       address: ((private_az1_cidr_prefix)).201
+      #address: postgres.service.((internal_domain))
       db_scheme: postgresql
       port: 5524
       databases:
