@@ -1,0 +1,68 @@
+# vim: set autoindent expandtab shiftwidth=2 softtabstop=2
+#
+
+---
+name: ((bosh_deployment))
+
+releases:
+#- {name: cf, version: latest}
+#- {name: diego, version: latest}
+#- {name: garden-runc, version: latest}
+#- {name: cflinuxfs2, version: latest}
+#- {name: cf-rabbitmq, version: latest}
+- {name: postgresql-databases, version: latest}
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  serial: false
+  canary_watch_time: 30000-600000
+  update_watch_time: 5000-600000
+
+jobs:
+- name: create-postgresql-databases-apps
+  instances: ((configure_rds_apps_postgres_instance))
+  lifecycle: errand
+  stemcell: default
+  vm_type: micro_general_errand
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: postgresql-databases, release: postgresql-databases}
+  properties:
+   postgresql_databases:
+     admin_username: ((rds_apps_instance_username))
+     admin_password: ((rds_apps_instance_password))
+     admin_database: postgres
+     host: ((rds_apps_instance_address))
+     port: ((rds_apps_instance_port))
+     databases:
+     - { name: rds_broker, username: rds_broker, password: ((rds_broker_admin_password)), extensions: [pgcrypto], options: [SUPERUSER] }
+
+- name: create-postgresql-databases-cf
+  instances: ((configure_rds_cf_postgres_instance))
+  lifecycle: errand
+  stemcell: default
+  vm_type: micro_general_errand
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: postgresql-databases, release: postgresql-databases}
+  properties:
+   postgresql_databases:
+     admin_username: ((rds_cf_instance_username))
+     admin_password: ((rds_cf_instance_password))
+     admin_database: postgres
+     host: ((rds_cf_instance_address))
+     port: ((rds_cf_instance_address))
+     databases:
+     - { name: ccdb, username: ccadmin, password: ((cc_db_admin_password)), extensions: [pgcrypto,citext] }
+     - { name: diego, username: diegoadmin, password: ((digeo_db_admin_password)), extensions: [pgcrypto,citext] }
+     - { name: uaadb, username: uaaadmin, password: ((uaa_db_admin_password)), extensions: [pgcrypto,citext] }
