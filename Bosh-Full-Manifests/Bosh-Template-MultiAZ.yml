@@ -429,7 +429,7 @@ jobs:
       databases:
       - {name: uaadb, tag: uaa}
       roles:
-      - {name: uaaadmin, password: ((uaa_db_admin_password)), tag: admin}
+      - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
 
 - name: router
   instances: 2
@@ -632,7 +632,7 @@ properties:
     databases:
     - {name: ccdb, tag: cc}
     roles:
-    - {name: ccadmin, password: ((cc_db_admin_password)), tag: admin}
+    - {name: ccadmin, password: ((cc_db_password)), tag: admin}
   consul:
     agent:
       log_level: null
@@ -666,8 +666,8 @@ properties:
   #  - {name: diego, tag: diego, citext: true}
   #  port: ((rds_cf_instance_port))
   #  roles:
-  #  - {name: ccadmin, password: ((cc_db_admin_password)), tag: admin}
-  #  - {name: uaaadmin, password: ((uaa_db_admin_password)), tag: admin}
+  #  - {name: ccadmin, password: ((cc_db_password)), tag: admin}
+  #  - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
   #  - {name: diego, password: ((diego_db_password)), tag: admin}
   description: Cloud Foundry - ((organisation))
   domain: system.((domain_name))
