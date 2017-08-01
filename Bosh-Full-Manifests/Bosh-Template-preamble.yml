@@ -43,7 +43,7 @@ jobs:
      host: ((rds_apps_instance_address))
      port: ((rds_apps_instance_port))
      databases:
-     - { name: rds_broker, username: rds_broker, password: ((rds_broker_admin_password)), extensions: [pgcrypto], options: [SUPERUSER] }
+     - { name: rds_broker, extensions: [pgcrypto] }
 
 - name: create-postgresql-databases-cf
   instances: ((configure_rds_cf_postgres_instance))
