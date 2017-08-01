@@ -42,6 +42,7 @@ jobs:
      admin_database: postgres
      host: ((rds_apps_instance_address))
      port: ((rds_apps_instance_port))
+     rds: true
      databases:
      - { name: rds_broker, extensions: [pgcrypto] }
 
@@ -62,7 +63,8 @@ jobs:
      admin_database: postgres
      host: ((rds_cf_instance_address))
      port: ((rds_cf_instance_address))
+     rds: true
      databases:
      - { name: ccdb, username: ccadmin, password: ((cc_db_admin_password)), extensions: [pgcrypto,citext] }
-     - { name: diego, username: diegoadmin, password: ((digeo_db_admin_password)), extensions: [pgcrypto,citext] }
+     - { name: diego, username: diegoadmin, password: ((diego_db_admin_password)), extensions: [pgcrypto,citext] }
      - { name: uaadb, username: uaaadmin, password: ((uaa_db_admin_password)), extensions: [pgcrypto,citext] }
