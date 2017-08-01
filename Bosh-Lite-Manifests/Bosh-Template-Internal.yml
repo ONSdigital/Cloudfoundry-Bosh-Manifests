@@ -38,6 +38,7 @@ resource_pools:
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_security_group)),((dmz_security_group))]
+    iam_instance_profile: ((director_bucket_access_instance_profile))
 
 disk_pools:
 - name: disks
@@ -72,34 +73,59 @@ jobs:
   persistent_disk_pool: disks
   networks:
   - name: cf_dmz
-    static_ips: [((dmz_az1_cidr_prefix)).6]
+    static_ips: [((bosh_lite_private_ip))]
     default: [dns, gateway]
   #- name: public
   #  static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
   properties:
-    agent: {mbus: "nats://nats:((nats_password))@((dmz_az1_cidr_prefix)).6:4222"}
+    agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
     aws: &aws
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
       region: ((aws_region))
       default_security_groups: [((dmz_security_group))]
+      default_iam_instance_profile: ((blobstore_bucket_ro_access_instance_profile))
     blobstore:
-      address: ((dmz_az1_cidr_prefix)).6
-      port: 25250
-      provider: dav
+      address: ((bosh_lite_private_ip))
+      provider: s3
+      s3_region: ((aws_region))
+      credentials_source: env_or_profile
+      bucket_name: ((blobstore_bucket))
+      #port: 25250
+      #provider: dav
       director:
         user: director
         password: ((director_blobstore_password))
       agent:
         user: agent
         password: ((agent_blobstore_password))
+    compiled_package_cache:
+      provider: s3
+      options:
+        s3_region: ((aws_region))
+        credentials_source: env_or_profile
+        bucket_name: ((compiled_package_cache_bucket))
+    default_ssh_options:
+      gateway_host: ((bosh_lite_ip))
     director:
       address: 127.0.0.1
       name: ((bosh_name))
+      backup_destination:
+        provider: s3
+        options:
+          s3_region: ((aws_region))
+          credentials_source: env_or_profile
+          bucket_name: ((director_backup_bucket))
       #generate_vm_passwords: true
       db: *db
       cpi_job: aws_cpi
+      enable_dedicated_status_worker: true
+      enable_nats_delivered_templates: true
+      enable_post_deploy: true
+      enable_snapshots: true
+      # To/from Director
+      #encryption: true
       max_threads: 10
       ssl:
         key: ((director_key))
@@ -129,8 +155,8 @@ jobs:
       database: bosh
       adapter: postgres
     registry:
-      address: ((dmz_az1_cidr_prefix)).6
-      host: ((dmz_az1_cidr_prefix)).6
+      address: ((bosh_lite_private_ip))
+      host: ((bosh_lite_private_ip))
       db: *db
       http:
         user: admin
