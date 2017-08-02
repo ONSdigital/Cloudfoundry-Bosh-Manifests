@@ -1,0 +1,3 @@
+- type: remove
+  path: /jobs/name=((deployment_name))-boshlite/networks/name=public
+
