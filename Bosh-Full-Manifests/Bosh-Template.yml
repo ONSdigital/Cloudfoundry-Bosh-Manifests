@@ -24,6 +24,22 @@ update:
   update_watch_time: 5000-600000
 
 jobs:
+- name: nats
+  instances: 3
+  azs: [az1,az2,az3]
+  vm_type: small_general
+  stemcell: default
+  templates:
+  - {name: nats, release: cf}
+  - {name: metron_agent, release: cf}
+  networks:
+  - name: cf_private
+    static_ips:
+    - ((nats_az1_ip1))
+  properties:
+    metron_agent:
+      zone: z1
+
 - name: etcd
   instances: 1
   azs: [az1]
@@ -37,7 +53,8 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips: ["((private_az1_cidr_prefix)).230"]
+    static_ips:
+    - ((etcd_az1_ip1))
     etcd_metrics_server:
       nats:
         machines: ["cf-etcd.service.((internal_domain))"]
@@ -63,7 +80,10 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips: ["((private_az1_cidr_prefix)).240-((private_az1_cidr_prefix)).242"]
+    static_ips:
+    - ((consul_az1_ip1))
+    - ((consul_az1_ip2))
+    - ((consul_az1_ip3))
   properties:
     metron_agent:
       zone: z1
@@ -73,24 +93,24 @@ jobs:
 
 # Should move to using RDS - but be careful, we currently login this box to allow us to
 # create the initial database for use by the RDS-broker
-- name: postgres
-  instances: ((required_non_rds_cf_postgres_instances))
-  #instances: 1
-  azs: [az1]
-  persistent_disk: 10240
-  vm_type: medium_general
-  stemcell: default
-  templates:
-  - {name: postgres, release: cf}
-  - {name: metron_agent, release: cf}
-  networks:
-  - name: cf_private
-    static_ips: [((private_az1_cidr_prefix)).201]
-  update:
-    serial: true
-  properties:
-    metron_agent:
-      zone: z1
+#- name: postgres
+#  instances: ((required_non_rds_cf_postgres_instances))
+#  #instances: 1
+#  azs: [az1]
+#  persistent_disk: 10240
+#  vm_type: medium_general
+#  stemcell: default
+#  templates:
+#  - {name: postgres, release: cf}
+#  - {name: metron_agent, release: cf}
+#  networks:
+#  - name: cf_private
+#    static_ips: [((private_az1_cidr_prefix)).201]
+#  update:
+#    serial: true
+#  properties:
+#    metron_agent:
+#      zone: z1
 
 - name: diego_cell
   instances: 12
@@ -417,11 +437,11 @@ jobs:
       cc:
         client_secret: ((uaa_cc_client_secret))
     uaadb:
-      address: ((private_az1_cidr_prefix)).201
+      address: ((rds_cf_instance_address))
+      port: ((rds_cf_instance_port))
       databases:
       - {name: uaadb, tag: uaa}
       db_scheme: postgresql
-      port: 5524
       roles:
       - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
 
@@ -436,7 +456,6 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips: [((private_az1_cidr_prefix)).210]
   properties:
     metron_agent:
       zone: z1
@@ -609,11 +628,11 @@ properties:
     staging_upload_password: ((staging_upload_password))
     staging_upload_user: staging_upload_user
   ccdb:
-    address: ((private_az1_cidr_prefix)).201
+    db_scheme: postgres
+    address: ((rds_cf_instance_address))
+    port: ((rds_cf_instance_port))
     databases:
     - {name: ccdb, tag: cc}
-    db_scheme: postgres
-    port: 5524
     roles:
     - {name: ccadmin, password: ((cc_db_password)), tag: admin}
   consul:
@@ -622,9 +641,9 @@ properties:
       domain: ((internal_domain))
       servers:
         lan:
-        - ((private_az1_cidr_prefix)).240
-        - ((private_az1_cidr_prefix)).241
-        - ((private_az1_cidr_prefix)).242
+        - ((consul_az1_ip1))
+        - ((consul_az1_ip2))
+        - ((consul_az1_ip3))
     encrypt_keys:
     - ((consul_encrypt_keys_secret))
     ca_cert: ((internal_ca_crt))
@@ -723,7 +742,8 @@ properties:
     protocols:
     - udp
   nats:
-    machines: [((private_az1_cidr_prefix)).220]
+    machines:
+    - ((nats_az1_ip1))
     password: ((nats_password))
     port: 4222
     user: nats
@@ -917,8 +937,8 @@ properties:
       server_key: ""
       sql:
         db_driver: postgres
-        db_host: ((private_az1_cidr_prefix)).201
-        db_port: 5524
+        db_host: ((rds_cf_instance_address))
+        db_port: ((rds_cf_instance_port))
         db_username: diego
         db_password: ((diego_db_password))
         db_schema: diego
@@ -946,7 +966,8 @@ properties:
         client_key: ""
         require_ssl: false
       nats:
-        machines: [((private_az1_cidr_prefix)).220]
+        machines:
+        - ((nats_az1_ip1))
         password: ((nats_password))
         port: 4222
         user: nats

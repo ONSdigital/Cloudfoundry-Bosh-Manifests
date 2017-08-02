@@ -1,0 +1,16 @@
+bosh_lite_private_ip: ((dmz_az1_static_ip1))
+
+nats_az1_ip1: ((private_az1_static_ip2))
+nats_az2_ip1: ((private_az2_static_ip2))
+nats_az3_ip1: ((private_az3_static_ip2))
+
+etcd_az1_ip1: ((private_az1_static_ip3))
+etcd_az2_ip1: ((private_az2_static_ip3))
+etcd_az3_ip1: ((private_az3_static_ip3))
+
+# AZ1
+consul_az1_ip1: ((private_az1_static_ip4))
+consul_az1_ip2: ((private_az1_static_ip5))
+consul_az1_ip3: ((private_az1_static_ip6))
+
+router_az1_ip1: ((private_az1_static_ip7))

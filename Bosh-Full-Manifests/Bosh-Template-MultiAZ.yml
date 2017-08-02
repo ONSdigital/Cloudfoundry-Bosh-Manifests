@@ -36,9 +36,9 @@ jobs:
   networks:
   - name: cf_private
     static_ips:
-    - ((private_az1_cidr_prefix)).220
-    - ((private_az2_cidr_prefix)).220
-    - ((private_az3_cidr_prefix)).220
+    - ((nats_az1_ip1))
+    - ((nats_az2_ip1))
+    - ((nats_az3_ip1))
   properties:
     metron_agent:
       zone: z1
@@ -56,6 +56,9 @@ jobs:
   - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
+    - ((etcd_az1_ip1))
+    - ((etcd_az2_ip1))
+    - ((etcd_az3_ip1))
   properties:
     etcd_metrics_server:
       nats:
@@ -82,15 +85,15 @@ jobs:
   networks:
   - name: cf_private
     static_ips:
-    - ((private_az1_cidr_prefix)).240
-    - ((private_az1_cidr_prefix)).241
-    - ((private_az1_cidr_prefix)).242
-    - ((private_az2_cidr_prefix)).240
-    - ((private_az2_cidr_prefix)).241
-    - ((private_az2_cidr_prefix)).242
-    - ((private_az3_cidr_prefix)).240
-    - ((private_az3_cidr_prefix)).241
-    - ((private_az3_cidr_prefix)).242
+    - ((consul_az1_ip1))
+    - ((consul_az1_ip2))
+    - ((consul_az1_ip3))
+    - ((consul_az2_ip1))
+    - ((consul_az2_ip2))
+    - ((consul_az2_ip3))
+    - ((consul_az3_ip1))
+    - ((consul_az3_ip2))
+    - ((consul_az3_ip3))
   properties:
     metron_agent:
       zone: z1
@@ -443,8 +446,8 @@ jobs:
   networks:
   - name: cf_private
     static_ips:
-    - ((private_az1_cidr_prefix)).210
-    - ((private_az2_cidr_prefix)).210
+    - ((router_az1_ip1))
+    - ((router_az2_ip1))
   properties:
     metron_agent:
       zone: z1
@@ -639,15 +642,15 @@ properties:
       domain: ((internal_domain))
       servers:
         lan:
-        - ((private_az1_cidr_prefix)).240
-        - ((private_az1_cidr_prefix)).241
-        - ((private_az1_cidr_prefix)).242
-        - ((private_az2_cidr_prefix)).240
-        - ((private_az2_cidr_prefix)).241
-        - ((private_az2_cidr_prefix)).242
-        - ((private_az3_cidr_prefix)).240
-        - ((private_az3_cidr_prefix)).241
-        - ((private_az3_cidr_prefix)).242
+        - ((consul_az1_ip1))
+        - ((consul_az1_ip2))
+        - ((consul_az1_ip3))
+        - ((consul_az2_ip1))
+        - ((consul_az2_ip2))
+        - ((consul_az2_ip3))
+        - ((consul_az3_ip1))
+        - ((consul_az3_ip2))
+        - ((consul_az3_ip3))
     encrypt_keys:
     - ((consul_encrypt_keys_secret))
     ca_cert: ((internal_ca_crt))
@@ -749,9 +752,9 @@ properties:
     - udp
   nats:
     machines:
-    - ((private_az1_cidr_prefix)).220
-    - ((private_az2_cidr_prefix)).220
-    - ((private_az3_cidr_prefix)).220
+    - ((nats_az1_ip1))
+    - ((nats_az2_ip1))
+    - ((nats_az3_ip1))
     password: ((nats_password))
     port: 4222
     user: nats
@@ -975,9 +978,9 @@ properties:
         require_ssl: false
       nats:
         machines:
-        - ((private_az1_cidr_prefix)).220
-        - ((private_az2_cidr_prefix)).220
-        - ((private_az3_cidr_prefix)).220
+        - ((nats_az1_ip1))
+        - ((nats_az2_ip1))
+        - ((nats_az3_ip1))
         password: ((nats_password))
         port: 4222
         user: nats
