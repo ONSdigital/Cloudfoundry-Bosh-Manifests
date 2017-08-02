@@ -107,7 +107,7 @@ jobs:
         credentials_source: env_or_profile
         bucket_name: ((compiled_package_cache_bucket))
     default_ssh_options:
-      gateway_host: ((bosh_lite_ip))
+      gateway_host: ((bosh_lite_public_ip))
     director:
       address: 127.0.0.1
       name: ((bosh_name))
@@ -167,9 +167,9 @@ jobs:
       port: 25777
 
 cloud_provider:
-  mbus: "https://mbus:((mbus_password))@((bosh_lite_ip)):6868"
+  mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
   ssh_tunnel:
-    host: ((bosh_lite_ip))
+    host: ((bosh_lite_public_ip))
     port: 22
     user: vcap
     private_key: ((bosh_ssh_key_file))
