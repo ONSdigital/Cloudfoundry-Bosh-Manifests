@@ -430,6 +430,7 @@ jobs:
       address: ((rds_cf_instance_address))
       port: ((rds_cf_instance_port))
       port: 5524
+      db_scheme: postgresql
       databases:
       - {name: uaadb, tag: uaa}
       roles:
