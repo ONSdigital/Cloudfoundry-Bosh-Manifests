@@ -2,7 +2,7 @@
 # 	Template URLs & hashes
 
 ---
-name: ((bosh_deployment))
+name: ((deployment_name))
 
 releases:
   # can use file:// URLs - then SHA1 not required
@@ -87,7 +87,7 @@ jobs:
       default_security_groups: [((dmz_security_group))]
       default_iam_instance_profile: ((blobstore_bucket_ro_access_instance_profile))
     blobstore:
-      address: ((bosh_lite_private_ip))
+      #address: ((bosh_lite_private_ip))
       provider: s3
       s3_region: ((aws_region))
       credentials_source: env_or_profile
@@ -110,7 +110,7 @@ jobs:
       gateway_host: ((bosh_lite_public_ip))
     director:
       address: 127.0.0.1
-      name: ((bosh_name))
+      name: ((deployment_name))
       backup_destination:
         provider: s3
         options:

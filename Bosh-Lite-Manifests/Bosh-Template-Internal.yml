@@ -2,7 +2,7 @@
 # 	Template URLs & hashes
 
 ---
-name: ((bosh_deployment))
+name: ((deployment_name))
 
 releases:
   # can use file:// URLs - then SHA1 not required
@@ -110,7 +110,7 @@ jobs:
       gateway_host: ((bosh_lite_ip))
     director:
       address: 127.0.0.1
-      name: ((bosh_name))
+      name: ((deployment_name))
       backup_destination:
         provider: s3
         options:
