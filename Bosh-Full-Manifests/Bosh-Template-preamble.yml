@@ -40,7 +40,7 @@ jobs:
      admin_username: ((rds_apps_instance_username))
      admin_password: ((rds_apps_instance_password))
      admin_database: postgres
-     host: ((rds_apps_instance_address))
+     host: ((rds_apps_instance_dns))
      port: ((rds_apps_instance_port))
      rds: true
      databases:
@@ -61,8 +61,8 @@ jobs:
      admin_username: ((rds_cf_instance_username))
      admin_password: ((rds_cf_instance_password))
      admin_database: postgres
-     host: ((rds_cf_instance_address))
-     port: ((rds_cf_instance_address))
+     host: ((rds_cf_instance_dns))
+     port: ((rds_cf_instance_port))
      rds: true
      databases:
      - { name: ccdb, username: ccadmin, password: ((cc_db_password)), extensions: [pgcrypto,citext] }

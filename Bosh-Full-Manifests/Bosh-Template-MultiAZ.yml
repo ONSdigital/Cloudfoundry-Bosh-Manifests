@@ -427,7 +427,7 @@ jobs:
       cc:
         client_secret: ((uaa_cc_client_secret))
     uaadb:
-      address: ((rds_cf_instance_address))
+      address: ((rds_cf_instance_dns))
       port: ((rds_cf_instance_port))
       port: 5524
       db_scheme: postgresql
@@ -632,7 +632,7 @@ properties:
     staging_upload_user: staging_upload_user
   ccdb:
     db_scheme: postgres
-    address: ((rds_cf_instance_address))
+    address: ((rds_cf_instance_dns))
     port: ((rds_cf_instance_port))
     databases:
     - {name: ccdb, tag: cc}
@@ -950,7 +950,7 @@ properties:
       server_key: ""
       sql:
         db_driver: postgres
-        db_host: ((rds_cf_instance_address))
+        db_host: ((rds_cf_instance_dns))
         db_port: ((rds_cf_instance_port))
         db_schema: diego
         db_username: diego
