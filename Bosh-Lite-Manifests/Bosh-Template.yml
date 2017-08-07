@@ -12,8 +12,8 @@ releases:
   sha1: 31d2912d4320ce6079c190f2218c6053fd1e920f
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=65
-  sha1: 26b3a5c43e6f82594a373309a495660d6db26254
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=66
+  sha1: 117d5518f1b1de8937c163244de8db45ad8ce1a9
 
 resource_pools:
 - name: bosh_vm
@@ -31,8 +31,8 @@ resource_pools:
     #  CPI 'create_stemcell' method responded with error: CmdError{"type":"Unknown","message":"Connection refused - Connection refused - connect(2) for \"169.254.169.254\" port 80 (169.254.169.254:80)","ok_to_retry":false}
     #
     # Despite not having 'light' in the URL, this always seems to download the 'light' version' (2017/05/15)
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3421.11
-    sha1: 98f9b71398f0f771e8a4bbaf5531440b99bae540
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3421.13
+    sha1: 5e4a5e921d7c109ccdcfabcd7fff9f43cfabfb27
   cloud_properties:
     instance_type: m4.large
     ephemeral_disk: {size: 50_000, type: gp2}
