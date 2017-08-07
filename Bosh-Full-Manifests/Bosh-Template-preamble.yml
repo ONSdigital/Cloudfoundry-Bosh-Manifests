@@ -42,6 +42,9 @@ jobs:
      admin_database: postgres
      host: ((rds_apps_instance_dns))
      port: ((rds_apps_instance_port))
+     #bucket_name:
+     #credentials_source: env_or_profile
+     #region: ((aws_region))
      rds: true
      databases:
      - { name: rds_broker, extensions: [pgcrypto] }
@@ -63,8 +66,12 @@ jobs:
      admin_database: postgres
      host: ((rds_cf_instance_dns))
      port: ((rds_cf_instance_port))
+     #bucket_name:
+     #credentials_source: env_or_profile
+     #region: ((aws_region))
      rds: true
      databases:
+     # restore_blob
      - { name: ccdb, username: ccadmin, password: ((cc_db_password)), extensions: [pgcrypto,citext] }
      - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext] }
      - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)), extensions: [pgcrypto,citext] }
