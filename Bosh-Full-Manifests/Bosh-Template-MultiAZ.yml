@@ -25,6 +25,29 @@ update:
   update_watch_time: 5000-600000
 
 jobs:
+#- name: backup-postgresql-databases-cf
+#  instances: ((configure_rds_cf_postgres_instance))
+#  lifecycle: errand
+#  stemcell: default
+#  vm_type: micro_general_errand
+#  networks:
+#  - name: cf_private
+#  azs: [az1]
+#  templates:
+#  - {name: postgresql-databases, release: postgresql-databases}
+#  properties:
+#   postgresql_databases:
+#     admin_username: ((rds_cf_instance_username))
+#     admin_password: ((rds_cf_instance_password))
+#     admin_database: postgres
+#     host: ((rds_cf_instance_dns))
+#     port: ((rds_cf_instance_port))
+#     rds: true
+#     databases:
+#     - { name: ccdb }
+#     - { name: diego }
+#     - { name: uaadb }
+
 - name: nats
   instances: 3
   azs: [az1,az2,az3]
