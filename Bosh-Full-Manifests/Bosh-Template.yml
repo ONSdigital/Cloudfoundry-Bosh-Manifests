@@ -872,16 +872,16 @@ properties:
     sslPrivateKey: ((uaa_key))
     # uaa.service.$INTERNAL_DOMAIN
     sslCertificate: ((uaa_crt))
-  password:
-    policy:
-      global:
-        expirePasswordInMonths: 3
-        maxLength: 255
-        minLength: 8
-        requireDigit: 1
-        requireLowerCaseCharacter: 1
-        requireSpecialCharacter: 1
-        requireUpperCaseCharacter: 1
+    password:
+      policy:
+        global:
+          expirePasswordInMonths: 3
+          maxLength: 255
+          minLength: 8
+          requireDigit: 1
+          requireLowerCaseCharacter: 1
+          requireSpecialCharacter: 1
+          requireUpperCaseCharacter: 1
   capi:
     cc_uploader:
       mutual_tls:
