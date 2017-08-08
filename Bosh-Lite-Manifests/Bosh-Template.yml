@@ -52,6 +52,8 @@ networks:
   - range: ((dmz_az1_cidr))
     gateway: ((dmz_az1_default_route))
     dns: [((dns_ip))]
+    reserved: ["((dmz_az1_reserved_start)) - ((dmz_az1_reserved_stop))"]
+    static: ["((dmz_az1_static_start)) - ((dmz_az1_static_stop))"]
     cloud_properties:
       subnet: ((dmz_az1_subnet))
       security_groups: [((dmz_security_group))]
