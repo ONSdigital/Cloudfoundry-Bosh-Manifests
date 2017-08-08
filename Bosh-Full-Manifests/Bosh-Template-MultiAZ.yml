@@ -1065,7 +1065,7 @@ properties:
     - 15674
     stats:
       username: rabbitmq-stats
-      password: (rabbitmq_stats_password)
+      password: ((rabbitmq_stats_password))
 #    server_ips: rabbitmq-node.service.((internal_domain))
   rabbitmq-server:
     plugins:
