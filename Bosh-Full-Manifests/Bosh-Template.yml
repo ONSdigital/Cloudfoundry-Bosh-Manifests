@@ -340,30 +340,6 @@ jobs:
         uris:
         - "api.system.((domain_name))"
 
-#- name: ha_proxy
-#  instances: 0
-#  azs: [az1]
-#  vm_type: small_general
-#  stemcell: default
-#  templates:
-#  - {name: haproxy, release: cf}
-#  - {name: consul_agent, release: cf}
-#  - {name: metron_agent, release: cf}
-#  networks:
-#  - name: elastic
-#    static_ips: [((external_ip_az1))]
-#  - name: cf_dmz_az1
-#    default: [gateway, dns]
-#  properties:
-#    metron_agent:
-#      zone: z1
-#    ha_proxy:
-#      # ha-proxy.$EXTERNAL_DOMAIN, altname *.$EXTERNAL_DOMAIN
-#      ssl_pem: ((ha_proxy_key))((ha_proxy_crt))
-#    router:
-#      servers:
-#        - ((private_az1_cidr_prefix)).210
-
 - name: doppler
   instances: 1
   azs: [az1]
