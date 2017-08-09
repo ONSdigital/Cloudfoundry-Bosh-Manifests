@@ -1,7 +1,4 @@
 ---
-# This file is interpolated to expand the variables
-bosh_lite_private_ip: ((dmz_az1_static_ip1))
-
 nats_az1_ip1: ((private_az1_static_ip2))
 nats_az2_ip1: ((private_az2_static_ip2))
 nats_az3_ip1: ((private_az3_static_ip2))
