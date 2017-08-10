@@ -137,6 +137,20 @@ jobs:
 #    metron_agent:
 #      zone: z1
 
+- name: ssh_proxy
+  instances: 2
+  azs: [az1,az2]
+  vm_type: small_ssh_general
+  stemcell: default
+  templates:
+  - { name: consul_agent, release: cf }
+  - { name: ssh_proxy, release: diego }
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+
 - name: diego_cell
   instances: 12
   azs: [az1]
@@ -148,7 +162,7 @@ jobs:
   - { name: garden, release: garden-runc }
   - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
   - { name: metron_agent, release: cf }
-  - { name: ssh_proxy, release: diego }
+#  - { name: ssh_proxy, release: diego }
   networks:
   - name: cf_private
   update:

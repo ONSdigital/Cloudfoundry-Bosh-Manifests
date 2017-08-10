@@ -106,6 +106,14 @@ vm_types:
   cloud_properties:
     instance_type: t2.small
     iam_instance_profile: ((blobstore_bucket_rw_access_instance_profile))
+- name: small_ssh_general
+  cloud_properties:
+    instance_type: t2.small
+    elbs: [((ssh_elb))
+    security_groups: [((ssh_elb_security_group))]
+- name: medium_general
+  cloud_properties:
+    instance_type: t2.medium
 - name: small_router_general
   cloud_properties:
     instance_type: t2.small
