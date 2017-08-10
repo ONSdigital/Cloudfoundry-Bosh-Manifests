@@ -125,6 +125,8 @@ jobs:
           credentials_source: env_or_profile
           bucket_name: ((director_backup_bucket))
       #generate_vm_passwords: true
+      # https://bosh.io/docs/remove-dev-tools.html
+      #remove_dev_tools: true
       db: *db
       cpi_job: aws_cpi
       enable_dedicated_status_worker: true
