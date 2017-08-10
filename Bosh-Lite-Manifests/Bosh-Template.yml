@@ -42,7 +42,7 @@ resource_pools:
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_security_group)),((dmz_security_group))]
     iam_instance_profile: ((director_bucket_access_instance_profile))
-    elbs: [((director_elb))
+    elbs: [((director_elb))]
     security_groups: [((director_security_group))]
 
 disk_pools:
