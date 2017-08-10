@@ -31,7 +31,10 @@ resource_pools:
     #  CPI 'create_stemcell' method responded with error: CmdError{"type":"Unknown","message":"Connection refused - Connection refused - connect(2) for \"169.254.169.254\" port 80 (169.254.169.254:80)","ok_to_retry":false}
     #
     # Despite not having 'light' in the URL, this always seems to download the 'light' version' (2017/05/15)
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3431.13
+    #
+    # Currently, this stemcell can't be reached from this URL, so we use the direct AWS S3 URL
+    #url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3431.13
+    url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
     sha1: 5e4a5e921d7c109ccdcfabcd7fff9f43cfabfb27
   cloud_properties:
     instance_type: m4.large
