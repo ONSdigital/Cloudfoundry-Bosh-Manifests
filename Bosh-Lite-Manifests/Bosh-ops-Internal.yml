@@ -2,7 +2,7 @@
   path: /jobs/name=((deployment_name))-boshlite/networks/name=public
 
 - type: remove
-  path /networks/name=public
+  path: /networks/name=public
 
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/properties/default_ssh_options/gateway_host
