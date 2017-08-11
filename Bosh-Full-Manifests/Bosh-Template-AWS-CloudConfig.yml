@@ -66,8 +66,8 @@ vm_types:
 - name: small_ssh_general
   cloud_properties:
     instance_type: t2.small
-    elbs: [((ssh_elb))
-    security_groups: [((ssh_elb_security_group))]
+    elbs: [((cf_ssh_elb))
+    security_groups: [((cf_ssh_security_group))]
 - name: small_router_general
   cloud_properties:
     instance_type: t2.small
