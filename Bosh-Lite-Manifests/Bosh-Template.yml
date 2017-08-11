@@ -62,8 +62,8 @@ networks:
     cloud_properties:
       subnet: ((dmz_az1_subnet))
       security_groups: [((dmz_security_group))]
-- name: public
-  type: vip
+#- name: public
+#  type: vip
 
 jobs:
 - name: ((deployment_name))-boshlite
@@ -82,8 +82,8 @@ jobs:
   - name: cf_dmz
     static_ips: [((bosh_lite_private_ip))]
     default: [dns, gateway]
-  - name: public
-    static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
+  #- name: public
+  #  static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
   properties:
     agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
     aws: &aws
@@ -114,7 +114,8 @@ jobs:
         credentials_source: env_or_profile
         bucket_name: ((compiled_package_cache_bucket))
     default_ssh_options:
-      gateway_host: ((bosh_lite_public_ip))
+      #gateway_host: ((bosh_lite_public_ip))
+      gateway_host: ((director_dns))
     director:
       address: 127.0.0.1
       name: ((deployment_name))
@@ -176,9 +177,11 @@ jobs:
       port: 25777
 
 cloud_provider:
-  mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
+  #mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
+  mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
   ssh_tunnel:
-    host: ((bosh_lite_public_ip))
+    #host: ((bosh_lite_public_ip))
+    host: ((director_dns))
     port: 22
     user: vcap
     private_key: ((bosh_ssh_key_file))
