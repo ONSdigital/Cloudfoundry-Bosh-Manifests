@@ -17,7 +17,7 @@ releases:
 
 resource_pools:
 - name: bosh_vm
-  network: cf_dmz
+  network: cf_director
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     # Sometimes the version stays the same but the hash changes
@@ -40,7 +40,7 @@ resource_pools:
     instance_type: m4.large
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
-    security_groups: [((director_security_group)),((dmz_security_group))]
+    security_groups: [((director_security_group))]
     iam_instance_profile: ((director_bucket_access_instance_profile))
     elbs: [((director_elb))]
     security_groups: [((director_security_group))]
@@ -51,17 +51,17 @@ disk_pools:
   cloud_properties: {type: gp2}
 
 networks:
-- name: cf_dmz
+- name: cf_director
   type: manual
   subnets:
-  - range: ((dmz_az1_cidr))
-    gateway: ((dmz_az1_default_route))
+  - range: ((director_az1_cidr))
+    gateway: ((director_az1_default_route))
     dns: [((dns_ip))]
-    reserved: ["((dmz_az1_reserved_start)) - ((dmz_az1_reserved_stop))"]
-    static: ["((dmz_az1_static_start)) - ((dmz_az1_static_stop))"]
+    reserved: ["((director_az1_reserved_start)) - ((director_az1_reserved_stop))"]
+    static: ["((director_az1_static_start)) - ((director_az1_static_stop))"]
     cloud_properties:
-      subnet: ((dmz_az1_subnet))
-      security_groups: [((dmz_security_group))]
+      subnet: ((director_az1_subnet))
+      security_groups: [((director_security_group))]
 #- name: public
 #  type: vip
 
@@ -79,7 +79,7 @@ jobs:
   resource_pool: bosh_vm
   persistent_disk_pool: disks
   networks:
-  - name: cf_dmz
+  - name: cf_director
     static_ips: [((bosh_lite_private_ip))]
     default: [dns, gateway]
   #- name: public
@@ -91,7 +91,7 @@ jobs:
       secret_access_key: ((bosh_aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
       region: ((aws_region))
-      default_security_groups: [((dmz_security_group))]
+      default_security_groups: [((director_security_group))]
       # All VMs need to be able to write to the blob store to create logs!
       default_iam_instance_profile: ((blobstore_bucket_ro_access_instance_profile))
     blobstore:

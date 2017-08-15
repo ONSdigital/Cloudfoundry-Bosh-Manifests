@@ -1,3 +1,3 @@
 ---
 # This file is interpolated to expand the variables
-bosh_lite_private_ip: ((dmz_az1_reserved_ip6))
+bosh_lite_private_ip: ((director_az1_reserved_ip6))
