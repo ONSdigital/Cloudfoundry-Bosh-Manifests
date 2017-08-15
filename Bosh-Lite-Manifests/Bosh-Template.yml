@@ -40,10 +40,9 @@ resource_pools:
     instance_type: m4.large
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
-    security_groups: [((director_security_group))]
+    security_groups: [((director_instance_security_group))]
     iam_instance_profile: ((director_bucket_access_instance_profile))
     elbs: [((director_elb))]
-    security_groups: [((director_security_group))]
 
 disk_pools:
 - name: disks
@@ -61,7 +60,6 @@ networks:
     static: ["((director_az1_static_start)) - ((director_az1_static_stop))"]
     cloud_properties:
       subnet: ((director_az1_subnet))
-      security_groups: [((director_security_group))]
 #- name: public
 #  type: vip
 
@@ -115,7 +113,6 @@ jobs:
         credentials_source: env_or_profile
         bucket_name: ((compiled_package_cache_bucket))
     default_ssh_options:
-      #gateway_host: ((bosh_lite_public_ip))
       gateway_host: ((director_dns))
     director:
       address: 127.0.0.1
@@ -178,10 +175,8 @@ jobs:
       port: 25777
 
 cloud_provider:
-  #mbus: "https://mbus:((mbus_password))@((bosh_lite_public_ip)):6868"
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
   ssh_tunnel:
-    #host: ((bosh_lite_public_ip))
     host: ((director_dns))
     port: 22
     user: vcap
