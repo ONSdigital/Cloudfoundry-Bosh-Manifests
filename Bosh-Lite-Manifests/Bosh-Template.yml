@@ -89,7 +89,7 @@ jobs:
       secret_access_key: ((bosh_aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
       region: ((aws_region))
-      default_security_groups: [((director_security_group))]
+      default_security_groups: [((director_instance_security_group))]
       # All VMs need to be able to write to the blob store to create logs!
       default_iam_instance_profile: ((blobstore_bucket_ro_access_instance_profile))
     blobstore:
