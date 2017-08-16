@@ -44,9 +44,9 @@ jobs:
 #     port: ((rds_cf_instance_port))
 #     rds: true
 #     databases:
-#     - { name: ccdb }
-#     - { name: diego }
-#     - { name: uaadb }
+#     - {name: ccdb}
+#     - {name: diego}
+#     - {name: uaadb}
 
 - name: nats
   instances: 3
@@ -76,7 +76,7 @@ jobs:
   - {name: etcd, release: cf}
   - {name: etcd_metrics_server, release: cf}
   - {name: metron_agent, release: cf}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
     static_ips:
@@ -105,7 +105,7 @@ jobs:
   stemcell: default
   templates:
   - {name: metron_agent, release: cf}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
     static_ips:
@@ -135,7 +135,7 @@ jobs:
 #  templates:
 #  - {name: postgres, release: cf}
 #  - {name: metron_agent, release: cf}
-#  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+#  - {name: consul_agent, release: cf}
 #  networks:
 #  - name: cf_private
 #    static_ips: [((private_az1_cidr_prefix)).201]
@@ -151,8 +151,8 @@ jobs:
   vm_type: small_ssh_general
   stemcell: default
   templates:
-  - { name: consul_agent, release: cf }
-  - { name: ssh_proxy, release: diego }
+  - {name: consul_agent, release: cf}
+  - {name: ssh_proxy, release: diego}
   networks:
   - name: cf_private
   update:
@@ -165,12 +165,12 @@ jobs:
   vm_type: large_ram_large_disk
   stemcell: default
   templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
-#  - { name: ssh_proxy, release: diego }
+  - {name: consul_agent, release: cf}
+  - {name: rep, release: diego}
+  - {name: garden, release: garden-runc}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: metron_agent, release: cf}
+#  - {name: ssh_proxy, release: diego}
   networks:
   - name: cf_private
   update:
@@ -189,11 +189,11 @@ jobs:
   vm_type: large_ram_large_disk_spot
   stemcell: default
   templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
+  - {name: consul_agent, release: cf}
+  - {name: rep, release: diego}
+  - {name: garden, release: garden-runc}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
   update:
@@ -212,11 +212,11 @@ jobs:
   vm_type: xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
+  - {name: consul_agent, release: cf}
+  - {name: rep, release: diego}
+  - {name: garden, release: garden-runc}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
   update:
@@ -235,11 +235,11 @@ jobs:
   vm_type: 2xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
+  - {name: consul_agent, release: cf}
+  - {name: rep, release: diego}
+  - {name: garden, release: garden-runc}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
   update:
@@ -258,11 +258,11 @@ jobs:
   vm_type: 4xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - { name: consul_agent, release: cf }
-  - { name: rep, release: diego }
-  - { name: garden, release: garden-runc }
-  - { name: cflinuxfs2-rootfs-setup, release: cflinuxfs2 }
-  - { name: metron_agent, release: cf }
+  - {name: consul_agent, release: cf}
+  - {name: rep, release: diego}
+  - {name: garden, release: garden-runc}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
   update:
@@ -281,16 +281,16 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - { name: consul_agent, release: cf }
-  - { name: bbs, release: diego }
-  - { name: auctioneer, release: diego }
-  - { name: stager, release: cf }
-  - { name: nsync, release: cf }
-  - { name: tps, release: cf }
-  - { name: cc_uploader, release: cf }
-  - { name: file_server, release: diego }
-  - { name: route_emitter, release: diego }
-  - { name: metron_agent, release: cf }
+  - {name: consul_agent, release: cf}
+  - {name: bbs, release: diego}
+  - {name: auctioneer, release: diego}
+  - {name: stager, release: cf}
+  - {name: nsync, release: cf}
+  - {name: tps, release: cf}
+  - {name: cc_uploader, release: cf}
+  - {name: file_server, release: diego}
+  - {name: route_emitter, release: diego}
+  - {name: metron_agent, release: cf}
   persistent_disk: 20480
   networks:
   - name: cf_private
@@ -315,7 +315,7 @@ jobs:
   - {name: cloud_controller_clock, release: cf}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf}
   - {name: go-buildpack, release: cf}
   - {name: binary-buildpack, release: cf}
   - {name: nodejs-buildpack, release: cf}
@@ -349,7 +349,7 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf}
   - {name: doppler, release: cf}
   - {name: metron_agent, release: cf}
   - {name: syslog_drain_binder, release: cf}
@@ -371,7 +371,7 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf}
   - {name: loggregator_trafficcontroller, release: cf}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
@@ -400,7 +400,7 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf}
   - {name: uaa, release: cf}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
@@ -456,7 +456,7 @@ jobs:
   templates:
   - {name: gorouter, release: cf}
   - {name: metron_agent, release: cf}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf}
   networks:
   - name: cf_private
     static_ips:
@@ -475,7 +475,7 @@ jobs:
   templates:
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf}
   properties:
     route_registrar:
       routes:
@@ -518,7 +518,7 @@ jobs:
   persistent_disk: 10240
   templates:
   - {name: rabbitmq-server, release: cf-rabbitmq}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf}
   networks:
   - name: cf_rabbitmq
   properties:
@@ -615,30 +615,30 @@ properties:
       - {destination: 192.169.0.0-255.255.255.255, protocol: all}
     - name: postgres_networks
       rules:
-      - {destination: ((rds_az1_cidr)), ports: '5432', protocol: tcp }
-      - {destination: ((rds_az2_cidr)), ports: '5432', protocol: tcp }
+      - {destination: ((rds_az1_cidr)), ports: '5432', protocol: tcp}
+      - {destination: ((rds_az2_cidr)), ports: '5432', protocol: tcp}
     - name: rabbitmq_networks
       rules:
-      - {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp }
-      - {destination: ((rabbitmq_az1_cidr)), ports: '8883', protocol: tcp }
-      - {destination: ((rabbitmq_az1_cidr)), ports: '5671', protocol: tcp }
-      - {destination: ((rabbitmq_az1_cidr)), ports: '5672', protocol: tcp }
-      - {destination: ((rabbitmq_az1_cidr)), ports: '61613', protocol: tcp }
-      - {destination: ((rabbitmq_az1_cidr)), ports: '61614', protocol: tcp }
-      - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp }
-      - {destination: ((rabbitmq_az1_cidr)), ports: '15674', protocol: tcp }
-      - {destination: ((rabbitmq_az2_cidr)), ports: '1883', protocol: tcp }
-      - {destination: ((rabbitmq_az2_cidr)), ports: '8883', protocol: tcp }
-      - {destination: ((rabbitmq_az2_cidr)), ports: '5671', protocol: tcp }
-      - {destination: ((rabbitmq_az2_cidr)), ports: '5672', protocol: tcp }
-      - {destination: ((rabbitmq_az2_cidr)), ports: '61613', protocol: tcp }
-      - {destination: ((rabbitmq_az2_cidr)), ports: '61614', protocol: tcp }
-      - {destination: ((rabbitmq_az2_cidr)), ports: '15672', protocol: tcp }
-      - {destination: ((rabbitmq_az2_cidr)), ports: '15674', protocol: tcp }
+      - {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '8883', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '5671', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '5672', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '61613', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '61614', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '15674', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '1883', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '8883', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '5671', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '5672', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '61613', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '61614', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '15672', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '15674', protocol: tcp}
     - name: redis_networks
       rules:
-      - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp }
-      - {destination: ((elasti_cache_az2_cidr)), ports: '6379', protocol: tcp }
+      - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp}
+      - {destination: ((elasti_cache_az2_cidr)), ports: '6379', protocol: tcp}
     staging_upload_password: ((staging_upload_password))
     staging_upload_user: staging_upload_user
   ccdb:
@@ -669,9 +669,9 @@ properties:
     ca_cert: ((internal_ca_crt))
     # server.dc1.$INTERNAL_DOMAIN
     server_cert: ((consul_server_crt))
+    server_key: ((consul_server_key))
     # agent.dc1.$INTERNAL_DOMAIN
     agent_cert: ((consul_agent_crt))
-    server_key: ((consul_server_key))
     agent_key: ((consul_agent_key))
   #databases:
   #  # RDS require uuid-ossp, pgcrypto, and citext
