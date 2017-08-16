@@ -162,7 +162,7 @@ jobs:
 - name: diego_cell
   instances: 2
   azs: [az1,az2]
-  vm_type: large_ram_large_disk_ssh
+  vm_type: large_ram_large_disk
   stemcell: default
   templates:
   - { name: consul_agent, release: cf }
