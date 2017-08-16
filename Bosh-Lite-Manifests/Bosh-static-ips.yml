@@ -1,3 +1,4 @@
 ---
 # This file is interpolated to expand the variables
+# This isn't an IPv6 address, but is merely the 6th reserved IP
 bosh_lite_private_ip: ((director_az1_reserved_ip6))
