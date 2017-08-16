@@ -26,7 +26,7 @@ update:
 
 jobs:
 #- name: backup-postgresql-databases-cf
-#  instances: ((configure_rds_cf_postgres_instance))
+#  instances: ((configure_cf_rds_postgres_instance))
 #  lifecycle: errand
 #  stemcell: default
 #  vm_type: small_general_blobstore_rw
@@ -37,11 +37,11 @@ jobs:
 #  - {name: postgresql-databases, release: postgresql-databases}
 #  properties:
 #   postgresql_databases:
-#     admin_username: ((rds_cf_instance_username))
-#     admin_password: ((rds_cf_instance_password))
+#     admin_username: ((cf_rds_instance_username))
+#     admin_password: ((cf_rds_instance_password))
 #     admin_database: postgres
-#     host: ((rds_cf_instance_dns))
-#     port: ((rds_cf_instance_port))
+#     host: ((cf_rds_instance_dns))
+#     port: ((cf_rds_instance_port))
 #     rds: true
 #     databases:
 #     - {name: ccdb}
@@ -119,7 +119,7 @@ jobs:
 # Should move to using RDS - but be careful, we currently login this box to allow us to
 # create the initial database for use by the RDS-broker
 #- name: postgres
-#  instances: ((required_non_rds_cf_postgres_instances))
+#  instances: ((required_non_cf_rds_postgres_instances))
 #  #instances: 1
 #  azs: [az1]
 #  persistent_disk: 10240
@@ -452,8 +452,8 @@ jobs:
       cc:
         client_secret: ((uaa_cc_client_secret))
     uaadb:
-      address: ((rds_cf_instance_dns))
-      port: ((rds_cf_instance_port))
+      address: ((cf_rds_instance_dns))
+      port: ((cf_rds_instance_port))
       databases:
       - {name: uaadb, tag: uaa}
       db_scheme: postgresql
@@ -643,8 +643,8 @@ properties:
     staging_upload_user: staging_upload_user
   ccdb:
     db_scheme: postgres
-    address: ((rds_cf_instance_dns))
-    port: ((rds_cf_instance_port))
+    address: ((cf_rds_instance_dns))
+    port: ((cf_rds_instance_port))
     databases:
     - {name: ccdb, tag: cc}
     roles:
@@ -951,8 +951,8 @@ properties:
       server_key: ""
       sql:
         db_driver: postgres
-        db_host: ((rds_cf_instance_dns))
-        db_port: ((rds_cf_instance_port))
+        db_host: ((cf_rds_instance_dns))
+        db_port: ((cf_rds_instance_port))
         db_username: diego
         db_password: ((diego_db_password))
         db_schema: diego
