@@ -639,7 +639,6 @@ properties:
     - name: redis_networks
       rules:
       - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp }
-    srv_api_uri: https://api.system.((domain_name))
     staging_upload_password: ((staging_upload_password))
     staging_upload_user: staging_upload_user
   ccdb:
