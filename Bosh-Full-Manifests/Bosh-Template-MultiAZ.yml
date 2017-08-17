@@ -76,7 +76,7 @@ jobs:
   - {name: etcd, release: cf}
   - {name: etcd_metrics_server, release: cf}
   - {name: metron_agent, release: cf}
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   networks:
   - name: cf_private
     static_ips:
@@ -105,7 +105,7 @@ jobs:
   stemcell: default
   templates:
   - {name: metron_agent, release: cf}
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   networks:
   - name: cf_private
     static_ips:
@@ -135,7 +135,7 @@ jobs:
 #  templates:
 #  - {name: postgres, release: cf}
 #  - {name: metron_agent, release: cf}
-#  - {name: consul_agent, release: cf}
+#  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
 #  networks:
 #  - name: cf_private
 #    static_ips: [((private_az1_cidr_prefix)).201]
@@ -151,7 +151,7 @@ jobs:
   vm_type: small_ssh_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: ssh_proxy, release: diego}
   networks:
   - name: cf_private
@@ -165,7 +165,7 @@ jobs:
   vm_type: large_ram_large_disk
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: rep, release: diego}
   - {name: garden, release: garden-runc}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
@@ -189,7 +189,7 @@ jobs:
   vm_type: large_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: rep, release: diego}
   - {name: garden, release: garden-runc}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
@@ -212,7 +212,7 @@ jobs:
   vm_type: xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: rep, release: diego}
   - {name: garden, release: garden-runc}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
@@ -235,7 +235,7 @@ jobs:
   vm_type: 2xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: rep, release: diego}
   - {name: garden, release: garden-runc}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
@@ -258,7 +258,7 @@ jobs:
   vm_type: 4xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: rep, release: diego}
   - {name: garden, release: garden-runc}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
@@ -281,7 +281,7 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: bbs, release: diego}
   - {name: auctioneer, release: diego}
   - {name: stager, release: cf}
@@ -315,7 +315,7 @@ jobs:
   - {name: cloud_controller_clock, release: cf}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: go-buildpack, release: cf}
   - {name: binary-buildpack, release: cf}
   - {name: nodejs-buildpack, release: cf}
@@ -349,7 +349,7 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: doppler, release: cf}
   - {name: metron_agent, release: cf}
   - {name: syslog_drain_binder, release: cf}
@@ -371,7 +371,7 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: loggregator_trafficcontroller, release: cf}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
@@ -400,7 +400,7 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: uaa, release: cf}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
@@ -456,7 +456,7 @@ jobs:
   templates:
   - {name: gorouter, release: cf}
   - {name: metron_agent, release: cf}
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   networks:
   - name: cf_private
     static_ips:
@@ -475,7 +475,7 @@ jobs:
   templates:
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   properties:
     route_registrar:
       routes:
@@ -518,7 +518,7 @@ jobs:
   persistent_disk: 10240
   templates:
   - {name: rabbitmq-server, release: cf-rabbitmq}
-  - {name: consul_agent, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   networks:
   - name: cf_rabbitmq
   properties:
