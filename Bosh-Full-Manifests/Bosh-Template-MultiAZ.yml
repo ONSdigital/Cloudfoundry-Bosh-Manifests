@@ -558,6 +558,8 @@ properties:
     default_app_disk_in_mb: 128
     internal_api_user: internal_user
     external_port: 9022
+    # This is being deprecated, but is still in use by Loggregator/Trafficcontroller (cf-release 270)
+    srv_api_uri: https://api.system.((domain_name))
     buildpacks:
       blobstore_type: fog
       buildpack_directory_key: ((buildpack_bucket))
