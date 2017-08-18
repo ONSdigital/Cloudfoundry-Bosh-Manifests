@@ -75,7 +75,6 @@ jobs:
   - {name: etcd_metrics_server, release: cf}
   - {name: metron_agent, release: cf}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
-  # - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   networks:
   - name: cf_private
     static_ips:
@@ -116,8 +115,6 @@ jobs:
       agent:
         mode: server
 
-# Should move to using RDS - but be careful, we currently login this box to allow us to
-# create the initial database for use by the RDS-broker
 #- name: postgres
 #  instances: ((required_non_cf_rds_postgres_instances))
 #  #instances: 1
@@ -162,7 +159,6 @@ jobs:
   - {name: garden, release: garden-runc}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
   - {name: metron_agent, release: cf}
-#  - {name: ssh_proxy, release: diego}
   networks:
   - name: cf_private
   update:

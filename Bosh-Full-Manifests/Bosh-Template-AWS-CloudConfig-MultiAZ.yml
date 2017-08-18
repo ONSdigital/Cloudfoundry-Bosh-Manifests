@@ -15,26 +15,6 @@ azs:
 
 
 networks:
-#- name: cf_dmz
-#  type: manual
-#  subnets:
-#  - range: ((dmz_az1_cidr))
-#    gateway: ((dmz_az1_default_route))
-#    dns: [((dns_ip))]
-#    az: az1
-#    reserved: ["((dmz_az1_reserved_start)) - ((dmz_az1_reserved_stop))"]
-#    static: ["((dmz_az1_static_start)) - ((dmz_az1_static_stop))"]
-#    cloud_properties:
-#      subnet: ((dmz_az1_subnet))
-#  - range: ((dmz_az2_cidr))
-#    gateway: ((dmz_az2_default_route))
-#    dns: [((dns_ip))]
-#    az: az2
-#    reserved: ["((dmz_az2_reserved_start)) - ((dmz_az2_reserved_stop))"]
-#    static: ["((dmz_az2_static_start)) - ((dmz_az2_static_stop))"]
-#    cloud_properties:
-#      subnet: ((dmz_az2_subnet))
-
 - name: cf_private
   type: manual
   subnets:
@@ -46,6 +26,7 @@ networks:
     static: ["((private_az1_static_start)) - ((private_az1_static_stop))"]
     cloud_properties:
       subnet: ((private_az1_subnet))
+      security_groups: [((private_security_group))]
   - range: ((private_az2_cidr))
     gateway: ((private_az2_default_route))
     dns: [((dns_ip))]
@@ -54,6 +35,7 @@ networks:
     static: ["((private_az2_static_start)) - ((private_az2_static_stop))"]
     cloud_properties:
       subnet: ((private_az2_subnet))
+      security_groups: [((private_security_group))]
   - range: ((private_az3_cidr))
     gateway: ((private_az3_default_route))
     dns: [((dns_ip))]
@@ -62,7 +44,7 @@ networks:
     static: ["((private_az3_static_start)) - ((private_az3_static_stop))"]
     cloud_properties:
       subnet: ((private_az3_subnet))
-
+      security_groups: [((private_security_group))]
 - name: cf_rabbitmq
   type: manual
   subnets:
@@ -72,21 +54,16 @@ networks:
     az: az1
     reserved: ["((rabbitmq_az1_reserved_start)) - ((rabbitmq_az1_reserved_stop))"]
     cloud_properties:
-      security_groups: [((rabbitmq_security_group))]
       subnet: ((rabbitmq_az1_subnet))
+      security_groups: [((rabbitmq_security_group))]
   - range: ((rabbitmq_az2_cidr))
     gateway: ((rabbitmq_az2_default_route))
     dns: [((dns_ip))]
     az: az2
     reserved: ["((rabbitmq_az2_reserved_start)) - ((rabbitmq_az2_reserved_stop))"]
     cloud_properties:
-      security_groups: [((rabbitmq_security_group))]
       subnet: ((rabbitmq_az2_subnet))
-
-- name: elastic
-  type: vip
-  cloud_properties: {}
-
+      security_groups: [((rabbitmq_security_group))]
 
 vm_types:
 - name: micro_general

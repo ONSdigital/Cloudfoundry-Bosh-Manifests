@@ -6,22 +6,9 @@ azs:
 - name: az1
   cloud_properties:
     availability_zone: ((aws_availability_zone1))
-- name: az2
-  cloud_properties:
-    availability_zone: ((aws_availability_zone2))
+
 
 networks:
-- name: cf_dmz
-  type: manual
-  subnets:
-  - range: ((dmz_az1_cidr))
-    gateway: ((dmz_az1_default_route))
-    dns: [((dns_ip))]
-    az: az1
-    reserved: ["((dmz_az1_reserved_start)) - ((dmz_az1_reserved_stop))"]
-    static: ["((dmz_az1_static_start)) - ((dmz_az1_static_stop))"]
-    cloud_properties:
-      subnet: ((dmz_az1_subnet))
 - name: cf_private
   type: manual
   subnets:
@@ -33,6 +20,7 @@ networks:
     static: ["((private_az1_static_start)) - ((private_az1_static_stop))"]
     cloud_properties:
       subnet: ((private_az1_subnet))
+      security_groups: [((private_security_group))]
 - name: cf_rabbitmq
   type: manual
   subnets:
@@ -43,10 +31,7 @@ networks:
     reserved: ["((rabbitmq_az1_reserved_start)) - ((rabbitmq_az1_reserved_stop))"]
     cloud_properties:
       subnet: ((rabbitmq_az1_subnet))
-- name: elastic
-  type: vip
-  cloud_properties: {}
-
+      security_groups: [((rabbitmq_security_group))]
 
 vm_types:
 - name: micro_general
@@ -66,7 +51,7 @@ vm_types:
 - name: small_ssh_general
   cloud_properties:
     instance_type: t2.small
-    elbs: [((cf_ssh_elb))
+    elbs: [((cf_ssh_elb))]
     security_groups: [((cf_ssh_security_group))]
 - name: small_router_general
   cloud_properties:
@@ -74,7 +59,7 @@ vm_types:
     lb_target_groups:
     - ((application_elb_target_group80))
     - ((application_elb_target_group443))
-    security_groups: [((router_security_group))]
+    security_groups: [((router_security_group)),((private_security_group))]
 - name: medium_general
   cloud_properties:
     instance_type: t2.medium
@@ -84,18 +69,10 @@ vm_types:
     lb_target_groups:
     - ((application_elb_target_group80))
     - ((application_elb_target_group443))
-    security_groups: [((router_security_groups))]
+    security_groups: [((router_security_group)),((private_security_group))]
 - name: medium_cc_general
   cloud_properties:
     instance_type: t2.medium
-    iam_instance_profile: ((cc_bucket_access_instance_profile))
-- name: large_cc_memory
-  network: cf_private
-  stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    version: latest
-  cloud_properties:
-    instance_type: m4.large
     iam_instance_profile: ((cc_bucket_access_instance_profile))
 - name: large_compute
   cloud_properties:
@@ -235,4 +212,4 @@ compilation:
     #spot_bid_price: 0.2
     #spot_ondemand_fallback: true
     security_groups: [((private_security_group))]
-    iam_instance_profile: ((cc_bosh_compile_nodes_bucket_access_instance_profile))
+    iam_instance_profile: ((compile_nodes_bucket_access_instance_profile))
