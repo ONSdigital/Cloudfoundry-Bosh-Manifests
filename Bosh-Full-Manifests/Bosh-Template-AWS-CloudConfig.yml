@@ -74,7 +74,7 @@ vm_types:
     lb_target_groups:
     - ((application_elb_target_group80))
     - ((application_elb_target_group443))
-    security_groups: [((lb_security_group))]
+    security_groups: [((router_security_group))]
 - name: medium_general
   cloud_properties:
     instance_type: t2.medium
@@ -84,7 +84,7 @@ vm_types:
     lb_target_groups:
     - ((application_elb_target_group80))
     - ((application_elb_target_group443))
-    security_groups: [((lb_security_groups))]
+    security_groups: [((router_security_groups))]
 - name: medium_cc_general
   cloud_properties:
     instance_type: t2.medium

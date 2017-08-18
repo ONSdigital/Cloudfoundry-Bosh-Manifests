@@ -45,7 +45,6 @@ networks:
     reserved: ["((private_az1_reserved_start)) - ((private_az1_reserved_stop))"]
     static: ["((private_az1_static_start)) - ((private_az1_static_stop))"]
     cloud_properties:
-      security_groups: [((private_security_group))]
       subnet: ((private_az1_subnet))
   - range: ((private_az2_cidr))
     gateway: ((private_az2_default_route))
@@ -54,7 +53,6 @@ networks:
     reserved: ["((private_az2_reserved_start)) - ((private_az2_reserved_stop))"]
     static: ["((private_az2_static_start)) - ((private_az2_static_stop))"]
     cloud_properties:
-      security_groups: [((private_security_group))]
       subnet: ((private_az2_subnet))
   - range: ((private_az3_cidr))
     gateway: ((private_az3_default_route))
@@ -63,7 +61,6 @@ networks:
     reserved: ["((private_az3_reserved_start)) - ((private_az3_reserved_stop))"]
     static: ["((private_az3_static_start)) - ((private_az3_static_stop))"]
     cloud_properties:
-      security_groups: [((private_security_group))]
       subnet: ((private_az3_subnet))
 
 - name: cf_rabbitmq
@@ -117,7 +114,7 @@ vm_types:
     lb_target_groups:
     - ((application_elb_target_group80))
     - ((application_elb_target_group443))
-    security_groups: [((lb_security_group)),((dmz_security_group))]
+    security_groups: [((router_security_group)),((private_security_group))]
 - name: medium_general
   cloud_properties:
     instance_type: t2.medium
@@ -127,7 +124,7 @@ vm_types:
     lb_target_groups:
     - ((application_elb_target_group80))
     - ((application_elb_target_group443))
-    security_groups: [((lb_security_group)),((dmz_security_group))]
+    security_groups: [((router_security_group)),((private_security_group))]
 - name: medium_cc_general
   cloud_properties:
     instance_type: t2.medium
