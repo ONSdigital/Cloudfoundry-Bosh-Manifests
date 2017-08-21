@@ -29,10 +29,10 @@ jobs:
 #  instances: ((configure_cf_rds_postgres_instance))
 #  lifecycle: errand
 #  stemcell: default
-#  vm_type: small_general_blobstore_rw
+#  vm_type: small_general_blobstore_backup
 #  networks:
 #  - name: cf_private
-#  azs: [az1]
+#  azs: [az1,az2]
 #  templates:
 #  - {name: postgresql-databases, release: postgresql-databases}
 #  properties:

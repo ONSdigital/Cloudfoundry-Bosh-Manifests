@@ -37,22 +37,22 @@ vm_types:
 - name: micro_general
   cloud_properties:
     instance_type: t2.micro
-- name: micro_general_blobstore_rw
+- name: micro_general_blobstore_backup
   cloud_properties:
     instance_type: t2.micro
-    iam_instance_profile: ((blobstore_bucket_rw_access_instance_profile))
+    iam_instance_profile: ((blobstore_blobstore_bucket_access_role))
 - name: small_general
   cloud_properties:
     instance_type: t2.small
-- name: small_general_blobstore_rw
+- name: small_general_blobstore_backup
   cloud_properties:
     instance_type: t2.small
-    iam_instance_profile: ((blobstore_bucket_rw_access_instance_profile))
+    iam_instance_profile: ((blobstore_blobstore_bucket_access_role))
 - name: small_ssh_general
   cloud_properties:
     instance_type: t2.small
     elbs: [((cf_ssh_elb))]
-    security_groups: [((cf_ssh_security_group))]
+    security_groups: [((cf_ssh_instance_security_group)),((private_security_group))]
 - name: small_router_general
   cloud_properties:
     instance_type: t2.small

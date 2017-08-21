@@ -25,28 +25,49 @@ update:
   update_watch_time: 5000-600000
 
 jobs:
-#- name: backup-postgresql-databases-cf
-#  instances: ((configure_cf_rds_postgres_instance))
-#  lifecycle: errand
-#  stemcell: default
-#  vm_type: small_general_blobstore_rw
-#  networks:
-#  - name: cf_private
-#  azs: [az1]
-#  templates:
-#  - {name: postgresql-databases, release: postgresql-databases}
-#  properties:
-#   postgresql_databases:
-#     admin_username: ((cf_rds_instance_username))
-#     admin_password: ((cf_rds_instance_password))
-#     admin_database: postgres
-#     host: ((cf_rds_instance_dns))
-#     port: ((cf_rds_instance_port))
-#     rds: true
-#     databases:
-#     - {name: ccdb}
-#     - {name: diego}
-#     - {name: uaadb}
+- name: backup-postgresql-databases-apps
+  instances: ((configure_apps_rds_postgres_instance))
+  lifecycle: errand
+  stemcell: default
+  vm_type: small_general_blobstore_backup
+  networks:
+  - name: cf_private
+  azs: [az1,az2]
+  templates:
+  - {name: postgresql-databases, release: postgresql-databases}
+  properties:
+   postgresql_databases:
+     admin_username: ((apps_rds_instance_username))
+     admin_password: ((apps_rds_instance_password))
+     admin_database: postgres
+     host: ((apps_rds_instance_dns))
+     port: ((apps_rds_instance_port))
+     rds: true
+     databases:
+     - {name: rds_broker}
+
+- name: backup-postgresql-databases-cf
+  instances: ((configure_cf_rds_postgres_instance))
+  lifecycle: errand
+  stemcell: default
+  vm_type: small_general_blobstore_backup
+  networks:
+  - name: cf_private
+  azs: [az1,az2]
+  templates:
+  - {name: postgresql-databases, release: postgresql-databases}
+  properties:
+   postgresql_databases:
+     admin_username: ((cf_rds_instance_username))
+     admin_password: ((cf_rds_instance_password))
+     admin_database: postgres
+     host: ((cf_rds_instance_dns))
+     port: ((cf_rds_instance_port))
+     rds: true
+     databases:
+     - {name: ccdb}
+     - {name: diego}
+     - {name: uaadb}
 
 - name: nats
   instances: 3
@@ -1019,6 +1040,10 @@ properties:
   cf:
     api_url: https://api.system.((domain_name))
     domain: ((domain_name))
+  postgresql_databases:
+     bucket_name: ((postgre_sql_bucket))
+     credentials_source: env_or_profile
+     region: ((aws_region))
   rabbitmq-broker:
     route: rabbitbroker
     cc_endpoint: https://api.system.((domain_name))

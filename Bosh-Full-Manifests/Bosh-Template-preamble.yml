@@ -29,7 +29,7 @@ jobs:
   instances: ((configure_apps_rds_postgres_instance))
   lifecycle: errand
   stemcell: default
-  vm_type: small_general_blobstore_rw
+  vm_type: small_general_blobstore_backup_rw
   networks:
   - name: cf_private
   azs: [az1]
@@ -53,7 +53,7 @@ jobs:
   instances: ((configure_cf_rds_postgres_instance))
   lifecycle: errand
   stemcell: default
-  vm_type: small_general_blobstore_rw
+  vm_type: small_general_blobstore_backup_rw
   networks:
   - name: cf_private
   azs: [az1]
