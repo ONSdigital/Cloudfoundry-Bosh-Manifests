@@ -91,7 +91,7 @@ jobs:
       region: ((aws_region))
       default_security_groups: [((director_instance_security_group))]
       # All VMs need to be able to write to the blob store to create logs!
-      default_iam_instance_profile: ((blobstore_bucket_rw_access_instance_profile))
+      default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
     blobstore:
       #address: ((bosh_lite_private_ip))
       provider: s3
