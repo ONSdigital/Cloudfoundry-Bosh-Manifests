@@ -40,14 +40,14 @@ vm_types:
 - name: micro_general_blobstore_backup
   cloud_properties:
     instance_type: t2.micro
-    iam_instance_profile: ((blobstore_blobstore_bucket_access_role))
+    iam_instance_profile: ((blobstore_backup_bucket_access_instance_profile))
 - name: small_general
   cloud_properties:
     instance_type: t2.small
 - name: small_general_blobstore_backup
   cloud_properties:
     instance_type: t2.small
-    iam_instance_profile: ((blobstore_blobstore_bucket_access_role))
+    iam_instance_profile: ((blobstore_backup_bucket_access_instance_profile))
 - name: small_ssh_general
   cloud_properties:
     instance_type: t2.small
