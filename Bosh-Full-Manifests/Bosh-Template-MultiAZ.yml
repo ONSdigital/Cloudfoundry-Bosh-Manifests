@@ -1041,7 +1041,7 @@ properties:
     api_url: https://api.system.((domain_name))
     domain: ((domain_name))
   postgresql_databases:
-     bucket_name: ((postgre_sql_bucket))
+     bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
      region: ((aws_region))
   rabbitmq-broker:
