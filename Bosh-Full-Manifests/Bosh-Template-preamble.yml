@@ -42,9 +42,9 @@ jobs:
      admin_database: postgres
      host: ((apps_rds_instance_dns))
      port: ((apps_rds_instance_port))
-     #bucket_name:
-     #credentials_source: env_or_profile
-     #region: ((aws_region))
+     bucket_name: ((backup_bucket))
+     credentials_source: env_or_profile
+     region: ((aws_region))
      rds: true
      databases:
      - { name: rds_broker, extensions: [pgcrypto] }
@@ -66,9 +66,9 @@ jobs:
      admin_database: postgres
      host: ((cf_rds_instance_dns))
      port: ((cf_rds_instance_port))
-     #bucket_name:
-     #credentials_source: env_or_profile
-     #region: ((aws_region))
+     bucket_name: ((backup_bucket))
+     credentials_source: env_or_profile
+     region: ((aws_region))
      rds: true
      databases:
      # restore_blob

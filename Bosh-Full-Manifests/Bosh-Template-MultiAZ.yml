@@ -25,26 +25,28 @@ update:
   update_watch_time: 5000-600000
 
 jobs:
-- name: backup-postgresql-databases-apps
-  instances: ((configure_apps_rds_postgres_instance))
-  lifecycle: errand
-  stemcell: default
-  vm_type: small_general_blobstore_backup
-  networks:
-  - name: cf_private
-  azs: [az1,az2]
-  templates:
-  - {name: postgresql-databases, release: postgresql-databases}
-  properties:
-   postgresql_databases:
-     admin_username: ((apps_rds_instance_username))
-     admin_password: ((apps_rds_instance_password))
-     admin_database: postgres
-     host: ((apps_rds_instance_dns))
-     port: ((apps_rds_instance_port))
-     rds: true
-     databases:
-     - {name: rds_broker}
+# This one would only dump the rds_broker database, so its relatively pointless as it stands.  The backup job
+# would need to be adjusted to iterate over the list of databases and dump each one in turn (TODO)
+#- name: backup-postgresql-databases-apps
+#  instances: ((configure_apps_rds_postgres_instance))
+#  lifecycle: errand
+#  stemcell: default
+#  vm_type: small_general_blobstore_backup
+#  networks:
+#  - name: cf_private
+#  azs: [az1,az2]
+#  templates:
+#  - {name: postgresql-databases, release: postgresql-databases}
+#  properties:
+#   postgresql_databases:
+#     admin_username: ((apps_rds_instance_username))
+#     admin_password: ((apps_rds_instance_password))
+#     admin_database: postgres
+#     host: ((apps_rds_instance_dns))
+#     port: ((apps_rds_instance_port))
+#     rds: true
+#     databases:
+#     - {name: all}
 
 - name: backup-postgresql-databases-cf
   instances: ((configure_cf_rds_postgres_instance))
