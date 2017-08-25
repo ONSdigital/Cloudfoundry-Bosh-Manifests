@@ -581,6 +581,7 @@ properties:
     default_app_disk_in_mb: 128
     internal_api_user: internal_user
     external_port: 9022
+    tls_port: 9023
     # This has been deprecated, cf-release 271
     #srv_api_uri: https://api.system.((domain_name))
     internal_service_hostname: cloudcontroller-ng.((internal_domain))
