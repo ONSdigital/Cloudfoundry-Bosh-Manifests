@@ -581,8 +581,9 @@ properties:
     default_app_disk_in_mb: 128
     internal_api_user: internal_user
     external_port: 9022
-    # This is being deprecated, but is still in use by Loggregator/Trafficcontroller (cf-release 270)
-    srv_api_uri: https://api.system.((domain_name))
+    # This has been deprecated, cf-release 271
+    #srv_api_uri: https://api.system.((domain_name))
+    internal_service_hostname: cloudcontroller-ng.((internal_domain))
     buildpacks:
       blobstore_type: fog
       buildpack_directory_key: ((buildpack_bucket))
@@ -759,6 +760,10 @@ properties:
         # trafficcontroller
         cert: ((trafficcontroller_crt))
         key: ((trafficcontroller_key))
+      cc_trafficcontroller:
+        # cc_trafficcontroller
+        cert: ((cc_trafficcontroller_crt))
+        key: ((cc_trafficcontroller_key))
       metron:
         # metron
         cert: ((metron_crt))
