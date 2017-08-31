@@ -748,7 +748,7 @@ properties:
       client_secret: ((uaa_doppler_client_secret))
     etcd:
       require_ssl: true
-      machines: ["cf-etcd.service.((internal_domain))"]:
+      machines: ["cf-etcd.service.((internal_domain))"]
       ca_cert: ((internal_ca_crt))
     tls:
       ca_cert: ((internal_ca_crt))
