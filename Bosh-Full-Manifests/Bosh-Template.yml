@@ -82,7 +82,11 @@ jobs:
     etcd_metrics_server:
       nats:
 <<<<<<< HEAD
+<<<<<<< HEAD
         #machines: [((nats_az1_ip1))]
+=======
+        machines: ["cf-etcd.service.((internal_domain))"]
+>>>>>>> parent of f6d0c2e... Use IPs for etcd & NATs
 =======
         machines: ["cf-etcd.service.((internal_domain))"]
 >>>>>>> parent of f6d0c2e... Use IPs for etcd & NATs
