@@ -81,19 +81,7 @@ jobs:
     - ((etcd_az1_ip1))
     etcd_metrics_server:
       nats:
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         #machines: [((nats_az1_ip1))]
-=======
-        machines: ["cf-etcd.service.((internal_domain))"]
->>>>>>> parent of f6d0c2e... Use IPs for etcd & NATs
-=======
-        machines: ["cf-etcd.service.((internal_domain))"]
->>>>>>> parent of f6d0c2e... Use IPs for etcd & NATs
-=======
-        machines: ["cf-etcd.service.((internal_domain))"]
->>>>>>> parent of f6d0c2e... Use IPs for etcd & NATs
         password: ((nats_password))
         username: nats
   properties:
