@@ -81,7 +81,7 @@ jobs:
     - ((etcd_az1_ip1))
     etcd_metrics_server:
       nats:
-        machines: [((nats_az1_ip1))]
+        #machines: [((nats_az1_ip1))]
         password: ((nats_password))
         username: nats
   properties:
@@ -566,7 +566,7 @@ properties:
     tls_port: 9023
     # This has been deprecated, cf-release 271
     #srv_api_uri: https://api.system.((domain_name))
-    internal_service_hostname: cloudcontroller-ng.((internal_domain))
+    internal_service_hostname: cloud-controller-ng.service.((internal_domain))
     buildpacks:
       blobstore_type: fog
       buildpack_directory_key: ((buildpack_bucket))
