@@ -682,7 +682,7 @@ properties:
     cluster:
     - name: etcd
       instances: 1
-    machines: [((etcd_az1_ip1))]
+    machines: ["cf-etcd.service.((internal_domain))"]
     peer_require_ssl: true
     require_ssl: true
     ca_cert: ((internal_ca_crt))
@@ -716,7 +716,7 @@ properties:
       client_secret: ((uaa_doppler_client_secret))
     etcd:
       require_ssl: true
-      machines: [((etcd_az1_ip1))]
+      machines: [cf-etcd.service.((internal_domain))]
       ca_cert: ((internal_ca_crt))
     tls:
       ca_cert: ((internal_ca_crt))
@@ -758,7 +758,8 @@ properties:
     protocols:
     - udp
   nats:
-    machines: [((nats_az1_ip1))]
+    machines:
+    - ((nats_az1_ip1))
     password: ((nats_password))
     port: 4222
     user: nats
@@ -941,7 +942,7 @@ properties:
         passphrase: ((bbs_password))
       ca_cert: ""
       etcd:
-        machines: [((etcd_az1_ip1))]
+        machines: ["cf-etcd.service.((internal_domain))"]
         ca_cert: ((internal_ca_crt))
         # clientName
         client_cert: ((cf_etcd_client_crt))
@@ -981,7 +982,8 @@ properties:
         client_key: ""
         require_ssl: false
       nats:
-        machines: [((nats_az1_ip1))]
+        machines:
+        - ((nats_az1_ip1))
         password: ((nats_password))
         port: 4222
         user: nats
