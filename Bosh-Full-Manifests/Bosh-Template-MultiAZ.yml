@@ -109,7 +109,6 @@ jobs:
   properties:
     etcd_metrics_server:
       nats:
-        #machines: [((nats_az1_ip1)),((nats_az2_ip1)),((nats_az3_ip1))]
         password: ((nats_password))
         username: nats
     metron_agent:
@@ -715,7 +714,7 @@ properties:
     cluster:
     - name: etcd
       instances: 1
-    machines: [((etcd_az1_ip1)),((etcd_az2_ip1)),((etcd_az3_ip1))]
+    machines: ["cf-etcd.service.((internal_domain))"]
     peer_require_ssl: true
     require_ssl: true
     ca_cert: ((internal_ca_crt))
@@ -749,7 +748,7 @@ properties:
       client_secret: ((uaa_doppler_client_secret))
     etcd:
       require_ssl: true
-      machines: [((etcd_az1_ip1)),((etcd_az2_ip1)),((etcd_az3_ip1))]
+      machines: ["cf-etcd.service.((internal_domain))"]:
       ca_cert: ((internal_ca_crt))
     tls:
       ca_cert: ((internal_ca_crt))
@@ -975,7 +974,7 @@ properties:
         passphrase: ((bbs_password))
       ca_cert: ""
       etcd:
-        machines: [((etcd_az1_ip1)),((etcd_az2_ip1)),((etcd_az3_ip1))]
+        machines: ["cf-etcd.service.((internal_domain))"]
         ca_cert: ((internal_ca_crt))
         # clientName
         client_cert: ((cf_etcd_client_crt))
