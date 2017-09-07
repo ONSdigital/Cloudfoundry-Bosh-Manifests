@@ -834,7 +834,7 @@ properties:
       userids_enabled: true
       users:
       - name: admin
-        password: PASSWORD
+        password: ((full_admin_password))
         groups:
         - scim.write
         - scim.read
