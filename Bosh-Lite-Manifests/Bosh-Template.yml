@@ -8,8 +8,8 @@ releases:
   # can use file:// URLs - then SHA1 not required
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=262.3
-  sha1: 31d2912d4320ce6079c190f2218c6053fd1e920f
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=263
+  sha1: cb3f6a1f1880b2883e04bd6a5d6fd0cb9af87fa1
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=66
@@ -21,10 +21,6 @@ resource_pools:
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     # Sometimes the version stays the same but the hash changes
-    # https://bosh.io/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    #
-    # The following error generally indicates a full stemcell is being used rather than the 'light' version. Prior to 2017/05/11
-    # the 'light' stemcell was always downloaded regardless of the link not including 'light' in its name
     #
     # The following error occurs when a normal stemcell is used:
     # creating stemcell (bosh-aws-xen-hvm-ubuntu-trusty-go_agent 3363.20):
@@ -32,10 +28,10 @@ resource_pools:
     #
     # Despite not having 'light' in the URL, this always seems to download the 'light' version' (2017/05/15)
     #
-    # Currently, this stemcell can't be reached from this URL, so we use the direct AWS S3 URL
-    #url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3431.13
-    url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
-    sha1: 5e4a5e921d7c109ccdcfabcd7fff9f43cfabfb27
+    # If the stemcell can't be reached from the bosh.io URL we can use the direct AWS S3 URL
+    #url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3445.7
+    sha1: ad82e910dc07b1ef4fe475776e11adbc83470538
   cloud_properties:
     instance_type: m4.large
     ephemeral_disk: {size: 50_000, type: gp2}
