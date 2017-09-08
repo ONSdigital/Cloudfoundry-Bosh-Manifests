@@ -19,7 +19,6 @@ resource_pools:
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     # https://bosh.io/stemcells/
-    #
     # Sometimes the version stays the same but the hash changes
     #
     # The following error occurs when a normal stemcell is used:
@@ -28,7 +27,7 @@ resource_pools:
     #
     # Despite not having 'light' in the URL, this always seems to download the 'light' version' (2017/05/15)
     #
-    # If the stemcell can't be reached from the bosh.io URL we can use the direct AWS S3 URL:
+    # If the stemcell can't be reached from the bosh.io URL we can use the direct AWS S3 URL
     #url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
     url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3445.7
     sha1: ad82e910dc07b1ef4fe475776e11adbc83470538
