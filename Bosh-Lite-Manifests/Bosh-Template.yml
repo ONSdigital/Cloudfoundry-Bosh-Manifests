@@ -6,8 +6,8 @@ releases:
   # can use file:// URLs - then SHA1 not required
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=263
-  sha1: cb3f6a1f1880b2883e04bd6a5d6fd0cb9af87fa1
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=263.1.0
+  sha1: a642387eb375a5241f237d221699768a1f0c0393
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=66
