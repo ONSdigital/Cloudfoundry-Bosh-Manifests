@@ -16,6 +16,10 @@ releases:
 resource_pools:
 - name: bosh_vm
   network: cf_director
+  env:
+    bosh:
+      # c1oudc0w
+      password: $6$GiQp7XJ3AYAnpUpZ$zGUSoI6OATmb4ff0k60ZFIk/pMNypGxqMoihspINUAS8Fk6p0Dz/PIMzFfguZIbLSeJPB5PkNMCNzkO4yJqp8/
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     # https://bosh.io/stemcells/
