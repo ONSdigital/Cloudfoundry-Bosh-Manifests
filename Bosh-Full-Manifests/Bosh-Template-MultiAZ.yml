@@ -5,7 +5,6 @@
 name: ((bosh_deployment))
 
 releases:
-- {name: bosh-hm-forwarder, version: latest}
 - {name: cf, version: latest}
 - {name: cf-rabbitmq, version: latest}
 - {name: cflinuxfs2, version: latest}
@@ -78,7 +77,6 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: metron_agent, release: cf}
   - {name: nats, release: cf}
   networks:
@@ -99,7 +97,6 @@ jobs:
   persistent_disk: 10240
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: etcd, release: cf}
   - {name: etcd_metrics_server, release: cf}
   - {name: metron_agent, release: cf}
@@ -129,7 +126,6 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: metron_agent, release: cf}
   networks:
@@ -177,7 +173,6 @@ jobs:
   vm_type: small_ssh_general
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: metron_agent, release: cf}
   - {name: ssh_proxy, release: diego}
@@ -193,7 +188,6 @@ jobs:
   vm_type: large_ram_large_disk
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
   - {name: garden, release: garden-runc}
@@ -218,7 +212,6 @@ jobs:
   vm_type: large_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
   - {name: garden, release: garden-runc}
@@ -242,7 +235,6 @@ jobs:
   vm_type: xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
   - {name: garden, release: garden-runc}
@@ -266,7 +258,6 @@ jobs:
   vm_type: 2xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
   - {name: garden, release: garden-runc}
@@ -290,7 +281,6 @@ jobs:
   vm_type: 4xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
   - {name: garden, release: garden-runc}
@@ -316,7 +306,6 @@ jobs:
   templates:
   - {name: auctioneer, release: diego}
   - {name: bbs, release: diego}
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: cc_uploader, release: cf}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: file_server, release: diego}
@@ -344,7 +333,6 @@ jobs:
   vm_type: medium_cc_general
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: cloud_controller_ng, release: cf}
   - {name: cloud_controller_worker, release: cf}
   - {name: cloud_controller_clock, release: cf}
@@ -384,7 +372,6 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: doppler, release: cf}
   - {name: metron_agent, release: cf}
@@ -407,7 +394,6 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: loggregator_trafficcontroller, release: cf}
   - {name: metron_agent, release: cf}
@@ -437,7 +423,6 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
@@ -492,7 +477,6 @@ jobs:
   vm_type: small_router_general
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: gorouter, release: cf}
   - {name: metron_agent, release: cf}
@@ -512,7 +496,6 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: metron_agent, release: cf}
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
@@ -538,7 +521,6 @@ jobs:
   stemcell: default
   persistent_disk: 10240
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: metron_agent, release: cf}
   - {name: rabbitmq-broker, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
@@ -560,7 +542,6 @@ jobs:
   stemcell: default
   persistent_disk: 10240
   templates:
-  - {name: boshhmforwarder, release: bosh-hm-forwarder}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: metron_agent, release: cf}
   - {name: rabbitmq-server, release: cf-rabbitmq}
