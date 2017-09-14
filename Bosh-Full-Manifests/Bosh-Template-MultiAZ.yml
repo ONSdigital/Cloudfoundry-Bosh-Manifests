@@ -1160,7 +1160,7 @@ properties:
     #  key:
     #  cacert:
   smoke_tests:
-    api: https://api.system.((domain_name)
+    api: https://api.system.((domain_name))
     apps_domain: [apps.((domain_name))]
     user: smoke_tester
     password: ((smoke_tester_password))
