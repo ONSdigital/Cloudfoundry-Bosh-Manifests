@@ -6,8 +6,9 @@ name: ((bosh_deployment))
 
 releases:
 - {name: cf, version: latest}
-- {name: cf-rabbitmq, version: latest}
 - {name: cflinuxfs2, version: latest}
+- {name: cf-rabbitmq, version: latest}
+- {name: cf-smoke-tests, version: latest}
 - {name: diego, version: latest}
 - {name: garden-runc, version: latest}
 - {name: postgresql-databases, version: latest}
@@ -70,6 +71,48 @@ jobs:
      - {name: ccdb}
      - {name: diego}
      - {name: uaadb}
+
+- name: cf-smoke-tests-az1
+  instances: 1
+  lifecycle: errand
+  stemcell: default
+  vm_type: micro_general
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: smoke_tests, release: cf-smoke-tests}
+  properties:
+    smoke_tests:
+      etcd_ip_address: ((etcd_az1_ip1))
+
+- name: cf-smoke-tests-az2
+  instances: 1
+  lifecycle: errand
+  stemcell: default
+  vm_type: micro_general
+  networks:
+  - name: cf_private
+  azs: [az2]
+  templates:
+  - {name: smoke_tests, release: cf-smoke-tests}
+  properties:
+    smoke_tests:
+      etcd_ip_address: ((etcd_az1_ip1))
+
+- name: cf-smoke-tests-az3
+  instances: 1
+  lifecycle: errand
+  stemcell: default
+  vm_type: micro_general
+  networks:
+  - name: cf_private
+  azs: [az3]
+  templates:
+  - {name: smoke_tests, release: cf-smoke-tests}
+  properties:
+    smoke_tests:
+      etcd_ip_address: ((etcd_az1_ip1))
 
 - name: nats
   instances: 3
@@ -880,6 +923,11 @@ properties:
         - doppler.firehose
         - routing.router_groups.read
         - routing.router_groups.write
+      - name: smoke_tester
+        password: ((smoke_tester_password))
+        groups:
+        - openid
+        - cloud_controller.admin
     jwt:
       policy:
         active_key_id: key-id-1
@@ -1111,3 +1159,11 @@ properties:
     #  cert:
     #  key:
     #  cacert:
+  smoke_tests:
+    api: https://api.system.((domain_name)
+    apps_domain: [apps.((domain_name))]
+    user: smoke_tester
+    password: ((smoke_tester_password))
+    org: SmokeTest_Org
+    space: SmokeTest_Space
+    backend: diego

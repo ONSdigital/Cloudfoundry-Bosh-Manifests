@@ -231,13 +231,14 @@ vm_types:
     spot_ondemand_fallback: true
 
 compilation:
-  workers: 10
+  workers: 16
   network: cf_private
   reuse_compilation_vms: true
   az: az1
   cloud_properties:
     # Using large VMs decreases initial deployment time massively
-    instance_type: m4.large
+    #instance_type: m4.large
+    instance_type: t2.medium
     ephemeral_disk:
       size: 160000
     # Spot instances can take longer to come up and if no capacity is available things may time out before the fallback starts
