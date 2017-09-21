@@ -1,4 +1,4 @@
-# vim: set autoindent expandtab shiftwidth=2 softtabstop=2
+#  vim: set autoindent expandtab shiftwidth=2 softtabstop=2
 #
 
 ---
@@ -354,7 +354,7 @@ jobs:
 - name: doppler
   instances: 1
   azs: [az1]
-  vm_type: small_general
+  vm_type: medium_general
   stemcell: default
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
@@ -697,6 +697,10 @@ properties:
     peer_cert: ((cf_etcd_server_crt))
     peer_key: ((cf_etcd_server_key))
   doppler:
+    # Number of log messages to retain per application
+    maxRetainedLogMessages: 2000
+    # Size of the internal buffer used by doppler to store messages for output to firehose or ‘cf logs’. If the buffer gets full doppler will drop the messages
+    message_drain_buffer_size: 20000
     etcd:
       # clientName
       client_cert: ((cf_etcd_client_crt))
