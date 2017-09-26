@@ -538,8 +538,10 @@ properties:
     status:
       password: ((router_status_password))
     enable_ssl: true
-    ssl_cert: ((router_crt))
-    ssl_key: ((router_key))
+    ca_certs: ((internal_ca_crt))
+    tls_pem:
+      - cert_chain: ((router_crt))
+        private_key: ((router_key))
   networks: {apps: cf_private}
   # https://docs.cloudfoundry.org/deploying/aws/cf-stub.html
   app_domains: [apps.((domain_name))]
@@ -784,6 +786,8 @@ properties:
         authorities: routing.router_groups.read
         secret: ((uaa_cc_routing_client_secret))
         authorized-grant-types: client_credentials
+      cc_service_key_client:
+        secret: ((uaa_cc_service_key_client_secret))
       cf:
         access-token-validity: 600
         authorities: uaa.none
