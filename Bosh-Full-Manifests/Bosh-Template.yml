@@ -363,6 +363,8 @@ jobs:
   - {name: syslog_drain_binder, release: cf}
   networks:
   - name: cf_private
+    static_ips:
+    - ((doppler_az1_ip1))
   properties:
     metron_agent:
       zone: z1

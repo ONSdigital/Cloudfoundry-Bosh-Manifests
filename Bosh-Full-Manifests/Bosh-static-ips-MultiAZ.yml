@@ -22,3 +22,7 @@ consul_az3_ip3: ((private_az3_static_ip6))
 
 router_az1_ip1: ((private_az1_static_ip7))
 router_az2_ip1: ((private_az2_static_ip7))
+
+doppler_az1_ip1: ((private_az1_static_ip8))
+doppler_az2_ip1: ((private_az2_static_ip8))
+doppler_az3_ip1: ((private_az3_static_ip8))
