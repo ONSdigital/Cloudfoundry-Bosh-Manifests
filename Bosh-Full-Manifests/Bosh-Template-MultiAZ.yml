@@ -69,7 +69,8 @@ jobs:
      rds: true
      databases:
      - {name: ccdb}
-     - {name: diego}
+     # This probably doesn't need backing up as it only saves running state
+     #- {name: diego}
      - {name: uaadb}
 
 - name: cf-smoke-tests-az1
