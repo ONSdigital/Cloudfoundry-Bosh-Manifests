@@ -762,9 +762,6 @@ properties:
     shared_secret: ((doppler_shared_secret))
   metron_agent:
     deployment: ((deployment_name))
-    dropsonde_incoming_port: 3457
-    protocols:
-    - udp
   nats:
     machines:
     - ((nats_az1_ip1))
