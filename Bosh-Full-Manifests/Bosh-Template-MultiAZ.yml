@@ -67,10 +67,9 @@ jobs:
      host: ((cf_rds_instance_dns))
      port: ((cf_rds_instance_port))
      rds: true
+     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state 
      databases:
      - {name: ccdb}
-     # This probably doesn't need backing up as it only saves running state
-     #- {name: diego}
      - {name: uaadb}
 
 - name: cf-smoke-tests-az1
