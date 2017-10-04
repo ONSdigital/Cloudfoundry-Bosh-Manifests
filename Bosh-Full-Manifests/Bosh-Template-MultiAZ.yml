@@ -468,7 +468,7 @@ jobs:
 - name: uaa
   instances: 2
   azs: [az1,az2]
-  vm_type: small_general
+  vm_type: small_smtp_sender_general
   stemcell: default
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}

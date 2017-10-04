@@ -80,6 +80,10 @@ vm_types:
   cloud_properties:
     instance_type: t2.small
     iam_instance_profile: ((blobstore_backup_bucket_access_instance_profile))
+- name: small_smtp_sender_general
+  cloud_properties:
+    instance_type: t2.small
+    security_groups: [((smtp_security_group)),((private_security_group))]
 - name: small_ssh_general
   cloud_properties:
     instance_type: t2.small
@@ -102,6 +106,10 @@ vm_types:
     - ((application_elb_target_group80))
     - ((application_elb_target_group443))
     security_groups: [((router_security_group)),((private_security_group))]
+- name: medium_smtp_sender_general
+  cloud_properties:
+    instance_type: t2.medium
+    security_groups: [((smtp_security_group)),((private_security_group))]
 - name: medium_cc_general
   cloud_properties:
     instance_type: t2.medium

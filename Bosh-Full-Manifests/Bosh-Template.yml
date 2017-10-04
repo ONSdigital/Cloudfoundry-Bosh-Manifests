@@ -51,7 +51,7 @@ jobs:
 - name: nats
   instances: 3
   azs: [az1,az2,az3]
-  vm_type: small_general
+  vm_type: small_smtp_sender_general
   stemcell: default
   templates:
   - {name: nats, release: cf}
