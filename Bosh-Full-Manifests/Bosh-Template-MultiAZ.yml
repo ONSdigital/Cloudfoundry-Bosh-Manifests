@@ -853,9 +853,11 @@ properties:
     skip_cert_verify: true
   system_domain: system.((domain_name))
   system_domain_organization: ((organisation))
-  uaa:
+  login:
     branding:
       company_name: ((organisation))
+    smtp: {}
+  uaa:
     clients:
       cc-service-dashboards:
         authorities: clients.read,clients.write,clients.admin
