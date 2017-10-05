@@ -870,6 +870,7 @@ properties:
         authorized-grant-types: client_credentials
       cc_service_key_client:
         secret: ((uaa_cc_service_key_client_secret))
+        authorized-grant-types: client_credentials
       cf:
         access-token-validity: 600
         authorities: uaa.none
