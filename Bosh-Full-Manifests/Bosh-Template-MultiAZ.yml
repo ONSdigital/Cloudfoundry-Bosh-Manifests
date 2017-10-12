@@ -72,6 +72,57 @@ jobs:
      - {name: ccdb}
      - {name: uaadb}
 
+#- name: rabbitmq-broker-registrar
+#  instances: 1
+#  lifecycle: errand
+#  vm_type: micro_general
+#  stemcell: default
+#  networks:
+#  - name: cf_rabbitmq
+#  azs: [az1,az2]
+#  templates:
+#  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
+#  properties:
+#    broker:
+#      service:
+#        name: rabbitmq
+#      name: rabbitmq
+#      protocol: https
+#      host: rabbitmq-broker.system.((domain_name))
+#      username: rabbitmq-broker
+#      password: ((rabbitmq_broker_password))
+
+#- name: rabbitmq-broker-deregistrar
+#  instances: 1
+#  lifecycle: errand
+#  vm_type: micro_general
+#  stemcell: default
+#  networks:
+#  - name: cf_rabbitmq
+#  azs: [az1,az2]
+#  templates:
+#  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
+#  properties:
+#    broker:
+#      service:
+#        name: rabbitmq
+#      name: rabbitmq
+
+#- name: rabbitmq-broker-smoketests
+#  instances: 1
+#  lifecycle: errand
+#  vm_type: micro_general
+#  stemcell: default
+#  networks:
+#  - name: cf_rabbitmq
+#  azs: [az1,az2]
+#  templates:
+#  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
+#  properties:
+#    broker:
+#      name: rabbitmq
+
+
 - name: cf-smoke-tests-az1
   instances: 1
   lifecycle: errand
@@ -1108,6 +1159,8 @@ properties:
   cf:
     api_url: https://api.system.((domain_name))
     domain: ((domain_name))
+    admin_username: admin
+    admin_password: ((uaa_admin_client_secret))
   postgresql_databases:
      bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
