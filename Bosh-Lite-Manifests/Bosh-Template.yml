@@ -6,8 +6,8 @@ releases:
   # can use file:// URLs - then SHA1 not required
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=263.2.0
-  sha1: 667b00e015a2b53b2ba70cfb97f3bd9f4b09c4ce
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=263.3.0
+  sha1: 39a0c2a4bb478a01861dc2ff7cce35b1be79a34c
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=66
@@ -40,7 +40,7 @@ resource_pools:
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_instance_security_group))]
-    iam_instance_profile: ((director_bucket_access_instance_profile))
+    iam_instance_profile: ((director_instance_profile))
     elbs: [((director_elb))]
 
 disk_pools:
@@ -83,6 +83,7 @@ jobs:
   #  static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
   properties:
     agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
+    # Health Monitor doesn't support instance access profiles, but it may do one day....
     aws: &aws
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
