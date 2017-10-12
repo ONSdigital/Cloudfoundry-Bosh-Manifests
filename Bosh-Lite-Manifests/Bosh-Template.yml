@@ -33,8 +33,9 @@ resource_pools:
     #
     # If the stemcell can't be reached from the bosh.io URL we can use the direct AWS S3 URL
     #url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3445.11
-    sha1: e978f09e8e706fbdd8083c52ecd382efad921071
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468
+    sha1: 72d0532ef6eb8e7c29283eaf147c7084bc10a4d8
+
   cloud_properties:
     instance_type: t2.medium
     ephemeral_disk: {size: 50_000, type: gp2}
