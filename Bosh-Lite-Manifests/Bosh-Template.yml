@@ -86,7 +86,8 @@ jobs:
     agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
     aws: &aws
       # Health Monitor doesn't support instance access profiles, but it may do one day....
-      credentials_source: env_or_profile
+      #credentials_source: env_or_profile
+      credentials_source: static
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
