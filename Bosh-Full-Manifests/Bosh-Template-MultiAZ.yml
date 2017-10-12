@@ -9,6 +9,7 @@ releases:
 - {name: cflinuxfs2, version: latest}
 - {name: cf-rabbitmq, version: latest}
 - {name: cf-smoke-tests, version: latest}
+- {name: rabbitmq-multitenant-broker, version: latest}
 - {name: diego, version: latest}
 - {name: garden-runc, version: latest}
 - {name: postgresql-databases, version: latest}
