@@ -36,7 +36,7 @@ resource_pools:
     url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3445.11
     sha1: e978f09e8e706fbdd8083c52ecd382efad921071
   cloud_properties:
-    instance_type: t4.medium
+    instance_type: t2.medium
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_instance_security_group))]
