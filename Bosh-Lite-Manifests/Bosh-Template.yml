@@ -6,8 +6,8 @@ releases:
   # can use file:// URLs - then SHA1 not required
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=263.2.0
-  sha1: 667b00e015a2b53b2ba70cfb97f3bd9f4b09c4ce
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=263.3.0
+  sha1: 39a0c2a4bb478a01861dc2ff7cce35b1be79a34c
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=66
@@ -33,14 +33,15 @@ resource_pools:
     #
     # If the stemcell can't be reached from the bosh.io URL we can use the direct AWS S3 URL
     #url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3445.11
-    sha1: e978f09e8e706fbdd8083c52ecd382efad921071
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468
+    sha1: 72d0532ef6eb8e7c29283eaf147c7084bc10a4d8
+
   cloud_properties:
-    instance_type: m4.large
+    instance_type: t2.medium
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_instance_security_group))]
-    iam_instance_profile: ((director_bucket_access_instance_profile))
+    iam_instance_profile: ((director_instance_profile))
     elbs: [((director_elb))]
 
 disk_pools:
@@ -84,6 +85,9 @@ jobs:
   properties:
     agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
     aws: &aws
+      # Health Monitor doesn't support instance access profiles, but it may do one day....
+      #credentials_source: env_or_profile
+      credentials_source: static
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
@@ -173,6 +177,10 @@ jobs:
       password: ((registry_password))
       port: 25777
 
+properties:
+
+addons:
+
 cloud_provider:
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
   ssh_tunnel:
@@ -182,7 +190,14 @@ cloud_provider:
     private_key: ((bosh_ssh_key_file))
   template: {name: aws_cpi, release: bosh-aws-cpi}
   properties:
-    aws: *aws
+    aws:
+      access_key_id: ((bosh_aws_access_key_id))
+      secret_access_key: ((bosh_aws_secret_access_key))
+      default_key_name: ((bosh_ssh_key_name))
+      region: ((aws_region))
+      default_security_groups: [((director_instance_security_group))]
+      # All VMs need to be able to write to the blob store to create logs!
+      default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
     agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
