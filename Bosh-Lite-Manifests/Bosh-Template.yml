@@ -18,6 +18,9 @@ resource_pools:
   network: cf_director
   env:
     bosh:
+      # The following should work to generate a new password:
+      # echo "$PASSWORD $SALT" | perl -ane 'print crypt($F[0],sprintf(q($6$%s$),$F[1])).qq(\n)'
+      #
       # c1oudc0w
       password: $6$GiQp7XJ3AYAnpUpZ$zGUSoI6OATmb4ff0k60ZFIk/pMNypGxqMoihspINUAS8Fk6p0Dz/PIMzFfguZIbLSeJPB5PkNMCNzkO4yJqp8/
   stemcell:
