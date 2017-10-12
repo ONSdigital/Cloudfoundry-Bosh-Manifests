@@ -36,7 +36,7 @@ resource_pools:
     url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3445.11
     sha1: e978f09e8e706fbdd8083c52ecd382efad921071
   cloud_properties:
-    instance_type: m4.large
+    instance_type: t4.medium
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_instance_security_group))]
@@ -83,8 +83,9 @@ jobs:
   #  static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
   properties:
     agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
-    # Health Monitor doesn't support instance access profiles, but it may do one day....
     aws: &aws
+      # Health Monitor doesn't support instance access profiles, but it may do one day....
+      credentials_source: env_or_profile
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
       default_key_name: ((bosh_ssh_key_name))
@@ -187,7 +188,14 @@ cloud_provider:
     private_key: ((bosh_ssh_key_file))
   template: {name: aws_cpi, release: bosh-aws-cpi}
   properties:
-    aws: *aws
+    aws:
+      access_key_id: ((bosh_aws_access_key_id))
+      secret_access_key: ((bosh_aws_secret_access_key))
+      default_key_name: ((bosh_ssh_key_name))
+      region: ((aws_region))
+      default_security_groups: [((director_instance_security_group))]
+      # All VMs need to be able to write to the blob store to create logs!
+      default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
     agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
