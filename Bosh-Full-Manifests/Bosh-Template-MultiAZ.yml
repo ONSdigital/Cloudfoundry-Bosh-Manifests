@@ -72,56 +72,69 @@ jobs:
      - {name: ccdb}
      - {name: uaadb}
 
-#- name: rabbitmq-broker-registrar
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: micro_general
-#  stemcell: default
-#  networks:
-#  - name: cf_rabbitmq
-#  azs: [az1,az2]
-#  templates:
-#  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
-#  properties:
-#    broker:
-#      service:
-#        name: rabbitmq
-#      name: rabbitmq
-#      protocol: https
-#      host: rabbitmq-broker.system.((domain_name))
-#      username: rabbitmq-broker
-#      password: ((rabbitmq_broker_password))
+- name: rabbitmq-broker-registrar
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_rabbitmq
+  azs: [az1,az2]
+  templates:
+  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
+      protocol: https
+      host: rabbitmq-broker.system.((domain_name))
+      username: rabbitmq-broker
+      password: ((rabbitmq_broker_password))
 
-#- name: rabbitmq-broker-deregistrar
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: micro_general
-#  stemcell: default
-#  networks:
-#  - name: cf_rabbitmq
-#  azs: [az1,az2]
-#  templates:
-#  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
-#  properties:
-#    broker:
-#      service:
-#        name: rabbitmq
-#      name: rabbitmq
+- name: rabbitmq-broker-deregistrar
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_rabbitmq
+  azs: [az1,az2]
+  templates:
+  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
 
-#- name: rabbitmq-broker-smoketests
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: micro_general
-#  stemcell: default
-#  networks:
-#  - name: cf_rabbitmq
-#  azs: [az1,az2]
-#  templates:
-#  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
-#  properties:
-#    broker:
-#      name: rabbitmq
+- name: rabbitmq-broker-smoke-tests-az1
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_rabbitmq
+  azs: [az1]
+  templates:
+  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      name: rabbitmq
 
+- name: rabbitmq-broker-smoke-tests-az2
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_rabbitmq
+  azs: [az2]
+  templates:
+  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      name: rabbitmq
 
 - name: cf-smoke-tests-az1
   instances: 1

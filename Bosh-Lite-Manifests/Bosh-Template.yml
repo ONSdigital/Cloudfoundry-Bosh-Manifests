@@ -173,6 +173,10 @@ jobs:
       password: ((registry_password))
       port: 25777
 
+properties:
+
+addons:
+
 cloud_provider:
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
   ssh_tunnel:
