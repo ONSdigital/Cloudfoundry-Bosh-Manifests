@@ -25,7 +25,15 @@ resource_pools:
       password: $6$GiQp7XJ3AYAnpUpZ$zGUSoI6OATmb4ff0k60ZFIk/pMNypGxqMoihspINUAS8Fk6p0Dz/PIMzFfguZIbLSeJPB5PkNMCNzkO4yJqp8/
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    # Sometimes, there are problems connecting disks. This seems to come and go between various releases.  Some AWS regions seem to suffer more than others
+    #
+    # [CLI] 2017/10/16 09:49:42 ERROR - Deploying: Creating instance 'clementine-boshlite/0': Updating instance disks: Updating disks: Deploying disk: Mounting disk: Sending 'get_task' to the agent: Agent responded with error: Action Failed get_task: Task f4b307dc-b987-4d0f-6592-0cad27bd3586 result: Persistent disk with volume id 'vol-0fc18013ccfad16dd' could not be found 
+    #
+    # To work around it, sometimes, you can just re-run the Bosh create-env task with a partially created env. Some
+    #
     # https://bosh.io/stemcells/
+    # https://bosh.io/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    #
     # Sometimes the version stays the same but the hash changes
     #
     # The following error occurs when a normal stemcell is used:
@@ -40,7 +48,7 @@ resource_pools:
     sha1: 72d0532ef6eb8e7c29283eaf147c7084bc10a4d8
 
   cloud_properties:
-    instance_type: t2.medium
+    instance_type: m4.large
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_instance_security_group))]
