@@ -14,11 +14,15 @@ releases:
 - {name: garden-runc, url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release", version: ((garden_runc))}
 - {name: postgresql-databases, version: latest}
 
+resource_pools:
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    url: "https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent"
+    version: ((stemcell_version))
+
 stemcells:
 - alias: default
   os: ubuntu-trusty
-  url: "https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent"
-  version: latest
 
 update:
   canaries: 1
