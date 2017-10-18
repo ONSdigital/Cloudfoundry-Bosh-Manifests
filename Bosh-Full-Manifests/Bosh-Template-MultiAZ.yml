@@ -7,11 +7,11 @@ name: ((bosh_deployment))
 releases:
 - {name: cf, url: "https://bosh.io/d/github.com/cloudfoundry/cf-release", version: ((cf_version))}
 - {name: cflinuxfs2, url: "https://bosh.io/d/github.com/cloudfoundry/cflinuxfs2-release", version: ((cflinuxfs2_version))}
-- {name: cf-rabbitmq, url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-release", version: ((cf_rabbitmq_version))} 
+- {name: cf-rabbitmq, url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-release", version: ((cf_rabbitmq_version))}
 - {name: cf-rabbitmq-multitenant-broker, url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release", version: ((cf_rabbitmq_multitenant_broker))}
 - {name: cf-smoke-tests, url: "https://bosh.io/d/github.com/cloudfoundry/cf-smoke-tests-release", version: ((cf_smoke_tests))}
 - {name: diego, url: "https://bosh.io/d/github.com/cloudfoundry/diego-release", version: ((diego))}
-- {name: garden-runc, url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release", version: ((garden-runc))}
+- {name: garden-runc, url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release", version: ((garden_runc))}
 - {name: postgresql-databases, version: latest}
 
 stemcells:
@@ -69,7 +69,7 @@ jobs:
      host: ((cf_rds_instance_dns))
      port: ((cf_rds_instance_port))
      rds: true
-     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state 
+     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
      databases:
      - {name: ccdb}
      - {name: uaadb}
@@ -636,7 +636,7 @@ jobs:
   persistent_disk: 10240
   templates:
   - {name: metron_agent, release: cf}
-  - {name: rabbitmq-broker, release: cf-rabbitmq}
+  - {name: rabbitmq-broker, release: cf-rabbitmq-multitenant-broker}
   - {name: route_registrar, release: cf}
   networks:
   - name: cf_rabbitmq
@@ -1162,7 +1162,7 @@ properties:
       diego_credentials: ""
       uaa_secret: ((uaa_ssh_proxy_secret))
       uaa_token_url: https://uaa.system.((domain_name))/oauth/token
-      healthcheck_listen_addr: 0.0.0.0:2223 
+      healthcheck_listen_addr: 0.0.0.0:2223
       listen_addr: 0.0.0.0:2222
     ssl:
       skip_cert_verify: true
