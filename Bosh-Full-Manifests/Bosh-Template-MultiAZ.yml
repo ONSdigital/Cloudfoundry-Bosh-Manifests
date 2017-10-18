@@ -5,18 +5,19 @@
 name: ((bosh_deployment))
 
 releases:
-- {name: cf, version: latest}
-- {name: cflinuxfs2, version: latest}
-- {name: cf-rabbitmq, version: latest}
-- {name: cf-smoke-tests, version: latest}
-- {name: rabbitmq-multitenant-broker, version: latest}
-- {name: diego, version: latest}
-- {name: garden-runc, version: latest}
+- {name: cf, url: "https://bosh.io/d/github.com/cloudfoundry/cf-release", version: ((cf_version))}
+- {name: cflinuxfs2, url: "https://bosh.io/d/github.com/cloudfoundry/cflinuxfs2-release", version: ((cflinuxfs2_version))}
+- {name: cf-rabbitmq, url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-release", version: ((cf_rabbitmq_version))} 
+- {name: cf-rabbitmq-multitenant-broker, url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release", version: ((cf_rabbitmq_multitenant_broker))}
+- {name: cf-smoke-tests, url: "https://bosh.io/d/github.com/cloudfoundry/cf-smoke-tests-release", version: ((cf_smoke_tests))}
+- {name: diego, url: "https://bosh.io/d/github.com/cloudfoundry/diego-release", version: ((diego))}
+- {name: garden-runc, url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release", version: ((garden-runc))}
 - {name: postgresql-databases, version: latest}
 
 stemcells:
 - alias: default
   os: ubuntu-trusty
+  url: "https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent"
   version: latest
 
 update:
