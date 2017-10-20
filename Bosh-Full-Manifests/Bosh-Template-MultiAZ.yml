@@ -8,10 +8,10 @@ releases:
 - {name: cf, url: "https://bosh.io/d/github.com/cloudfoundry/cf-release", version: ((cf_version))}
 - {name: cflinuxfs2, url: "https://bosh.io/d/github.com/cloudfoundry/cflinuxfs2-release", version: ((cflinuxfs2_version))}
 - {name: cf-rabbitmq, url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-release", version: ((cf_rabbitmq_version))}
-- {name: cf-rabbitmq-multitenant-broker, url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release", version: ((cf_rabbitmq_multitenant_broker))}
-- {name: cf-smoke-tests, url: "https://bosh.io/d/github.com/cloudfoundry/cf-smoke-tests-release", version: ((cf_smoke_tests))}
-- {name: diego, url: "https://bosh.io/d/github.com/cloudfoundry/diego-release", version: ((diego))}
-- {name: garden-runc, url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release", version: ((garden_runc))}
+- {name: cf-rabbitmq-multitenant-broker, url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release", version: ((cf_rabbitmq_multitenant_broker_version))}
+- {name: cf-smoke-tests, url: "https://bosh.io/d/github.com/cloudfoundry/cf-smoke-tests-release", version: ((cf_smoke_tests_version))}
+- {name: diego, url: "https://bosh.io/d/github.com/cloudfoundry/diego-release", version: ((diego_version))}
+- {name: garden-runc, url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release", version: ((garden_runc_verision))}
 - {name: postgresql-databases, version: latest}
 
 stemcells:
