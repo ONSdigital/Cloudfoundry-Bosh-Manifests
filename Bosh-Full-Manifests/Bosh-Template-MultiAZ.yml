@@ -16,7 +16,7 @@ releases:
   url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-release((cf_rabbitmq_version_url_suffix))"
   version: ((cf_rabbitmq_version))
 - name: cf-rabbitmq-multitenant-broker
-  url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-multitenant-broker((cf_rabbitmq_multitenant_broker_version_url_suffix))"
+  url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release((cf_rabbitmq_multitenant_broker_version_url_suffix))"
   version: ((cf_rabbitmq_multitenant_broker_version))
 - name: cf-smoke-tests
   url: "https://bosh.io/d/github.com/cloudfoundry/cf-smoke-tests-release((cf_smoke_tests_version_url_suffix))"
