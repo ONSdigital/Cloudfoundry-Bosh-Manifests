@@ -146,6 +146,8 @@ jobs:
       enable_nats_delivered_templates: true
       enable_post_deploy: true
       enable_snapshots: true
+      #snapshot_schedule: 0 0 7 * * * UTC
+      #self_snapshot_schedule: 0 0 6 * * * UTC
       # To/from Director
       #encryption: true
       max_threads: 10

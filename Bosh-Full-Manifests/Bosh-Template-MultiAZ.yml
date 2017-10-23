@@ -5,13 +5,31 @@
 name: ((bosh_deployment))
 
 releases:
-- {name: cf, version: latest}
-- {name: cflinuxfs2, version: latest}
-- {name: cf-rabbitmq, version: latest}
-- {name: cf-smoke-tests, version: latest}
-- {name: diego, version: latest}
-- {name: garden-runc, version: latest}
-- {name: postgresql-databases, version: latest}
+# Despite having version set, CF seems to ignore this when it uploads them, so we have to use a specific URL
+- name: cf
+  url: "https://bosh.io/d/github.com/cloudfoundry/cf-release((cf_version_url_suffix))"
+  version: ((cf_version))
+- name: cflinuxfs2
+  url: "https://bosh.io/d/github.com/cloudfoundry/cflinuxfs2-release((cflinuxfs2_version_url_suffix))"
+  version: ((cflinuxfs2_version))
+- name: cf-rabbitmq
+  url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-release((cf_rabbitmq_version_url_suffix))"
+  version: ((cf_rabbitmq_version))
+- name: cf-rabbitmq-multitenant-broker
+  url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release((cf_rabbitmq_multitenant_broker_version_url_suffix))"
+  version: ((cf_rabbitmq_multitenant_broker_version))
+- name: cf-smoke-tests
+  url: "https://bosh.io/d/github.com/cloudfoundry/cf-smoke-tests-release((cf_smoke_tests_version_url_suffix))"
+  version: ((cf_smoke_tests_version))
+- name: diego
+  url: "https://bosh.io/d/github.com/cloudfoundry/diego-release((diego_version_url_suffix))"
+  version: ((diego_version))
+- name: garden-runc
+  url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release((garden_runc_version_url_suffix))"
+  version: ((garden_runc_version))
+# Currently, we don't host a release of this anywhere
+- name: postgresql-databases
+  version: latest
 
 stemcells:
 - alias: default
@@ -67,61 +85,78 @@ jobs:
      host: ((cf_rds_instance_dns))
      port: ((cf_rds_instance_port))
      rds: true
-     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state 
+     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
      databases:
      - {name: ccdb}
      - {name: uaadb}
 
-#- name: rabbitmq-broker-registrar
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: micro_general
-#  stemcell: default
-#  networks:
-#  - name: cf_rabbitmq
-#  azs: [az1,az2]
-#  templates:
-#  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
-#  properties:
-#    broker:
-#      service:
-#        name: rabbitmq
-#      name: rabbitmq
-#      protocol: https
-#      host: rabbitmq-broker.system.((domain_name))
-#      username: rabbitmq-broker
-#      password: ((rabbitmq_broker_password))
+- name: rabbitmq-broker-registrar
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1,az2]
+  templates:
+  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
+      protocol: https
+      host: rabbitmq-broker.system.((domain_name))
+      username: rabbitmq-broker
+      password: ((rabbitmq_broker_password))
 
-#- name: rabbitmq-broker-deregistrar
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: micro_general
-#  stemcell: default
-#  networks:
-#  - name: cf_rabbitmq
-#  azs: [az1,az2]
-#  templates:
-#  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
-#  properties:
-#    broker:
-#      service:
-#        name: rabbitmq
-#      name: rabbitmq
+- name: rabbitmq-broker-deregistrar
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1,az2]
+  templates:
+  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
 
-#- name: rabbitmq-broker-smoketests
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: micro_general
-#  stemcell: default
-#  networks:
-#  - name: cf_rabbitmq
-#  azs: [az1,az2]
-#  templates:
-#  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
-#  properties:
-#    broker:
-#      name: rabbitmq
+- name: rabbitmq-broker-smoke-tests-az1
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      name: rabbitmq
 
+- name: rabbitmq-broker-smoke-tests-az2
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az2]
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      name: rabbitmq
 
 - name: cf-smoke-tests-az1
   instances: 1
@@ -132,6 +167,7 @@ jobs:
   - name: cf_private
   azs: [az1]
   templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: smoke_tests, release: cf-smoke-tests}
   properties:
     smoke_tests:
@@ -146,6 +182,7 @@ jobs:
   - name: cf_private
   azs: [az2]
   templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: smoke_tests, release: cf-smoke-tests}
   properties:
     smoke_tests:
@@ -554,6 +591,7 @@ jobs:
         - "login.system.((domain_name))"
         - "*.login.system.((domain_name))"
     uaa:
+      # UAA admin, not CF admin
       admin:
         client_secret: ((uaa_admin_client_secret))
       batch:
@@ -620,8 +658,9 @@ jobs:
   stemcell: default
   persistent_disk: 10240
   templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: metron_agent, release: cf}
-  - {name: rabbitmq-broker, release: cf-rabbitmq}
+  - {name: rabbitmq-broker, release: cf-rabbitmq-multitenant-broker}
   - {name: route_registrar, release: cf}
   networks:
   - name: cf_rabbitmq
@@ -976,6 +1015,7 @@ properties:
     scim:
       userids_enabled: true
       users:
+      # CF admin, not UAA admin
       - name: admin
         password: ((admin_password))
         groups:
@@ -1040,7 +1080,8 @@ properties:
         client_key: ""
         require_ssl: false
       cc:
-        base_url: https://api.system.((domain_name))
+        #base_url: https://api.system.((domain_name))
+        base_url: http://cloud-controller-ng.service.((internal_domain)):9022
         basic_auth_password: ((internal_api_password))
       diego_privileged_containers: true
     tps:
@@ -1055,7 +1096,8 @@ properties:
         # tps_watcher
         client_cert: ((tps_watcher_crt))
         client_key: ((tps_watcher_key))
-        base_url: https://api.system.((domain_name))
+        #base_url: https://api.system.((domain_name))
+        base_url: https://cloud-controller-ng.service.((internal_domain)):9023
         basic_auth_password: ((internal_api_password))
     tps_listener:
       bbs:
@@ -1064,7 +1106,8 @@ properties:
         client_key: ""
         require_ssl: false
       cc:
-        base_url: https://api.system.((domain_name))
+        #base_url: https://api.system.((domain_name))
+        base_url: http://cloud-controller-ng.service.((internal_domain)):9022
         basic_auth_password: ((internal_api_password))
     stager:
       # The default for this and diego.route_emitter.healthcheck_address is 127.0.0.1:17011 (2017/04/03)
@@ -1075,7 +1118,8 @@ properties:
         client_key: ""
         require_ssl: false
       cc:
-        base_url: https://api.system.((domain_name))
+        #base_url: https://api.system.((domain_name))
+        base_url: http://cloud-controller-ng.service.((internal_domain)):9022
         basic_auth_password: ((internal_api_password))
   diego:
     auctioneer:
@@ -1147,7 +1191,7 @@ properties:
       diego_credentials: ""
       uaa_secret: ((uaa_ssh_proxy_secret))
       uaa_token_url: https://uaa.system.((domain_name))/oauth/token
-      healthcheck_listen_addr: 0.0.0.0:2223 
+      healthcheck_listen_addr: 0.0.0.0:2223
       listen_addr: 0.0.0.0:2222
     ssl:
       skip_cert_verify: true
@@ -1157,17 +1201,19 @@ properties:
     deny_networks:
     - 0.0.0.0/0
   cf:
+    # This is used by the smoke tests, so should be the external URL
     api_url: https://api.system.((domain_name))
     domain: ((domain_name))
     admin_username: admin
-    admin_password: ((uaa_admin_client_secret))
+    admin_password: ((admin_password))
   postgresql_databases:
      bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
      region: ((aws_region))
   rabbitmq-broker:
     route: rabbitbroker
-    cc_endpoint: https://api.system.((domain_name))
+    #cc_endpoint: https://api.system.((domain_name))
+    cc_endpoint: http://cloud-controller-ng.service.((internal_domain)):9022
     service:
       #name: ((rabbitmq_product_name))
       name: rabbitmq
