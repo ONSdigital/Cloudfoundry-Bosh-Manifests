@@ -70,3 +70,4 @@ jobs:
      - { name: ccdb, username: ccadmin, password: ((cc_db_password)), extensions: [pgcrypto,citext] }
      - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext], no_backup: true }
      - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)), extensions: [pgcrypto,citext] }
+     - { name: atcdb, username: atcadmin, password: ((atc_db_password)), extensions: [pgcrypto,citext] }

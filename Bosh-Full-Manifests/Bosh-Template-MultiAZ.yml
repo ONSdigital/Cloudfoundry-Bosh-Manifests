@@ -27,6 +27,9 @@ releases:
 - name: garden-runc
   url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release((garden_runc_version_url_suffix))"
   version: ((garden_runc_version))
+- name: concourse
+  url: "http://bosh.io/releases/github.com/concourse/concourse((concourse_version_url_suffix))"
+  version: ((concourse_version))
 # Currently, we don't host a release of this anywhere
 - name: postgresql-databases
   version: latest
@@ -201,6 +204,57 @@ jobs:
   properties:
     smoke_tests:
       etcd_ip_address: ((etcd_az1_ip1))
+
+- name: concourse_web
+  instances: 1
+  lifecycle: errand
+  stemcell: default
+  vm_type: medium_general
+  networks:
+  - name: cf_private
+  azs: [az1,az2,az3]
+  templates:
+  - {name: atc, release: concourse}
+  - {name: tsa, release: concourse}
+  - {name: route_registrar, release: cf}
+  properties:
+    external_url: https://concourse.system.((domain_name))
+    basic_auth_username: concourse
+    basic_auth_password: ((concourse_password))
+    tls_cert: ((concourse_crt))
+    tls_key: ((concourse_key))
+    postgresql:
+      host: ((cf_rds_instance_dns))
+      database: atc
+      port: ((cf_rds_instance_port))
+      role:
+        name: atcadmin
+        password: ((atc_db_password))
+    route_registrar:
+      routes:
+      - name: concourse
+        registration_interval: 20s
+        port: 8080
+        uris:
+        - "concourse.system.((domain_name))"
+
+- name: concourse_worker
+  instances: 1
+  lifecycle: errand
+  stemcell: default
+  persistent_disk: 20480
+  vm_type: medium_general
+  networks:
+  - name: cf_private
+  azs: [az1,az2,az3]
+  templates:
+  - {name: groundcrew, release: concourse}
+  - {name: baggageclaim, release: concourse}
+  - {name: garden, release: garden-runc}
+  properties:
+    garden:
+      listen_network: tcp
+      listen_address: 0.0.0.0:7777
 
 - name: nats
   instances: 3
