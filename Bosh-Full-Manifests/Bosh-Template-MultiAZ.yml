@@ -100,7 +100,6 @@ jobs:
   azs: [az1,az2]
   templates:
   - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   properties:
     broker:
       service:
@@ -121,7 +120,6 @@ jobs:
   azs: [az1,az2]
   templates:
   - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   properties:
     broker:
       service:
@@ -137,7 +135,6 @@ jobs:
   - name: cf_private
   azs: [az1]
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
   properties:
     broker:
@@ -152,7 +149,6 @@ jobs:
   - name: cf_private
   azs: [az2]
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
   properties:
     broker:
@@ -167,7 +163,6 @@ jobs:
   - name: cf_private
   azs: [az1]
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: smoke_tests, release: cf-smoke-tests}
   properties:
     smoke_tests:
@@ -182,7 +177,6 @@ jobs:
   - name: cf_private
   azs: [az2]
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: smoke_tests, release: cf-smoke-tests}
   properties:
     smoke_tests:
