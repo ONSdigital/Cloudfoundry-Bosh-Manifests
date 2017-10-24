@@ -28,7 +28,7 @@ releases:
   url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release((garden_runc_version_url_suffix))"
   version: ((garden_runc_version))
 - name: concourse
-  url: "http://bosh.io/releases/github.com/concourse/concourse((concourse_version_url_suffix))"
+  url: "http://bosh.io/d/github.com/concourse/concourse((concourse_version_url_suffix))"
   version: ((concourse_version))
 # Currently, we don't host a release of this anywhere
 - name: postgresql-databases
