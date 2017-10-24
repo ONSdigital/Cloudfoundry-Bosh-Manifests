@@ -201,7 +201,6 @@ jobs:
 
 - name: concourse_web
   instances: 1
-  lifecycle: errand
   stemcell: default
   vm_type: medium_general
   networks:
@@ -234,7 +233,6 @@ jobs:
 
 - name: concourse_worker
   instances: 1
-  lifecycle: errand
   stemcell: default
   persistent_disk: 20480
   vm_type: medium_general
