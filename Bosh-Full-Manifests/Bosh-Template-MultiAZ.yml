@@ -214,11 +214,11 @@ jobs:
     external_url: https://concourse.system.((domain_name))
     basic_auth_username: concourse
     basic_auth_password: ((concourse_password))
-    tls_cert: ((concourse_crt))
-    tls_key: ((concourse_key))
+  #  tls_cert: ((concourse_crt))
+  #  tls_key: ((concourse_key))
     postgresql:
       host: ((cf_rds_instance_dns))
-      database: atc
+      database: atcdb
       port: ((cf_rds_instance_port))
       role:
         name: atcadmin
@@ -247,6 +247,7 @@ jobs:
     garden:
       listen_network: tcp
       listen_address: 0.0.0.0:7777
+      allow_host_access: true
 
 - name: nats
   instances: 3
