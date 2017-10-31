@@ -47,7 +47,7 @@ jobs:
 # This one would only dump the rds_broker database, so its relatively pointless as it stands.  The backup job
 # would need to be adjusted to iterate over the list of databases and dump each one in turn (TODO)
 #- name: backup-postgresql-databases-apps
-#  instances: ((configure_apps_rds_postgres_instance))
+#  instances: 1
 #  lifecycle: errand
 #  stemcell: default
 #  vm_type: small_general_blobstore_backup
@@ -68,7 +68,7 @@ jobs:
 #     - {name: all}
 
 - name: backup-postgresql-databases-cf
-  instances: ((configure_cf_rds_postgres_instance))
+  instances: 1
   lifecycle: errand
   stemcell: default
   vm_type: small_general_blobstore_backup
