@@ -1,0 +1,1211 @@
+# vim: set autoindent expandtab shiftwidth=2 softtabstop=2
+#
+
+---
+name: ((bosh_deployment))
+
+releases:
+# Despite having version set, CF seems to ignore this when it uploads them, so we have to use a specific URL
+- name: cf
+  url: "https://bosh.io/d/github.com/cloudfoundry/cf-release((cf_version_url_suffix))"
+  version: ((cf_version))
+- name: cflinuxfs2
+  url: "https://bosh.io/d/github.com/cloudfoundry/cflinuxfs2-release((cflinuxfs2_version_url_suffix))"
+  version: ((cflinuxfs2_version))
+- name: cf-rabbitmq
+  url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-release((cf_rabbitmq_version_url_suffix))"
+  version: ((cf_rabbitmq_version))
+- name: cf-rabbitmq-multitenant-broker
+  url: "https://bosh.io/d/github.com/pivotal-cf/cf-rabbitmq-multitenant-broker-release((cf_rabbitmq_multitenant_broker_version_url_suffix))"
+  version: ((cf_rabbitmq_multitenant_broker_version))
+- name: cf-smoke-tests
+  url: "https://bosh.io/d/github.com/cloudfoundry/cf-smoke-tests-release((cf_smoke_tests_version_url_suffix))"
+  version: ((cf_smoke_tests_version))
+- name: diego
+  url: "https://bosh.io/d/github.com/cloudfoundry/diego-release((diego_version_url_suffix))"
+  version: ((diego_version))
+- name: garden-runc
+  url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release((garden_runc_version_url_suffix))"
+  version: ((garden_runc_version))
+# Currently, we don't host a release of this anywhere
+- name: postgresql-databases
+  version: latest
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 1
+  serial: false
+  canary_watch_time: 30000-600000
+  update_watch_time: 5000-600000
+
+jobs:
+# This one would only dump the rds_broker database, so its relatively pointless as it stands.  The backup job
+# would need to be adjusted to iterate over the list of databases and dump each one in turn (TODO)
+#- name: backup-postgresql-databases-apps
+#  instances: ((configure_apps_rds_postgres_instance))
+#  lifecycle: errand
+#  stemcell: default
+#  vm_type: small_general_blobstore_backup
+#  networks:
+#  - name: cf_private
+#  azs: [az1]
+#  templates:
+#  - {name: postgresql-databases, release: postgresql-databases}
+#  properties:
+#   postgresql_databases:
+#     admin_username: ((apps_rds_instance_username))
+#     admin_password: ((apps_rds_instance_password))
+#     admin_database: postgres
+#     host: ((apps_rds_instance_dns))
+#     port: ((apps_rds_instance_port))
+#     rds: true
+#     databases:
+#     - {name: all}
+
+- name: backup-postgresql-databases-cf
+  instances: ((configure_cf_rds_postgres_instance))
+  lifecycle: errand
+  stemcell: default
+  vm_type: small_general_blobstore_backup
+  networks:
+  - name: cf_private
+  azs: [az1,]
+  templates:
+  - {name: postgresql-databases, release: postgresql-databases}
+  properties:
+   postgresql_databases:
+     admin_username: ((cf_rds_instance_username))
+     admin_password: ((cf_rds_instance_password))
+     admin_database: postgres
+     host: ((cf_rds_instance_dns))
+     port: ((cf_rds_instance_port))
+     rds: true
+     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
+     databases:
+     - {name: ccdb}
+     - {name: uaadb}
+
+- name: rabbitmq-broker-registrar
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
+      protocol: https
+      host: rabbitmq-broker.system.((domain_name))
+      username: rabbitmq-broker
+      password: ((rabbitmq_broker_password))
+
+- name: rabbitmq-broker-deregistrar
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
+
+- name: rabbitmq-broker-smoke-tests-az1
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      name: rabbitmq
+
+- name: cf-smoke-tests-az1
+  instances: 1
+  lifecycle: errand
+  stemcell: default
+  vm_type: micro_general
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: smoke_tests, release: cf-smoke-tests}
+  properties:
+    smoke_tests:
+      etcd_ip_address: ((etcd_az1_ip1))
+
+- name: nats
+  instances: 2
+  azs: [az1]
+  vm_type: small_general
+  stemcell: default
+  templates:
+  - {name: metron_agent, release: cf}
+  - {name: nats, release: cf}
+  networks:
+  - name: cf_private
+    static_ips:
+    - ((nats_az1_ip1))
+    - ((nats_az1_ip2))
+  properties:
+    metron_agent:
+      zone: z1
+
+- name: etcd
+  instances: 3
+  azs: [az1]
+  vm_type: micro_general
+  stemcell: default
+  persistent_disk: 10240
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: etcd, release: cf}
+  - {name: etcd_metrics_server, release: cf}
+  - {name: metron_agent, release: cf}
+  networks:
+  - name: cf_private
+    static_ips:
+    - ((etcd_az1_ip1))
+    - ((etcd_az1_ip2))
+    - ((etcd_az1_ip3))
+  properties:
+    etcd_metrics_server:
+      nats:
+        password: ((nats_password))
+        username: nats
+    metron_agent:
+      zone: z1
+    consul:
+      agent:
+        services:
+          etcd:
+            name: cf-etcd
+
+- name: consul
+  instances: 3
+  azs: [az1]
+  persistent_disk: 1024
+  vm_type: small_general
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: metron_agent, release: cf}
+  networks:
+  - name: cf_private
+    static_ips:
+    - ((consul_az1_ip1))
+    - ((consul_az1_ip2))
+    - ((consul_az1_ip3))
+  properties:
+    metron_agent:
+      zone: z1
+    consul:
+      agent:
+        mode: server
+
+#- name: postgres
+#  #instances: 1
+#  instances: ((required_non_cf_rds_postgres_instances))
+#  azs: [az1]
+#  persistent_disk: 10240
+#  vm_type: medium_general
+#  stemcell: default
+#  templates:
+#  - {name: postgres, release: cf}
+#  - {name: metron_agent, release: cf}
+#  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+#  networks:
+#  - name: cf_private
+#    static_ips: [((private_az1_cidr_prefix)).201]
+#  update:
+#    serial: true
+#  properties:
+#    metron_agent:
+#      zone: z1
+
+- name: ssh_proxy
+  instances: 2
+  azs: [az1]
+  vm_type: small_ssh_general
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: metron_agent, release: cf}
+  - {name: ssh_proxy, release: diego}
+  networks:
+  - name: cf_private
+  properties:
+    metron_agent:
+      zone: z1
+
+- name: diego_cell
+  instances: 2
+  azs: [az1]
+  vm_type: large_ram_large_disk
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: garden, release: garden-runc}
+  - {name: metron_agent, release: cf}
+  - {name: rep, release: diego}
+#  - {name: ssh_proxy, release: diego}
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z1
+    diego:
+      rep:
+        zone: z1
+
+- name: diego_cell_large_spot
+  instances: 0
+  azs: [az1]
+  vm_type: large_ram_large_disk_spot
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: garden, release: garden-runc}
+  - {name: metron_agent, release: cf}
+  - {name: rep, release: diego}
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z1
+    diego:
+      rep:
+        zone: z1
+
+- name: diego_cell_xlarge_spot
+  instances: 0
+  azs: [az1]
+  vm_type: xlarge_ram_large_disk_spot
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: garden, release: garden-runc}
+  - {name: metron_agent, release: cf}
+  - {name: rep, release: diego}
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z1
+    diego:
+      rep:
+        zone: z1
+
+- name: diego_cell_2xlarge_spot
+  instances: 0
+  azs: [az1]
+  vm_type: 2xlarge_ram_large_disk_spot
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: garden, release: garden-runc}
+  - {name: metron_agent, release: cf}
+  - {name: rep, release: diego}
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z1
+    diego:
+      rep:
+        zone: z1
+
+- name: diego_cell_4xlarge_spot
+  instances: 0
+  azs: [az1]
+  vm_type: 4xlarge_ram_large_disk_spot
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: garden, release: garden-runc}
+  - {name: metron_agent, release: cf}
+  - {name: rep, release: diego}
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z1
+    diego:
+      rep:
+        zone: z1
+
+- name: diego_brain
+  instances: 2
+  azs: [az1]
+  vm_type: small_general
+  stemcell: default
+  templates:
+  - {name: auctioneer, release: diego}
+  - {name: bbs, release: diego}
+  - {name: cc_uploader, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: file_server, release: diego}
+  - {name: metron_agent, release: cf}
+  - {name: nsync, release: cf}
+  - {name: route_emitter, release: diego}
+  - {name: stager, release: cf}
+  - {name: tps, release: cf}
+  persistent_disk: 20480
+  networks:
+  - name: cf_private
+  update:
+    serial: true
+    max_in_flight: 1
+  properties:
+    metron_agent:
+      zone: z1
+    consul:
+      agent:
+        services: {}
+
+- name: api
+  instances: 2
+  azs: [az1]
+  vm_type: medium_cc_general
+  stemcell: default
+  templates:
+  - {name: cloud_controller_ng, release: cf}
+  - {name: cloud_controller_worker, release: cf}
+  - {name: cloud_controller_clock, release: cf}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: go-buildpack, release: cf}
+  - {name: metron_agent, release: cf}
+  - {name: route_registrar, release: cf}
+  - {name: statsd_injector, release: cf}
+  - {name: binary-buildpack, release: cf}
+  - {name: dotnet-core-buildpack, release: cf}
+  - {name: java-buildpack, release: cf}
+  - {name: nodejs-buildpack, release: cf}
+  - {name: php-buildpack, release: cf}
+  - {name: python-buildpack, release: cf}
+  - {name: ruby-buildpack, release: cf}
+  - {name: staticfile-buildpack, release: cf}
+  networks:
+  - name: cf_private
+  properties:
+    metron_agent:
+      zone: z1
+    consul:
+      agent:
+        services:
+          cloud_controller_ng: {}
+    route_registrar:
+      routes:
+      - name: api
+        registration_interval: 20s
+        port: 9022
+        uris:
+        - "api.system.((domain_name))"
+
+- name: doppler
+  instances: 2
+  azs: [az1]
+  vm_type: medium_general
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: doppler, release: cf}
+  - {name: metron_agent, release: cf}
+  - {name: syslog_drain_binder, release: cf}
+  networks:
+  - name: cf_private
+    static_ips:
+    - ((doppler_az1_ip1))
+    - ((doppler_az1_ip2))
+  properties:
+    metron_agent:
+      zone: z1
+    doppler:
+      zone: z1
+    consul:
+      agent:
+        services:
+          doppler: {}
+
+- name: loggregator_trafficcontroller
+  instances: 2
+  azs: [az1]
+  vm_type: small_general
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: loggregator_trafficcontroller, release: cf}
+  - {name: metron_agent, release: cf}
+  - {name: route_registrar, release: cf}
+  networks:
+  - name: cf_private
+  properties:
+    metron_agent:
+      zone: z1
+    traffic_controller: {zone: z1}
+    route_registrar:
+      routes:
+      - name: doppler
+        registration_interval: 20s
+        port: 8081
+        uris:
+        - "doppler.system.((domain_name))"
+      - name: loggregator
+        registration_interval: 20s
+        port: 8080
+        uris:
+        - "loggregator.system.((domain_name))"
+
+- name: uaa
+  instances: 2
+  azs: [az1]
+  vm_type: small_smtp_sender_general
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: metron_agent, release: cf}
+  - {name: route_registrar, release: cf}
+  - {name: statsd_injector, release: cf}
+  - {name: uaa, release: cf}
+  networks:
+  - name: cf_private
+  properties:
+    metron_agent:
+      zone: z1
+    consul:
+      agent:
+        services:
+          uaa: {}
+    login:
+      saml:
+        serviceProviderKey: ((uaa_key))
+        serviceProviderKeyPassword: ""
+        # uaa.service.((internal_domain))
+        serviceProviderCertificate: ((uaa_crt))
+      catalina_opts: -Xmx768m -XX:MaxPermSize=256m
+    route_registrar:
+      routes:
+      - name: uaa
+        registration_interval: 20s
+        port: 8080
+        uris:
+        - "uaa.system.((domain_name))"
+        - "*.uaa.system.((domain_name))"
+        - "login.system.((domain_name))"
+        - "*.login.system.((domain_name))"
+    uaa:
+      # UAA admin, not CF admin
+      admin:
+        client_secret: ((uaa_admin_client_secret))
+      batch:
+        password: ((uaa_batch_password))
+        username: batch_user
+      cc:
+        client_secret: ((uaa_cc_client_secret))
+    uaadb:
+      address: ((cf_rds_instance_dns))
+      port: ((cf_rds_instance_port))
+      db_scheme: postgresql
+      databases:
+      - {name: uaadb, tag: uaa}
+      roles:
+      - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
+
+- name: router
+  instances: 2
+  azs: [az1]
+  vm_type: small_router_general
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: gorouter, release: cf}
+  - {name: metron_agent, release: cf}
+  networks:
+  - name: cf_private
+    static_ips:
+    - ((router_az1_ip1))
+    - ((router_az1_ip2))
+  properties:
+    metron_agent:
+      zone: z1
+    dropsonde: {enabled: true}
+
+- name: rabbitmq-mgnt
+  instances: 2
+  azs: [az1]
+  vm_type: small_general
+  stemcell: default
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: metron_agent, release: cf}
+  - {name: rabbitmq-haproxy, release: cf-rabbitmq}
+  - {name: route_registrar, release: cf}
+  properties:
+    route_registrar:
+      routes:
+      - name: rabbitmq-mgnt
+        port: 15672
+        registration_interval: 20s
+        uris:
+        - rabbitmq-mgnt.system.((domain_name))
+    consul:
+      agent:
+        services: {}
+  networks:
+  - name: cf_rabbitmq
+
+- name: rabbitmq-broker
+  instances: 2
+  azs: [az1]
+  vm_type: micro_general
+  stemcell: default
+  persistent_disk: 10240
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: metron_agent, release: cf}
+  - {name: rabbitmq-broker, release: cf-rabbitmq-multitenant-broker}
+  - {name: route_registrar, release: cf}
+  networks:
+  - name: cf_rabbitmq
+  properties:
+    route_registrar:
+      routes:
+      - name: rabbitmq-broker
+        port: 4567
+        registration_interval: 20s
+        uris:
+        - rabbitmq-broker.system.((domain_name))
+
+- name: rabbitmq-node
+  instances: 2
+  azs: [az1]
+  vm_type: small_general
+  stemcell: default
+  persistent_disk: 10240
+  templates:
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: metron_agent, release: cf}
+  - {name: rabbitmq-server, release: cf-rabbitmq}
+  networks:
+  - name: cf_rabbitmq
+  properties:
+    consul:
+      agent:
+        services: {}
+
+properties:
+  router:
+    route_services_secret: ((router_route_services_secret))
+    ssl_skip_validation: true
+    status:
+      password: ((router_status_password))
+    enable_ssl: true
+    ca_certs: ((internal_ca_crt))
+    tls_pem:
+      - cert_chain: ((router_crt))
+        private_key: ((router_key))
+  networks: {apps: cf_private}
+  # https://docs.cloudfoundry.org/deploying/aws/cf-stub.html
+  app_domains: [apps.((domain_name))]
+  app_ssh:
+    host_key_fingerprint: ((ssh_host_key_fingerprint))
+    oauth_client_id: ssh-proxy
+  cc:
+    disable_custom_buildpacks: true
+    # https://github.com/cloudfoundry/cloud_controller_ng/blob/master/bosh/jobs/cloud_controller_ng/spec
+    # quota_definitions & default_quota_definition
+    maximum_app_disk_in_mb: 8192
+    mutual_tls:
+      # $INTERNAL_DOMAIN
+      ca_cert: ((internal_ca_crt))
+      # cloud-controller-ng.service.$INTERNAL_DOMAIN
+      public_cert: ((cloud_controller_ng_crt))
+      private_key: ((cloud_controller_ng_key))
+    allow_app_ssh_access: true
+    default_to_diego_backend: true
+    default_app_memory: 64
+    default_app_disk_in_mb: 128
+    internal_api_user: internal_user
+    external_port: 9022
+    tls_port: 9023
+    # This has been deprecated, cf-release 271
+    #srv_api_uri: https://api.system.((domain_name))
+    internal_service_hostname: cloud-controller-ng.service.((internal_domain))
+    buildpacks:
+      blobstore_type: fog
+      buildpack_directory_key: ((buildpack_bucket))
+      fog_connection: &fog_s3_bucket_connection
+        provider: AWS
+        region: ((aws_region))
+        use_iam_profile: true
+    droplets:
+      blobstore_type: fog
+      droplet_directory_key: ((droplet_bucket))
+      fog_connection: *fog_s3_bucket_connection
+    packages:
+      blobstore_type: fog
+      app_package_directory_key: ((package_bucket))
+      fog_connection: *fog_s3_bucket_connection
+    resource_pool:
+      blobstore_type: fog
+      resource_directory_key: ((resource_bucket))
+      fog_connection: *fog_s3_bucket_connection
+    bulk_api_password: ((bulk_api_password))
+    db_encryption_key: ((db_encryption_secret))
+    # public_networks for a running instance should be restricted to the bare essentials (eg Git repo server for Jenkins installs)
+    default_running_security_groups: [dns, public_networks, postgres_networks, rabbitmq_networks, redis_networks]
+    default_staging_security_groups: [dns, public_networks]
+    # The buildpacks can, sometimes, be quite slow to download and install, so we list the ones that are used during deployment first - hopefully,
+    # the order is respected
+    install_buildpacks:
+    - {name: staticfile_buildpack, package: staticfile-buildpack}
+    - {name: python_buildpack, package: python-buildpack}
+    - {name: go_buildpack, package: go-buildpack}
+    - {name: java_buildpack, package: java-buildpack}
+    - {name: ruby_buildpack, package: ruby-buildpack}
+    - {name: nodejs_buildpack, package: nodejs-buildpack}
+    - {name: php_buildpack, package: php-buildpack}
+    - {name: binary_buildpack, package: binary-buildpack}
+    - {name: dotnet_core_buildpack, package: dotnet-core-buildpack}
+    internal_api_password: ((internal_api_password))
+    quota_definitions:
+      default:
+        memory_limit: 102400
+        non_basic_services_allowed: true
+        total_routes: 1000
+        total_services: -1
+    security_group_definitions:
+    - name: dns
+      rules:
+      - {destination: 0.0.0.0/0, ports: '53', protocol: tcp}
+      - {destination: 0.0.0.0/0, ports: '53', protocol: udp}
+    - name: public_networks
+      rules:
+      - {destination: 0.0.0.0-9.255.255.255, protocol: all}
+      - {destination: 11.0.0.0-169.253.255.255, protocol: all}
+      - {destination: 169.255.0.0-172.15.255.255, protocol: all}
+      - {destination: 172.32.0.0-192.167.255.255, protocol: all}
+      - {destination: 192.169.0.0-255.255.255.255, protocol: all}
+    - name: postgres_networks
+      rules:
+      - {destination: ((rds_az1_cidr)), ports: '5432', protocol: tcp}
+    - name: rabbitmq_networks
+      rules:
+      - {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '8883', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '5671', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '5672', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '15674', protocol: tcp}
+    - name: redis_networks
+      rules:
+      - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp}
+    staging_upload_password: ((staging_upload_password))
+    staging_upload_user: staging_upload_user
+  ccdb:
+    db_scheme: postgres
+    address: ((cf_rds_instance_dns))
+    port: ((cf_rds_instance_port))
+    databases:
+    - {name: ccdb, tag: cc}
+    roles:
+    - {name: ccadmin, password: ((cc_db_password)), tag: admin}
+  consul:
+    agent:
+      log_level: null
+      domain: ((internal_domain))
+      servers:
+        lan:
+        - ((consul_az1_ip1))
+        - ((consul_az1_ip2))
+        - ((consul_az1_ip3))
+    encrypt_keys:
+    - ((consul_encrypt_keys_secret))
+    ca_cert: ((internal_ca_crt))
+    # server.dc1.$INTERNAL_DOMAIN
+    server_cert: ((consul_server_crt))
+    server_key: ((consul_server_key))
+    # agent.dc1.$INTERNAL_DOMAIN
+    agent_cert: ((consul_agent_crt))
+    agent_key: ((consul_agent_key))
+  #databases:
+  #  # RDS require uuid-ossp, pgcrypto, and citext
+  #  # Apps RDS requires pgcrypto
+  #  databases:
+  #  - {name: ccdb, tag: cc, citext: true}
+  #  - {name: uaadb, tag: uaa, citext: true}
+  #  - {name: diego, tag: diego, citext: true}
+  #  port: ((cf_rds_instance_port))
+  #  roles:
+  #  - {name: ccadmin, password: ((cc_db_password)), tag: admin}
+  #  - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
+  #  - {name: diego, password: ((diego_db_password)), tag: admin}
+  description: Cloud Foundry - ((organisation))
+  domain: system.((domain_name))
+  etcd:
+    advertise_urls_dns_suffix: cf-etcd.service.((internal_domain))
+    cluster:
+    - name: etcd
+      instances: 1
+    machines: ["cf-etcd.service.((internal_domain))"]
+    peer_require_ssl: true
+    require_ssl: true
+    ca_cert: ((internal_ca_crt))
+    # cf-etcd.service.$INTERNAL_DOMAIN, altnames: *.cf-etcd.service.$INTERNAL_DOMAIN, cf-etcd.service.$INTERNAL_DOMAIN
+    server_cert: ((cf_etcd_server_crt))
+    server_key: ((cf_etcd_server_key))
+    # cf-etcd-client
+    client_cert: ((cf_etcd_client_crt))
+    client_key: ((cf_etcd_client_key))
+    peer_ca_cert: ((internal_ca_crt))
+    # cf-etcd.service.$INTERNAL_DOMAIN, altnames: *.cf-etcd.service.$INTERNAL_DOMAIN, cf-etcd.service.$INTERNAL_DOMAIN
+    peer_cert: ((cf_etcd_server_crt))
+    peer_key: ((cf_etcd_server_key))
+  doppler:
+    # Number of log messages to retain per application
+    maxRetainedLogMessages: 2000
+    # Size of the internal buffer used by doppler to store messages for output to firehose or ‘cf logs’. If the buffer gets full doppler will drop the messages
+    message_drain_buffer_size: 20000
+    etcd:
+      # clientName
+      client_cert: ((cf_etcd_client_crt))
+      client_key: ((cf_etcd_client_key))
+  traffic_controller:
+    etcd:
+      # clientName
+      client_cert: ((cf_etcd_client_crt))
+      client_key: ((cf_etcd_client_key))
+  syslog_drain_binder:
+    etcd:
+      # clientName
+      client_cert: ((cf_etcd_client_crt))
+      client_key: ((cf_etcd_client_key))
+  loggregator:
+    uaa:
+      client_secret: ((uaa_doppler_client_secret))
+    etcd:
+      require_ssl: true
+      machines: ["cf-etcd.service.((internal_domain))"]
+      ca_cert: ((internal_ca_crt))
+    tls:
+      ca_cert: ((internal_ca_crt))
+      doppler:
+        # doppler
+        cert: ((doppler_crt))
+        key: ((doppler_key))
+      trafficcontroller:
+        # trafficcontroller
+        cert: ((trafficcontroller_crt))
+        key: ((trafficcontroller_key))
+      cc_trafficcontroller:
+        # cc_trafficcontroller
+        cert: ((cc_trafficcontroller_crt))
+        key: ((cc_trafficcontroller_key))
+      metron:
+        # metron
+        cert: ((metron_crt))
+        key: ((metron_key))
+      syslogdrainbinder:
+        # syslogdrainbinder
+        cert: ((syslogdrainbinder_crt))
+        key: ((syslogdrainbinder_key))
+      statsd_injector:
+        # statsdinjector
+        cert: ((statsdinjector_crt))
+        key: ((statsdinjector_key))
+  statsd_injector:
+    deployment: ((bosh_deployment))
+  doppler_endpoint:
+    shared_secret: ((doppler_shared_secret))
+  loggregator_endpoint:
+    shared_secret: ((doppler_shared_secret))
+  metron_endpoint:
+    shared_secret: ((doppler_shared_secret))
+  metron_agent:
+    deployment: ((deployment_name))
+  nats:
+    machines: [((nats_az1_ip1)),((nats_az1_ip2))]
+    password: ((nats_password))
+    port: 4222
+    user: nats
+  ssl:
+    skip_cert_verify: true
+  system_domain: system.((domain_name))
+  system_domain_organization: ((organisation))
+  login:
+    branding:
+      company_name: ((organisation))
+    smtp: {}
+  uaa:
+    clients:
+      cc-service-dashboards:
+        authorities: clients.read,clients.write,clients.admin
+        authorized-grant-types: client_credentials
+        scope: openid,cloud_controller_service_permissions.read
+        secret: ((uaa_cc_service_dashboard_client_secret))
+      cc_routing:
+        authorities: routing.router_groups.read
+        secret: ((uaa_cc_routing_client_secret))
+        authorized-grant-types: client_credentials
+      cc_service_key_client:
+        authorities: credhub.read,credhub.write
+        secret: ((uaa_cc_service_key_client_secret))
+        authorized-grant-types: client_credentials
+      cf:
+        access-token-validity: 600
+        authorities: uaa.none
+        authorized-grant-types: password,refresh_token
+        autoapprove: true
+        secret: ''
+        override: true
+        refresh-token-validity: 604800
+        scope: cloud_controller.read,cloud_controller.write,openid,password.write,cloud_controller.admin,scim.read,scim.write,doppler.firehose,uaa.user,routing.router_groups.read
+      cf-services:
+        authorities: uaa.resource,oauth.service,clients.read,clients.write,clients.secret
+        authorized-grant-types: client_credentials,implicit
+        redirect-uri: https://login.system.((domain_name))/login
+        secret: ((uaa_cf_services_secret))
+        override: true
+        scope: openid,cloud_controller.read,cloud_controller.write
+      cloud_controller_username_lookup:
+        authorities: scim.userids
+        authorized-grant-types: client_credentials
+        secret: ((uaa_cc_username_lookup_client_secret))
+      doppler:
+        authorities: uaa.resource
+        authorized-grant-types: client_credentials
+        secret: ((uaa_doppler_client_secret))
+      gorouter:
+        authorities: routing.routes.read
+        authorized-grant-types: client_credentials
+        secret: ((uaa_go_router_client_secret))
+      login:
+        authorities: oauth.login,scim.write,clients.read,notifications.write,critical_notifications.write,emails.write,scim.userids,password.write
+        authorized-grant-types: authorization_code,client_credentials,refresh_token
+        redirect-uri: https://login.system.((domain_name))/login
+        scope: openid,oauth.approvals
+        secret: ((uaa_login_client_secret))
+      ssh-proxy:
+        authorized-grant-types: authorization_code
+        autoapprove: true
+        override: true
+        redirect-uri: https://login.system.((domain_name))/login
+        scope: openid,cloud_controller.read,cloud_controller.write,cloud_controller.admin
+        secret: ((uaa_ssh_proxy_secret))
+      tcp_emitter:
+        authorities: routing.routes.write,routing.routes.read
+        authorized-grant-types: client_credentials
+        secret: ((uaa_tcp_emitter_client_secret))
+      tcp_router:
+        authorities: routing.routes.read
+        authorized-grant-types: client_credentials
+        secret: ((uaa_tcp_router_client_secret))
+        scope:
+    scim:
+      userids_enabled: true
+      users:
+      # CF admin, not UAA admin
+      - name: admin
+        password: ((admin_password))
+        groups:
+        - scim.write
+        - scim.read
+        - openid
+        - cloud_controller.admin
+        - clients.read
+        - clients.write
+        - doppler.firehose
+        - routing.router_groups.read
+        - routing.router_groups.write
+      - name: smoke_tester
+        password: ((smoke_tester_password))
+        groups:
+        - openid
+        - cloud_controller.admin
+    jwt:
+      policy:
+        active_key_id: key-id-1
+        keys:
+          key-id-1:
+            signingKey: ((jwt_key))
+    zones:
+      internal:
+        hostnames:
+        - uaa.service.((internal_domain))
+        - login.service.((internal_domain))
+    ssl:
+      # Internal UAA port
+      port: 8443
+    # Should no longer be used in cf-release 272
+    url: https://uaa.system.((domain_name))
+    ca_cert: ((internal_ca_crt))
+    sslPrivateKey: ((uaa_key))
+    # uaa.service.$INTERNAL_DOMAIN
+    sslCertificate: ((uaa_crt))
+    password:
+      policy:
+        global:
+          expirePasswordInMonths: 3
+          maxLength: 255
+          minLength: 8
+          requireDigit: 1
+          requireLowerCaseCharacter: 1
+          requireSpecialCharacter: 1
+          requireUpperCaseCharacter: 1
+  capi:
+    cc_uploader:
+      mutual_tls:
+        ca_cert: ((internal_ca_crt))
+        server_cert: ((cc_uploader_mutual_crt))
+        server_key: ((cc_uploader_mutual_key))
+      cc:
+        ca_cert: ((internal_ca_crt))
+        client_cert: ((cc_uploader_cc_crt))
+        client_key: ((cc_uploader_cc_key))
+    nsync:
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+      cc:
+        #base_url: https://api.system.((domain_name))
+        base_url: http://cloud-controller-ng.service.((internal_domain)):9022
+        basic_auth_password: ((internal_api_password))
+      diego_privileged_containers: true
+    tps:
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+      cc:
+        # $INTERNAL_DOMAIN
+        ca_cert: ((internal_ca_crt))
+        # tps_watcher
+        client_cert: ((tps_watcher_crt))
+        client_key: ((tps_watcher_key))
+        #base_url: https://api.system.((domain_name))
+        base_url: https://cloud-controller-ng.service.((internal_domain)):9023
+        basic_auth_password: ((internal_api_password))
+    tps_listener:
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+      cc:
+        #base_url: https://api.system.((domain_name))
+        base_url: http://cloud-controller-ng.service.((internal_domain)):9022
+        basic_auth_password: ((internal_api_password))
+    stager:
+      # The default for this and diego.route_emitter.healthcheck_address is 127.0.0.1:17011 (2017/04/03)
+      debug_addr: 127.0.0.1:17012
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+      cc:
+        #base_url: https://api.system.((domain_name))
+        base_url: http://cloud-controller-ng.service.((internal_domain)):9022
+        basic_auth_password: ((internal_api_password))
+  diego:
+    auctioneer:
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+    bbs:
+      active_key_label: active
+      encryption_keys:
+      - label: active
+        passphrase: ((bbs_password))
+      ca_cert: ""
+      etcd:
+        machines: ["cf-etcd.service.((internal_domain))"]
+        ca_cert: ((internal_ca_crt))
+        # clientName
+        client_cert: ((cf_etcd_client_crt))
+        client_key: ((cf_etcd_client_key))
+        require_ssl: true
+      require_ssl: false
+      server_cert: ""
+      server_key: ""
+      sql:
+        db_driver: postgres
+        db_host: ((cf_rds_instance_dns))
+        db_port: ((cf_rds_instance_port))
+        db_schema: diego
+        db_username: diego
+        db_password: ((diego_db_password))
+        max_open_connections: 50
+    converger:
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+    rep:
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+      preloaded_rootfses: ["cflinuxfs2:/var/vcap/packages/cflinuxfs2/rootfs"]
+    executor:
+      memory_capacity_mb: 30720
+      disk_capacity_mb: 163840
+    route_emitter:
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+      nats:
+        machines: [((nats_az1_ip1)),((nats_az1_ip2))]
+        password: ((nats_password))
+        port: 4222
+        user: nats
+    ssh_proxy:
+      bbs:
+        ca_cert: ""
+        client_cert: ""
+        client_key: ""
+        require_ssl: false
+      host_key: ((ssh_host_key))
+      enable_cf_auth: true
+      enable_diego_auth: false
+      diego_credentials: ""
+      uaa_secret: ((uaa_ssh_proxy_secret))
+      uaa_token_url: https://uaa.system.((domain_name))/oauth/token
+      healthcheck_listen_addr: 0.0.0.0:2223
+      listen_addr: 0.0.0.0:2222
+    ssl:
+      skip_cert_verify: true
+  garden:
+    graph_cleanup_threshold_in_mb: 0
+    persistent_image_list: ["/var/vcap/packages/cflinuxfs2/rootfs"]
+    deny_networks:
+    - 0.0.0.0/0
+  cf:
+    # This is used by the smoke tests, so should be the external URL
+    api_url: https://api.system.((domain_name))
+    domain: ((domain_name))
+    admin_username: admin
+    admin_password: ((admin_password))
+  postgresql_databases:
+     bucket_name: ((backup_bucket))
+     credentials_source: env_or_profile
+     region: ((aws_region))
+  rabbitmq-broker:
+    route: rabbitbroker
+    #cc_endpoint: https://api.system.((domain_name))
+    cc_endpoint: http://cloud-controller-ng.service.((internal_domain)):9022
+    service:
+      #name: ((rabbitmq_product_name))
+      name: rabbitmq
+      username: rabbitmq-broker
+      password: ((rabbitmq_broker_password))
+      url: http://rabbitmq-broker.system.((domain_name))
+    rabbitmq:
+      hosts: rabbitmq-node.service.((internal_domain))
+      operator_set_policy:
+        enabled: true
+        policy_name: "operator_set_policy"
+        policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
+        policy_priority: 50
+      management_domain: rabbitmq-mgnt.system.((domain_name))
+      ssl: false
+      administrator:
+        username: rabbitmq-broker
+        password: ((rabbitmq_broker_password))
+  rabbitmq-haproxy:
+    ports:
+    - 5671
+    - 5672
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    stats:
+      username: rabbitmq-stats
+      password: ((rabbitmq_stats_password))
+#    server_ips: rabbitmq-node.service.((internal_domain))
+  rabbitmq-server:
+    plugins:
+    - rabbitmq_management
+    - rabbitmq_mqtt
+    ports:
+    - 5671
+    - 5672
+    - 1883
+    - 8883
+    - 61613
+    - 61614
+    - 15672
+    - 15674
+    administrators:
+      management:
+        username: rabbitmq-management
+        password: ((rabbitmq_management_password))
+      broker:
+        username: rabbitmq-broker
+        password: ((rabbitmq_broker_password))
+    cluster_partition_handling: autoheal
+    #ssl:
+    #  security_options:
+    #  cert:
+    #  key:
+    #  cacert:
+  smoke_tests:
+    api: https://api.system.((domain_name))
+    apps_domain: [apps.((domain_name))]
+    user: smoke_tester
+    password: ((smoke_tester_password))
+    org: SmokeTest_Org
+    space: SmokeTest_Space
+    backend: diego
