@@ -1,19 +1,23 @@
+# Single AZ + HA
 ---
-nats_az1_ip1: ((private_az1_static_ip1))
-nats_az1_ip2: ((private_az1_static_ip2))
-nats_az1_ip3: ((private_az1_static_ip3))
+# Consul likes to have a cluster
+consul_az1_ip1: ((private_az1_static_ip1))
+consul_az1_ip2: ((private_az1_static_ip2))
+consul_az1_ip3: ((private_az1_static_ip3))
 
-etcd_az1_ip1: ((private_az1_static_ip4))
-etcd_az1_ip2: ((private_az1_static_ip5))
-etcd_az1_ip3: ((private_az1_static_ip6))
+#
+doppler_az1_ip1: ((private_az1_static_ip4))
+doppler_az1_ip2: ((private_az1_static_ip5))
 
-# AZ1
-consul_az1_ip1: ((private_az1_static_ip7))
-consul_az1_ip2: ((private_az1_static_ip8))
-consul_az1_ip3: ((private_az1_static_ip9))
+#
+etcd_az1_ip1: ((private_az1_static_ip6))
+etcd_az1_ip2: ((private_az1_static_ip7))
+etcd_az1_ip3: ((private_az1_static_ip8))
 
-router_az1_ip1: ((private_az1_static_ip10))
-router_az2_ip2: ((private_az1_static_ip11))
+#
+nats_az1_ip1: ((private_az1_static_ip9))
+nats_az1_ip2: ((private_az1_static_ip10))
 
-doppler_az1_ip1: ((private_az1_static_ip12))
-doppler_az1_ip2: ((private_az1_static_ip13))
+#
+router_az1_ip1: ((private_az1_static_ip11))
+router_az1_ip2: ((private_az2_static_ip12))

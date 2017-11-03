@@ -53,7 +53,7 @@ jobs:
 #  vm_type: small_general_blobstore_backup
 #  networks:
 #  - name: cf_private
-#  azs: [az1,az2]
+#  azs: [az1]
 #  templates:
 #  - {name: postgresql-databases, release: postgresql-databases}
 #  properties:
@@ -74,7 +74,7 @@ jobs:
   vm_type: small_general_blobstore_backup
   networks:
   - name: cf_private
-  azs: [az1,az2]
+  azs: [az1,]
   templates:
   - {name: postgresql-databases, release: postgresql-databases}
   properties:
@@ -97,7 +97,7 @@ jobs:
   stemcell: default
   networks:
   - name: cf_private
-  azs: [az1,az2]
+  azs: [az1]
   templates:
   - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
   properties:
@@ -117,7 +117,7 @@ jobs:
   stemcell: default
   networks:
   - name: cf_private
-  azs: [az1,az2]
+  azs: [az1]
   templates:
   - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
   properties:
@@ -140,20 +140,6 @@ jobs:
     broker:
       name: rabbitmq
 
-- name: rabbitmq-broker-smoke-tests-az2
-  instances: 1
-  lifecycle: errand
-  vm_type: micro_general
-  stemcell: default
-  networks:
-  - name: cf_private
-  azs: [az2]
-  templates:
-  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
-  properties:
-    broker:
-      name: rabbitmq
-
 - name: cf-smoke-tests-az1
   instances: 1
   lifecycle: errand
@@ -168,37 +154,9 @@ jobs:
     smoke_tests:
       etcd_ip_address: ((etcd_az1_ip1))
 
-- name: cf-smoke-tests-az2
-  instances: 1
-  lifecycle: errand
-  stemcell: default
-  vm_type: micro_general
-  networks:
-  - name: cf_private
-  azs: [az2]
-  templates:
-  - {name: smoke_tests, release: cf-smoke-tests}
-  properties:
-    smoke_tests:
-      etcd_ip_address: ((etcd_az1_ip1))
-
-- name: cf-smoke-tests-az3
-  instances: 1
-  lifecycle: errand
-  stemcell: default
-  vm_type: micro_general
-  networks:
-  - name: cf_private
-  azs: [az3]
-  templates:
-  - {name: smoke_tests, release: cf-smoke-tests}
-  properties:
-    smoke_tests:
-      etcd_ip_address: ((etcd_az1_ip1))
-
 - name: nats
-  instances: 6
-  azs: [az1,az2,az3]
+  instances: 2
+  azs: [az1]
   vm_type: small_general
   stemcell: default
   templates:
@@ -209,17 +167,13 @@ jobs:
     static_ips:
     - ((nats_az1_ip1))
     - ((nats_az1_ip2))
-    - ((nats_az2_ip1))
-    - ((nats_az2_ip2))
-    - ((nats_az3_ip1))
-    - ((nats_az3_ip2))
   properties:
     metron_agent:
       zone: z1
 
 - name: etcd
-  instances: 6
-  azs: [az1,az2,az3]
+  instances: 3
+  azs: [az1]
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
@@ -232,14 +186,8 @@ jobs:
   - name: cf_private
     static_ips:
     - ((etcd_az1_ip1))
-    - ((etcd_az2_ip1))
-    - ((etcd_az3_ip1))
-    - ((etcd_az1_ip1))
-    - ((etcd_az2_ip1))
-    - ((etcd_az3_ip1))
-    - ((etcd_az1_ip1))
-    - ((etcd_az2_ip1))
-    - ((etcd_az3_ip1))
+    - ((etcd_az1_ip2))
+    - ((etcd_az1_ip3))
   properties:
     etcd_metrics_server:
       nats:
@@ -254,8 +202,8 @@ jobs:
             name: cf-etcd
 
 - name: consul
-  instances: 9
-  azs: [az1,az2,az3]
+  instances: 3
+  azs: [az1]
   persistent_disk: 1024
   vm_type: small_general
   stemcell: default
@@ -268,12 +216,6 @@ jobs:
     - ((consul_az1_ip1))
     - ((consul_az1_ip2))
     - ((consul_az1_ip3))
-    - ((consul_az2_ip1))
-    - ((consul_az2_ip2))
-    - ((consul_az2_ip3))
-    - ((consul_az3_ip1))
-    - ((consul_az3_ip2))
-    - ((consul_az3_ip3))
   properties:
     metron_agent:
       zone: z1
@@ -282,8 +224,7 @@ jobs:
         mode: server
 
 #- name: postgres
-#  #instances: 1
-#  instances: ((required_non_cf_rds_postgres_instances))
+#  instances: 1
 #  azs: [az1]
 #  persistent_disk: 10240
 #  vm_type: medium_general
@@ -303,7 +244,7 @@ jobs:
 
 - name: ssh_proxy
   instances: 2
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: small_ssh_general
   stemcell: default
   templates:
@@ -318,7 +259,7 @@ jobs:
 
 - name: diego_cell
   instances: 2
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: large_ram_large_disk
   stemcell: default
   templates:
@@ -342,7 +283,7 @@ jobs:
 
 - name: diego_cell_large_spot
   instances: 0
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: large_ram_large_disk_spot
   stemcell: default
   templates:
@@ -365,7 +306,7 @@ jobs:
 
 - name: diego_cell_xlarge_spot
   instances: 0
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: xlarge_ram_large_disk_spot
   stemcell: default
   templates:
@@ -388,7 +329,7 @@ jobs:
 
 - name: diego_cell_2xlarge_spot
   instances: 0
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: 2xlarge_ram_large_disk_spot
   stemcell: default
   templates:
@@ -411,7 +352,7 @@ jobs:
 
 - name: diego_cell_4xlarge_spot
   instances: 0
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: 4xlarge_ram_large_disk_spot
   stemcell: default
   templates:
@@ -433,8 +374,8 @@ jobs:
         zone: z1
 
 - name: diego_brain
-  instances: 4
-  azs: [az1,az2]
+  instances: 2
+  azs: [az1]
   vm_type: small_general
   stemcell: default
   templates:
@@ -462,8 +403,8 @@ jobs:
         services: {}
 
 - name: api
-  instances: 4
-  azs: [az1,az2]
+  instances: 2
+  azs: [az1]
   vm_type: medium_cc_general
   stemcell: default
   templates:
@@ -501,8 +442,8 @@ jobs:
         - "api.system.((domain_name))"
 
 - name: doppler
-  instances: 4
-  azs: [az1,az2]
+  instances: 2
+  azs: [az1]
   vm_type: medium_general
   stemcell: default
   templates:
@@ -515,8 +456,6 @@ jobs:
     static_ips:
     - ((doppler_az1_ip1))
     - ((doppler_az1_ip2))
-    - ((doppler_az2_ip1))
-    - ((doppler_az2_ip2))
   properties:
     metron_agent:
       zone: z1
@@ -528,8 +467,8 @@ jobs:
           doppler: {}
 
 - name: loggregator_trafficcontroller
-  instances: 4
-  azs: [az1,az2]
+  instances: 2
+  azs: [az1]
   vm_type: small_general
   stemcell: default
   templates:
@@ -558,7 +497,7 @@ jobs:
 
 - name: uaa
   instances: 2
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: small_smtp_sender_general
   stemcell: default
   templates:
@@ -613,7 +552,7 @@ jobs:
 
 - name: router
   instances: 2
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: small_router_general
   stemcell: default
   templates:
@@ -624,7 +563,7 @@ jobs:
   - name: cf_private
     static_ips:
     - ((router_az1_ip1))
-    - ((router_az2_ip1))
+    - ((router_az1_ip2))
   properties:
     metron_agent:
       zone: z1
@@ -632,7 +571,7 @@ jobs:
 
 - name: rabbitmq-mgnt
   instances: 2
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: small_general
   stemcell: default
   templates:
@@ -656,7 +595,7 @@ jobs:
 
 - name: rabbitmq-broker
   instances: 2
-  azs: [az1,az2]
+  azs: [az1]
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
@@ -677,8 +616,8 @@ jobs:
         - rabbitmq-broker.system.((domain_name))
 
 - name: rabbitmq-node
-  instances: 4
-  azs: [az1,az2]
+  instances: 2
+  azs: [az1]
   vm_type: small_general
   stemcell: default
   persistent_disk: 10240
@@ -789,7 +728,6 @@ properties:
     - name: postgres_networks
       rules:
       - {destination: ((rds_az1_cidr)), ports: '5432', protocol: tcp}
-      - {destination: ((rds_az2_cidr)), ports: '5432', protocol: tcp}
     - name: rabbitmq_networks
       rules:
       - {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp}
@@ -798,16 +736,9 @@ properties:
       - {destination: ((rabbitmq_az1_cidr)), ports: '5672', protocol: tcp}
       - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp}
       - {destination: ((rabbitmq_az1_cidr)), ports: '15674', protocol: tcp}
-      - {destination: ((rabbitmq_az2_cidr)), ports: '1883', protocol: tcp}
-      - {destination: ((rabbitmq_az2_cidr)), ports: '8883', protocol: tcp}
-      - {destination: ((rabbitmq_az2_cidr)), ports: '5671', protocol: tcp}
-      - {destination: ((rabbitmq_az2_cidr)), ports: '5672', protocol: tcp}
-      - {destination: ((rabbitmq_az2_cidr)), ports: '15672', protocol: tcp}
-      - {destination: ((rabbitmq_az2_cidr)), ports: '15674', protocol: tcp}
     - name: redis_networks
       rules:
       - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp}
-      - {destination: ((elasti_cache_az2_cidr)), ports: '6379', protocol: tcp}
     staging_upload_password: ((staging_upload_password))
     staging_upload_user: staging_upload_user
   ccdb:
@@ -827,12 +758,6 @@ properties:
         - ((consul_az1_ip1))
         - ((consul_az1_ip2))
         - ((consul_az1_ip3))
-        - ((consul_az2_ip1))
-        - ((consul_az2_ip2))
-        - ((consul_az2_ip3))
-        - ((consul_az3_ip1))
-        - ((consul_az3_ip2))
-        - ((consul_az3_ip3))
     encrypt_keys:
     - ((consul_encrypt_keys_secret))
     ca_cert: ((internal_ca_crt))
@@ -938,7 +863,7 @@ properties:
   metron_agent:
     deployment: ((deployment_name))
   nats:
-    machines: [((nats_az1_ip1)),((nats_az2_ip1)),((nats_az3_ip1))]
+    machines: [((nats_az1_ip1)),((nats_az1_ip2))]
     password: ((nats_password))
     port: 4222
     user: nats
@@ -1178,7 +1103,7 @@ properties:
         client_key: ""
         require_ssl: false
       nats:
-        machines: [((nats_az1_ip1)),((nats_az2_ip1)),((nats_az3_ip1))]
+        machines: [((nats_az1_ip1)),((nats_az1_ip2))]
         password: ((nats_password))
         port: 4222
         user: nats

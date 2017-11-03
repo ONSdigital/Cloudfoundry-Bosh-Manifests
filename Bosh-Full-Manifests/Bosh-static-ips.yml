@@ -1,13 +1,19 @@
+# SingleAZ + No HA
 ---
-nats_az1_ip1: ((private_az1_static_ip1))
-
-etcd_az1_ip1: ((private_az1_static_ip2))
-
 # Consul likes to have a cluster
 consul_az1_ip1: ((private_az1_static_ip3))
 consul_az1_ip2: ((private_az1_static_ip4))
 consul_az1_ip3: ((private_az1_static_ip5))
 
+#
+doppler_az1_ip1: ((private_az1_static_ip7))
+
+#
+etcd_az1_ip1: ((private_az1_static_ip2))
+
+#
+nats_az1_ip1: ((private_az1_static_ip1))
+
+#
 router_az1_ip1: ((private_az1_static_ip6))
 
-doppler_az1_ip1: ((private_az1_static_ip7))
