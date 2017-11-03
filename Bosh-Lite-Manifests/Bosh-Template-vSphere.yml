@@ -1,0 +1,169 @@
+#
+---
+name: ((deployment_name))
+
+releases:
+  # can use file:// URLs - then SHA1 not required
+- name: bosh
+  # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=263.3.0
+  sha1: 39a0c2a4bb478a01861dc2ff7cce35b1be79a34c
+- name: bosh-vsphere-cpi
+  # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?all=1 - this may, eventually change to not-incubator
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=45
+  sha1: b5f3c53c800d6c8a9182b263ec239a952f33ba67
+
+resource_pools:
+- name: bosh_vm
+  network: cf_director
+  env:
+    bosh:
+      # The following should work to generate a new password:
+      # echo "$PASSWORD $SALT" | perl -ane 'print crypt($F[0],sprintf(q($6$%s$),$F[1])).qq(\n)'
+      #
+      # c1oudc0w
+      password: $6$GiQp7XJ3AYAnpUpZ$zGUSoI6OATmb4ff0k60ZFIk/pMNypGxqMoihspINUAS8Fk6p0Dz/PIMzFfguZIbLSeJPB5PkNMCNzkO4yJqp8/
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    # https://bosh.io/stemcells/
+    # https://bosh.io/stemcells/bosh-vcloud-esxi-ubuntu-trusty-go_agent
+    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3468.1
+    sha1: 9881f777860a1d46c7d25584a9d0bd0a788207dd
+
+  cloud_properties:
+    instance_type: m4.large
+    ephemeral_disk: {size: 50_000, type: gp2}
+    availability_zone: ((vsphere_availability_zone1))
+    security_groups: [((director_instance_security_group))]
+
+disk_pools:
+- name: disks
+  disk_size: 20_000
+  cloud_properties: {type: gp2}
+
+networks:
+- name: cf_director
+  type: manual
+  subnets:
+  - range: ((director_az1_cidr))
+    gateway: ((director_az1_default_route))
+    dns: [((dns_ip))]
+    reserved: ["((director_az1_reserved_start)) - ((director_az1_reserved_stop))"]
+    static: ["((director_az1_static_start)) - ((director_az1_static_stop))"]
+    cloud_properties:
+      subnet: ((director_az1_subnet))
+#- name: public
+#  type: vip
+
+jobs:
+- name: ((deployment_name))-boshlite
+  instances: 1
+  templates:
+  - {name: nats, release: bosh}
+  - {name: postgres-9.4, release: bosh}
+  - {name: blobstore, release: bosh}
+  - {name: director, release: bosh}
+  - {name: health_monitor, release: bosh}
+  - {name: registry, release: bosh}
+  - {name: vsphere_cpi, release: bosh-vsphere-cpi}
+  resource_pool: bosh_vm
+  persistent_disk_pool: disks
+  networks:
+  - name: cf_director
+    static_ips: [((bosh_lite_private_ip))]
+    default: [dns, gateway]
+  #- name: public
+  #  static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
+  properties:
+    agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
+    vsphere: &vsphere
+
+    blobstore:
+      address: ((bosh_lite_private_ip))
+      port: 25250
+      provider: dav
+      director:
+        user: director
+        password: ((director_blobstore_password))
+      agent:
+        user: agent
+        password: ((agent_blobstore_password))
+    compiled_package_cache:
+      provider: dav
+    default_ssh_options:
+      gateway_host: ((director_dns))
+    director:
+      address: 127.0.0.1
+      name: ((deployment_name))
+      backup_destination:
+        provider: dav
+      #generate_vm_passwords: true
+      # https://bosh.io/docs/remove-dev-tools.html
+      #remove_dev_tools: true
+      db: *db
+      cpi_job: vsphere_cpi
+      enable_dedicated_status_worker: true
+      enable_nats_delivered_templates: true
+      enable_post_deploy: true
+      enable_snapshots: true
+      #snapshot_schedule: 0 0 7 * * * UTC
+      #self_snapshot_schedule: 0 0 6 * * * UTC
+      # To/from Director
+      #encryption: true
+      max_threads: 10
+      ssl:
+        key: ((director_key))
+        cert: ((director_crt))
+      user_management:
+        provider: local
+        local:
+          users:
+          - {name: director, password: ((director_password))}
+          - {name: hm, password: ((hm_password))}
+    hm:
+      cloud_watch_enabled: true
+      director_account:
+        user: hm
+        password: ((hm_password))
+      resurrector_enabled: true
+    nats:
+      address: 127.0.0.1
+      user: nats
+      password: ((nats_password))
+    ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+    postgres: &db
+      listen_address: 127.0.0.1
+      host: 127.0.0.1
+      user: postgres
+      password: ((postgres_password))
+      database: bosh
+      adapter: postgres
+    registry:
+      address: ((bosh_lite_private_ip))
+      host: ((bosh_lite_private_ip))
+      db: *db
+      http:
+        user: admin
+        password: ((http_password))
+        port: 25777
+      username: admin
+      password: ((registry_password))
+      port: 25777
+
+properties:
+
+addons:
+
+cloud_provider:
+  mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
+  ssh_tunnel:
+    host: ((director_dns))
+    port: 22
+    user: vcap
+    private_key: ((bosh_ssh_key_file))
+  template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
+  properties:
+    vsphere: *vsphere
+    agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
+    blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
+    ntp: *ntp
