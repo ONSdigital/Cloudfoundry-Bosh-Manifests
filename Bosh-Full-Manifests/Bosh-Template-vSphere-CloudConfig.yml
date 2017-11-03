@@ -1,0 +1,216 @@
+# vim: set autoindent expandtab shiftwidth=2 softtabstop=2
+#
+---
+
+azs:
+- name: az1
+  cloud_properties:
+    availability_zone: ((vsphere_availability_zone1))
+
+
+networks:
+- name: cf_private
+  type: manual
+  subnets:
+  - range: ((private_az1_cidr))
+    gateway: ((private_az1_default_route))
+    dns: [((dns_ip))]
+    az: az1
+    reserved: ["((private_az1_reserved_start)) - ((private_az1_reserved_stop))"]
+    static: ["((private_az1_static_start)) - ((private_az1_static_stop))"]
+    cloud_properties:
+      subnet: ((private_az1_subnet))
+      security_groups: [((private_security_group))]
+- name: cf_rabbitmq
+  type: manual
+  subnets:
+  - range: ((rabbitmq_az1_cidr))
+    gateway: ((rabbitmq_az1_default_route))
+    dns: [((dns_ip))]
+    az: az1
+    reserved: ["((rabbitmq_az1_reserved_start)) - ((rabbitmq_az1_reserved_stop))"]
+    cloud_properties:
+      subnet: ((rabbitmq_az1_subnet))
+      security_groups: [((rabbitmq_security_group))]
+
+vm_types:
+- name: micro_general
+  cloud_properties:
+    instance_type: t2.micro
+- name: micro_general_blobstore_backup
+  cloud_properties:
+    instance_type: t2.micro
+    iam_instance_profile: ((blobstore_backup_bucket_access_instance_profile))
+- name: small_general
+  cloud_properties:
+    instance_type: t2.small
+- name: small_general_blobstore_backup
+  cloud_properties:
+    instance_type: t2.small
+    iam_instance_profile: ((blobstore_backup_bucket_access_instance_profile))
+- name: small_ssh_general
+  cloud_properties:
+    instance_type: t2.small
+    elbs: [((cf_ssh_elb))]
+    security_groups: [((cf_ssh_instance_security_group)),((private_security_group))]
+- name: small_router_general
+  cloud_properties:
+    instance_type: t2.small
+    lb_target_groups:
+    - ((application_elb_target_group80))
+    - ((application_elb_target_group443))
+    security_groups: [((router_security_group)),((private_security_group))]
+- name: medium_general
+  cloud_properties:
+    instance_type: t2.medium
+- name: medium_router_general
+  cloud_properties:
+    instance_type: t2.medium
+    lb_target_groups:
+    - ((application_elb_target_group80))
+    - ((application_elb_target_group443))
+    security_groups: [((router_security_group)),((private_security_group))]
+- name: medium_cc_general
+  cloud_properties:
+    instance_type: t2.medium
+    iam_instance_profile: ((cc_bucket_access_instance_profile))
+- name: large_compute
+  cloud_properties:
+    instance_type: c4.large
+- name: large_compute_spot
+  cloud_properties:
+    instance_type: c4.large
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+- name: large_compute_spot_fallback
+  cloud_properties:
+    instance_type: c4.large
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+    spot_ondemand_fallback: true
+- name: large_cc_compute_spot
+  cloud_properties:
+    instance_type: c4.large
+    iam_instance_profile: ((cc_bucket_access_instance_profile))
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+- name: large_cc_compute_spot_fallback
+  cloud_properties:
+    instance_type: c4.large
+    iam_instance_profile: ((cc_bucket_access_instance_profile))
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+    spot_ondemand_fallback: true
+- name: xlarge_compute
+  cloud_properties:
+    instance_type: c4.xlarge
+- name: xlarge_compute_spot
+  cloud_properties:
+    instance_type: c4.xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+- name: xlarge_compute_spot_fallback
+  cloud_properties:
+    instance_type: c4.xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+    spot_ondemand_fallback: true
+# Its probably better to use more large instances, and less xlarge instances - the cost is the same, the
+# ram will be virtually the same, ignoring base OS overhead, but the availability will be better
+- name: large_ram_large_disk
+  cloud_properties:
+    instance_type: r4.large
+    ephemeral_disk:
+      size: 80000
+- name: large_ram_large_disk_spot
+  cloud_properties:
+    instance_type: r4.large
+    ephemeral_disk:
+      size: 80000
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+- name: large_ram_large_disk_spot_fallback
+  cloud_properties:
+    ephemeral_disk:
+      size: 80000
+    instance_type: r4.large
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.05
+    spot_ondemand_fallback: true
+- name: xlarge_ram_large_disk
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.xlarge
+- name: xlarge_ram_large_disk_spot
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+- name: xlarge_ram_large_disk_spot_fallback
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+    spot_ondemand_fallback: true
+- name: 2xlarge_ram_large_disk
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.2xlarge
+- name: 2xlarge_ram_large_disk_spot
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.2xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+- name: 2xlarge_ram_large_disk_spot_fallback
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.2xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.1
+    spot_ondemand_fallback: true
+- name: 4xlarge_ram_large_disk
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.4xlarge
+- name: 4xlarge_ram_large_disk_spot
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.4xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.15
+- name: 4xlarge_ram_large_disk_spot_fallback
+  cloud_properties:
+    ephemeral_disk:
+      size: 160000
+    instance_type: r4.4xlarge
+    # Ensure this is set to a sensible value
+    spot_bid_price: 0.15
+    spot_ondemand_fallback: true
+
+compilation:
+  workers: 10
+  network: cf_private
+  reuse_compilation_vms: true
+  az: az1
+  cloud_properties:
+    # Using large VMs decreases initial deployment time massively
+    #instance_type: m4.large
+    instance_type: t2.large
+    ephemeral_disk:
+      size: 160000
+    # Spot instances can take longer to come up and if no capacity is available things may time out before the fallback starts
+    #spot_bid_price: 0.2
+    #spot_ondemand_fallback: true
+    security_groups: [((private_security_group))]
+    iam_instance_profile: ((compile_nodes_bucket_access_instance_profile))
