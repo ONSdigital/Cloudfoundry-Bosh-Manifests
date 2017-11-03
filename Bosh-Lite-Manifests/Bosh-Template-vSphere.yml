@@ -23,23 +23,25 @@ resource_pools:
       #
       # c1oudc0w
       password: $6$GiQp7XJ3AYAnpUpZ$zGUSoI6OATmb4ff0k60ZFIk/pMNypGxqMoihspINUAS8Fk6p0Dz/PIMzFfguZIbLSeJPB5PkNMCNzkO4yJqp8/
+    # http_proxy:
+    # https_proxy:
+    # no_proxy:
   stemcell:
-    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     # https://bosh.io/stemcells/
     # https://bosh.io/stemcells/bosh-vcloud-esxi-ubuntu-trusty-go_agent
     url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3468.1
     sha1: 9881f777860a1d46c7d25584a9d0bd0a788207dd
 
   cloud_properties:
-    instance_type: m4.large
-    ephemeral_disk: {size: 50_000, type: gp2}
+    instance_type: ((vsphere_large_ram_large_cpu))
+    ephemeral_disk: {size: 50_000}
     availability_zone: ((vsphere_availability_zone1))
     security_groups: [((director_instance_security_group))]
 
 disk_pools:
 - name: disks
   disk_size: 20_000
-  cloud_properties: {type: gp2}
 
 networks:
 - name: cf_director
@@ -76,8 +78,14 @@ jobs:
   #  static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
   properties:
     agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
-    vsphere: &vsphere
-
+    vcenter: &vcenter
+      address: [((vcenter_address))]
+      user: [((vcenter_username))]
+      password: [((vcenter_password))]
+      datacenters: [((vcenter_datacenters))]
+      enable_auto_anti_affinity_drs_rules: ((vcenter_drs_enabled))
+      #connection_options:
+        #ca_cert: ((vcenter_ca_certificateion))
     blobstore:
       address: ((bosh_lite_private_ip))
       port: 25250
@@ -163,7 +171,7 @@ cloud_provider:
     private_key: ((bosh_ssh_key_file))
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
   properties:
-    vsphere: *vsphere
+    vsphere: *vcenter
     agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
