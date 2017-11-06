@@ -237,7 +237,7 @@ jobs:
     - ((etcd_az2_ip1))
     - ((etcd_az2_ip2))
     - ((etcd_az2_ip3))
-    - ((etcd_az3_ip2))
+    - ((etcd_az3_ip1))
     - ((etcd_az3_ip2))
     - ((etcd_az3_ip3))
   properties:
