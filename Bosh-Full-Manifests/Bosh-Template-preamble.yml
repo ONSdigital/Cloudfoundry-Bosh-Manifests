@@ -21,7 +21,7 @@ update:
 
 jobs:
 - name: create-postgresql-databases-apps
-  instances: ((configure_apps_rds_postgres_instance))
+  instances: 1
   lifecycle: errand
   stemcell: default
   vm_type: small_general_blobstore_backup
@@ -45,7 +45,7 @@ jobs:
      - { name: rds_broker, extensions: [pgcrypto] }
 
 - name: create-postgresql-databases-cf
-  instances: ((configure_cf_rds_postgres_instance))
+  instances: 1
   lifecycle: errand
   stemcell: default
   vm_type: small_general_blobstore_backup
