@@ -190,6 +190,8 @@ jobs:
     - ((etcd_az1_ip3))
   properties:
     etcd_metrics_server:
+      etcd:
+        require_ssl: true
       nats:
         password: ((nats_password))
         username: nats
