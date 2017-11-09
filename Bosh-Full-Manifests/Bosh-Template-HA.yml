@@ -787,7 +787,7 @@ properties:
     advertise_urls_dns_suffix: cf-etcd.service.((internal_domain))
     cluster:
     - name: etcd
-      instances: 1
+      instances: 3
     machines: ["cf-etcd.service.((internal_domain))"]
     peer_require_ssl: true
     require_ssl: true
