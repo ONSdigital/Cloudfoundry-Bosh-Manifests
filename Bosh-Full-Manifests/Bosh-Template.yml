@@ -550,7 +550,7 @@ jobs:
       - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
 
 - name: router
-  instances: 1:
+  instances: 1
   azs: [az1]
   vm_type: small_router_general
   stemcell: default
