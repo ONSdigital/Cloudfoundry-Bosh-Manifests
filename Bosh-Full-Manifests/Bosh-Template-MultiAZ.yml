@@ -617,7 +617,7 @@ jobs:
   - {name: gorouter, release: cf}
   - {name: metron_agent, release: cf}
   networks:
-  #- name: cf_private
+  - name: cf_private
   #  static_ips:
   #  - ((router_az1_ip1))
   #  - ((router_az2_ip1))
