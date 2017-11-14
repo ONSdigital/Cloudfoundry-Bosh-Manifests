@@ -180,7 +180,6 @@ jobs:
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: etcd, release: cf}
-  - {name: etcd_metrics_server, release: cf}
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
@@ -189,7 +188,6 @@ jobs:
     - ((etcd_az1_ip2))
     - ((etcd_az1_ip3))
   properties:
-    etcd_metrics_server:
       nats:
         password: ((nats_password))
         username: nats
@@ -785,7 +783,7 @@ properties:
     advertise_urls_dns_suffix: cf-etcd.service.((internal_domain))
     cluster:
     - name: etcd
-      instances: 1
+      instances: 3
     machines: ["cf-etcd.service.((internal_domain))"]
     peer_require_ssl: true
     require_ssl: true

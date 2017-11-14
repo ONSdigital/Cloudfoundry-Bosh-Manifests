@@ -1,29 +1,56 @@
+# MultAZ
 ---
-nats_az1_ip1: ((private_az1_static_ip2))
-nats_az2_ip1: ((private_az2_static_ip2))
-nats_az3_ip1: ((private_az3_static_ip2))
 
-etcd_az1_ip1: ((private_az1_static_ip3))
-etcd_az2_ip1: ((private_az2_static_ip3))
-etcd_az3_ip1: ((private_az3_static_ip3))
+#
+consul_az1_ip1: ((private_az1_static_ip1))
+consul_az1_ip2: ((private_az1_static_ip2))
+consul_az1_ip3: ((private_az1_static_ip3))
+#
+consul_az2_ip1: ((private_az2_static_ip1))
+consul_az2_ip2: ((private_az2_static_ip2))
+consul_az2_ip3: ((private_az2_static_ip3))
+#
+consul_az3_ip1: ((private_az3_static_ip1))
+consul_az3_ip2: ((private_az3_static_ip2))
+consul_az3_ip3: ((private_az3_static_ip3))
 
-# AZ1
-consul_az1_ip1: ((private_az1_static_ip4))
-consul_az1_ip2: ((private_az1_static_ip5))
-consul_az1_ip3: ((private_az1_static_ip6))
-# AZ2
-consul_az2_ip1: ((private_az2_static_ip4))
-consul_az2_ip2: ((private_az2_static_ip5))
-consul_az2_ip3: ((private_az2_static_ip6))
-# AZ3
-consul_az3_ip1: ((private_az3_static_ip4))
-consul_az3_ip2: ((private_az3_static_ip5))
-consul_az3_ip3: ((private_az3_static_ip6))
+#
+doppler_az1_ip1: ((private_az1_static_ip4))
+doppler_az1_ip2: ((private_az1_static_ip5))
+#
+doppler_az2_ip1: ((private_az2_static_ip4))
+doppler_az2_ip2: ((private_az2_static_ip5))
+#
+doppler_az3_ip1: ((private_az3_static_ip4))
+doppler_az3_ip2: ((private_az3_static_ip5))
 
-router_az1_ip1: ((private_az1_static_ip7))
-router_az2_ip1: ((private_az2_static_ip7))
+#
+etcd_az1_ip1: ((private_az1_static_ip6))
+etcd_az1_ip2: ((private_az1_static_ip7))
+etcd_az1_ip3: ((private_az1_static_ip8))
+#
+etcd_az2_ip1: ((private_az2_static_ip6))
+etcd_az2_ip2: ((private_az2_static_ip7))
+etcd_az2_ip3: ((private_az2_static_ip8))
+#
+etcd_az3_ip1: ((private_az3_static_ip6))
+etcd_az3_ip2: ((private_az3_static_ip7))
+etcd_az3_ip3: ((private_az3_static_ip8))
 
-doppler_az1_ip1: ((private_az1_static_ip8))
-doppler_az1_ip2: ((private_az1_static_ip9))
-doppler_az2_ip1: ((private_az2_static_ip8))
-doppler_az2_ip2: ((private_az2_static_ip9))
+#
+nats_az1_ip1: ((private_az1_static_ip9))
+nats_az1_ip2: ((private_az1_static_ip10))
+#
+nats_az2_ip1: ((private_az2_static_ip9))
+nats_az2_ip2: ((private_az2_static_ip10))
+#
+nats_az3_ip1: ((private_az3_static_ip9))
+nats_az3_ip2: ((private_az3_static_ip10))
+
+#
+router_az1_ip1: ((private_az1_static_ip11))
+router_az1_ip2: ((private_az1_static_ip12))
+#
+router_az2_ip1: ((private_az2_static_ip11))
+router_az2_ip2: ((private_az2_static_ip12))
+

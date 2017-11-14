@@ -197,7 +197,7 @@ jobs:
       etcd_ip_address: ((etcd_az1_ip1))
 
 - name: nats
-  instances: 3
+  instances: 6
   azs: [az1,az2,az3]
   vm_type: small_general
   stemcell: default
@@ -208,14 +208,17 @@ jobs:
   - name: cf_private
     static_ips:
     - ((nats_az1_ip1))
+    - ((nats_az1_ip2))
     - ((nats_az2_ip1))
+    - ((nats_az2_ip2))
     - ((nats_az3_ip1))
+    - ((nats_az3_ip2))
   properties:
     metron_agent:
       zone: z1
 
 - name: etcd
-  instances: 3
+  instances: 9
   azs: [az1,az2,az3]
   vm_type: micro_general
   stemcell: default
@@ -223,19 +226,21 @@ jobs:
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: etcd, release: cf}
-  - {name: etcd_metrics_server, release: cf}
+#  - {name: etcd_metrics_server, release: cf}
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
     static_ips:
     - ((etcd_az1_ip1))
+    - ((etcd_az1_ip2))
+    - ((etcd_az1_ip3))
     - ((etcd_az2_ip1))
+    - ((etcd_az2_ip2))
+    - ((etcd_az2_ip3))
     - ((etcd_az3_ip1))
+    - ((etcd_az3_ip2))
+    - ((etcd_az3_ip3))
   properties:
-    etcd_metrics_server:
-      nats:
-        password: ((nats_password))
-        username: nats
     metron_agent:
       zone: z1
     consul:
@@ -424,7 +429,7 @@ jobs:
         zone: z1
 
 - name: diego_brain
-  instances: 2
+  instances: 4
   azs: [az1,az2]
   vm_type: small_general
   stemcell: default
@@ -453,7 +458,7 @@ jobs:
         services: {}
 
 - name: api
-  instances: 2
+  instances: 4
   azs: [az1,az2]
   vm_type: medium_cc_general
   stemcell: default
@@ -548,7 +553,7 @@ jobs:
         - "loggregator.system.((domain_name))"
 
 - name: uaa
-  instances: 2
+  instances: 4
   azs: [az1,az2]
   vm_type: small_smtp_sender_general
   stemcell: default
@@ -603,7 +608,7 @@ jobs:
       - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
 
 - name: router
-  instances: 2
+  instances: 4
   azs: [az1,az2]
   vm_type: small_router_general
   stemcell: default
@@ -613,16 +618,16 @@ jobs:
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips:
-    - ((router_az1_ip1))
-    - ((router_az2_ip1))
+  #  static_ips:
+  #  - ((router_az1_ip1))
+  #  - ((router_az2_ip1))
   properties:
     metron_agent:
       zone: z1
     dropsonde: {enabled: true}
 
 - name: rabbitmq-mgnt
-  instances: 2
+  instances: 4
   azs: [az1,az2]
   vm_type: small_general
   stemcell: default
@@ -646,7 +651,7 @@ jobs:
   - name: cf_rabbitmq
 
 - name: rabbitmq-broker
-  instances: 2
+  instances: 4
   azs: [az1,az2]
   vm_type: micro_general
   stemcell: default
@@ -851,8 +856,8 @@ properties:
     advertise_urls_dns_suffix: cf-etcd.service.((internal_domain))
     cluster:
     - name: etcd
-      instances: 1
-    machines: ["cf-etcd.service.((internal_domain))"]
+      instances: 9
+#    machines: ["cf-etcd.service.((internal_domain))"]
     peer_require_ssl: true
     require_ssl: true
     ca_cert: ((internal_ca_crt))
@@ -866,6 +871,13 @@ properties:
     # cf-etcd.service.$INTERNAL_DOMAIN, altnames: *.cf-etcd.service.$INTERNAL_DOMAIN, cf-etcd.service.$INTERNAL_DOMAIN
     peer_cert: ((cf_etcd_server_crt))
     peer_key: ((cf_etcd_server_key))
+#  etcd_metrics_server:
+#    etcd:
+#      require_ssl: true
+#      dns_suffix: cf-etcd.service.((internal_domain))
+#    nats:
+#      password: ((nats_password))
+#      username: nats
   doppler:
     # Number of log messages to retain per application
     maxRetainedLogMessages: 2000

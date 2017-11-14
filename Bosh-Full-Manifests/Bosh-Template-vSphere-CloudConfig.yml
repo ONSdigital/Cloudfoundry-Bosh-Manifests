@@ -5,7 +5,7 @@
 azs:
 - name: az1
   cloud_properties:
-    availability_zone: ((aws_availability_zone1))
+    availability_zone: ((vsphere_availability_zone1))
 
 
 networks:
@@ -60,10 +60,6 @@ vm_types:
     - ((application_elb_target_group80))
     - ((application_elb_target_group443))
     security_groups: [((router_security_group)),((private_security_group))]
- - name: small_smtp_sender_general
-   cloud_properties:
-     instance_type: t2.small
-     security_groups: [((smtp_security_group)),((private_security_group))]
 - name: medium_general
   cloud_properties:
     instance_type: t2.medium
@@ -78,10 +74,6 @@ vm_types:
   cloud_properties:
     instance_type: t2.medium
     iam_instance_profile: ((cc_bucket_access_instance_profile))
- - name: medium_smtp_sender_general
-   cloud_properties:
-     instance_type: t2.medium
-     security_groups: [((smtp_security_group)),((private_security_group))]
 - name: large_compute
   cloud_properties:
     instance_type: c4.large
@@ -214,7 +206,7 @@ compilation:
   cloud_properties:
     # Using large VMs decreases initial deployment time massively
     #instance_type: m4.large
-    instance_type: t2.medium
+    instance_type: t2.large
     ephemeral_disk:
       size: 160000
     # Spot instances can take longer to come up and if no capacity is available things may time out before the fallback starts
