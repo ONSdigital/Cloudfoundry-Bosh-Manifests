@@ -179,19 +179,12 @@ jobs:
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: etcd, release: cf}
-  - {name: etcd_metrics_server, release: cf}
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
     static_ips:
     - ((etcd_az1_ip1))
   properties:
-    etcd_metrics_server:
-      etcd:
-        require_ssl: true
-      nats:
-        password: ((nats_password))
-        username: nats
     metron_agent:
       zone: z1
     consul:
