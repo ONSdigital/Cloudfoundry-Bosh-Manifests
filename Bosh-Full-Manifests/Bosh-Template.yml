@@ -74,7 +74,7 @@ jobs:
   vm_type: small_general_blobstore_backup
   networks:
   - name: cf_private
-  azs: [az1,]
+  azs: [az1]
   templates:
   - {name: postgresql-databases, release: postgresql-databases}
   properties:
