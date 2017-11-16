@@ -67,92 +67,92 @@ jobs:
 #     databases:
 #     - {name: all}
 
-- name: backup-postgresql-databases-cf
-  instances: 1
-  lifecycle: errand
-  stemcell: default
-  vm_type: small_general_blobstore_backup
-  networks:
-  - name: cf_private
-  azs: [az1]
-  templates:
-  - {name: postgresql-databases, release: postgresql-databases}
-  properties:
-   postgresql_databases:
-     admin_username: ((cf_rds_instance_username))
-     admin_password: ((cf_rds_instance_password))
-     admin_database: postgres
-     host: ((cf_rds_instance_dns))
-     port: ((cf_rds_instance_port))
-     rds: true
-     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
-     databases:
-     - {name: ccdb}
-     - {name: uaadb}
+#- name: backup-postgresql-databases-cf
+#  instances: 1
+#  lifecycle: errand
+#  stemcell: default
+#  vm_type: small_general_blobstore_backup
+#  networks:
+#  - name: cf_private
+#  azs: [az1]
+#  templates:
+#  - {name: postgresql-databases, release: postgresql-databases}
+#  properties:
+#   postgresql_databases:
+#     admin_username: ((cf_rds_instance_username))
+#     admin_password: ((cf_rds_instance_password))
+#     admin_database: postgres
+#     host: ((cf_rds_instance_dns))
+#     port: ((cf_rds_instance_port))
+#     rds: true
+#     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
+#     databases:
+#     - {name: ccdb}
+#     - {name: uaadb}
 
-- name: rabbitmq-broker-registrar
-  instances: 1
-  lifecycle: errand
-  vm_type: micro_general
-  stemcell: default
-  networks:
-  - name: cf_private
-  azs: [az1]
-  templates:
-  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
-  properties:
-    broker:
-      service:
-        name: rabbitmq
-      name: rabbitmq
-      protocol: https
-      host: rabbitmq-broker.system.((domain_name))
-      username: rabbitmq-broker
-      password: ((rabbitmq_broker_password))
+#- name: rabbitmq-broker-registrar
+#  instances: 1
+#  lifecycle: errand
+#  vm_type: micro_general
+#  stemcell: default
+#  networks:
+#  - name: cf_private
+#  azs: [az1]
+#  templates:
+#  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
+#  properties:
+#    broker:
+#      service:
+#        name: rabbitmq
+#      name: rabbitmq
+#      protocol: https
+#      host: rabbitmq-broker.system.((domain_name))
+#      username: rabbitmq-broker
+#      password: ((rabbitmq_broker_password))
 
-- name: rabbitmq-broker-deregistrar
-  instances: 1
-  lifecycle: errand
-  vm_type: micro_general
-  stemcell: default
-  networks:
-  - name: cf_private
-  azs: [az1]
-  templates:
-  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
-  properties:
-    broker:
-      service:
-        name: rabbitmq
-      name: rabbitmq
+#- name: rabbitmq-broker-deregistrar
+#  instances: 1
+#  lifecycle: errand
+#  vm_type: micro_general
+#  stemcell: default
+#  networks:
+#  - name: cf_private
+#  azs: [az1]
+#  templates:
+#  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
+#  properties:
+#    broker:
+#      service:
+#        name: rabbitmq
+#      name: rabbitmq
 
-- name: rabbitmq-broker-smoke-tests-az1
-  instances: 1
-  lifecycle: errand
-  vm_type: micro_general
-  stemcell: default
-  networks:
-  - name: cf_private
-  azs: [az1]
-  templates:
-  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
-  properties:
-    broker:
-      name: rabbitmq
+#- name: rabbitmq-broker-smoke-tests-az1
+#  instances: 1
+#  lifecycle: errand
+#  vm_type: micro_general
+#  stemcell: default
+#  networks:
+#  - name: cf_private
+#  azs: [az1]
+#  templates:
+#  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
+#  properties:
+#    broker:
+#      name: rabbitmq
 
-- name: cf-smoke-tests-az1
-  instances: 1
-  lifecycle: errand
-  stemcell: default
-  vm_type: micro_general
-  networks:
-  - name: cf_private
-  azs: [az1]
-  templates:
-  - {name: smoke_tests, release: cf-smoke-tests}
-  properties:
-    smoke_tests:
-      etcd_ip_address: ((etcd_az1_ip1))
+#- name: cf-smoke-tests-az1
+#  instances: 1
+#  lifecycle: errand
+#  stemcell: default
+#  vm_type: micro_general
+#  networks:
+#  - name: cf_private
+#  azs: [az1]
+#  templates:
+#  - {name: smoke_tests, release: cf-smoke-tests}
+#  properties:
+#    smoke_tests:
+#      etcd_ip_address: ((etcd_az1_ip1))
 
 - name: nats
   instances: 1
@@ -854,10 +854,25 @@ properties:
   metron_agent:
     deployment: ((deployment_name))
   nats:
+    # address
     machines: [((nats_az1_ip1))]
     password: ((nats_password))
     port: 4222
     user: nats
+    tls:
+      ca:
+      client_ca:
+        certificate:
+        private_key:
+      server:
+        certificate:
+        private_key:
+      director:
+        certificate:
+        private_key:
+      health_monitor:
+        certificate:
+        private_key:
   ssl:
     skip_cert_verify: true
   system_domain: system.((domain_name))

@@ -129,7 +129,6 @@ jobs:
           - {name: director, password: ((director_password))}
           - {name: hm, password: ((hm_password))}
     hm:
-      cloud_watch_enabled: true
       director_account:
         user: hm
         password: ((hm_password))

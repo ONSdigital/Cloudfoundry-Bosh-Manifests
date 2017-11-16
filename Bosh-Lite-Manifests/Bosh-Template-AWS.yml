@@ -6,7 +6,7 @@ releases:
   # can use file:// URLs - then SHA1 not required
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=263.4.0
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.1
   sha1: 8910e6af4dcdd0ff6b9b3064866cae513ceb77a0
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
@@ -161,7 +161,6 @@ jobs:
           - {name: director, password: ((director_password))}
           - {name: hm, password: ((hm_password))}
     hm:
-      cloud_watch_enabled: true
       director_account:
         user: hm
         password: ((hm_password))
