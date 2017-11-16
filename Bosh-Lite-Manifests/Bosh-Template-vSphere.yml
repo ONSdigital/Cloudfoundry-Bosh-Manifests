@@ -30,8 +30,8 @@ resource_pools:
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     # https://bosh.io/stemcells/
     # https://bosh.io/stemcells/bosh-vcloud-esxi-ubuntu-trusty-go_agent
-    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3468.1
-    sha1: 9881f777860a1d46c7d25584a9d0bd0a788207dd
+    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3468.5
+    sha1: 7cc32c725c22486908637b060bf8587f64c07aae
 
   cloud_properties:
     instance_type: ((vsphere_large_ram_large_cpu))
