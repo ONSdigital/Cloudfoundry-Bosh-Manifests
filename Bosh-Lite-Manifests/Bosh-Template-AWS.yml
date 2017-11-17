@@ -6,8 +6,8 @@ releases:
   # can use file:// URLs - then SHA1 not required
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.1
-  sha1: 9c601aef001fc016924dd27df033c19b10754564
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.2.0
+  sha1: 702537f942a09caabcb21d85cf1093cb0dcb9434
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=67
@@ -48,7 +48,7 @@ resource_pools:
     sha1: cb4f2f51ff75b9b21429de2498ecc97b1c3a1ba2
 
   cloud_properties:
-    instance_type: m4.large
+    instance_type: t2.medium
     ephemeral_disk: {size: 50_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_instance_security_group))]
