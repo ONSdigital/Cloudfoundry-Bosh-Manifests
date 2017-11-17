@@ -169,6 +169,20 @@ jobs:
       address: 127.0.0.1
       user: nats
       password: ((nats_password))
+    tls:
+      ca: ((nats_ca_crt))
+      server:
+        certificate: ((nats_server_crt))
+        private_key: ((nats_server_key))
+      client_ca:
+        certificate: ((nats_clients_ca_crt))
+        private_key: ((nats_clients_ca_key))
+      director:
+        certificate: ((nats_clients_director_crt))
+        private_key: ((nats_clients_director_key))
+      health_monitor:
+        certificate: ((nats_clients_healthmonitor_crt))
+        private_key: ((nats_clients_healthmonitor_key))
     ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
     postgres: &db
       listen_address: 127.0.0.1
