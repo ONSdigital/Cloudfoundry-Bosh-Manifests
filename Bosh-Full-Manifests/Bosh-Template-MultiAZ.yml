@@ -226,7 +226,6 @@ jobs:
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: etcd, release: cf}
-#  - {name: etcd_metrics_server, release: cf}
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
@@ -323,7 +322,6 @@ jobs:
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
-#  - {name: ssh_proxy, release: diego}
   networks:
   - name: cf_private
   update:
@@ -574,10 +572,10 @@ jobs:
           uaa: {}
     login:
       saml:
-        serviceProviderKey: ((uaa_key))
+        serviceProviderKey: ((uaa_login_saml.private_key))
         serviceProviderKeyPassword: ""
         # uaa.service.((internal_domain))
-        serviceProviderCertificate: ((uaa_crt))
+        serviceProviderCertificate: ((uaa_login_saml.certificate))
       catalina_opts: -Xmx768m -XX:MaxPermSize=256m
     route_registrar:
       routes:
@@ -691,20 +689,21 @@ jobs:
 
 properties:
   router:
-    route_services_secret: ((router_route_services_secret))
-    ssl_skip_validation: true
-    status:
-      password: ((router_status_password))
     enable_ssl: true
-    ca_certs: ((internal_ca_crt))
     tls_pem:
-      - cert_chain: ((router_crt))
-        private_key: ((router_key))
+      - cert_chain: ((router_ssl.certificate))
+        private_key: ((router_ssl.private_key))
+    status:
+      user: router-status
+      password: ((router_status_password))
+    route_services_secret: ((router_route_services_secret))
+    tracing:
+      enable_zipkin: true
   networks: {apps: cf_private}
   # https://docs.cloudfoundry.org/deploying/aws/cf-stub.html
   app_domains: [apps.((domain_name))]
   app_ssh:
-    host_key_fingerprint: ((ssh_host_key_fingerprint))
+    host_key_fingerprint: ((diego_ssh_proxy_host_key.public_key_fingerprint))
     oauth_client_id: ssh-proxy
   cc:
     disable_custom_buildpacks: true
@@ -712,11 +711,9 @@ properties:
     # quota_definitions & default_quota_definition
     maximum_app_disk_in_mb: 8192
     mutual_tls:
-      # $INTERNAL_DOMAIN
-      ca_cert: ((internal_ca_crt))
-      # cloud-controller-ng.service.$INTERNAL_DOMAIN
-      public_cert: ((cloud_controller_ng_crt))
-      private_key: ((cloud_controller_ng_key))
+      ca_cert: ((cc_tls.ca))
+      public_cert: ((cc_tls.certificate))
+      private_key: ((cc_tls.private_key))
     allow_app_ssh_access: true
     default_to_diego_backend: true
     default_app_memory: 64
@@ -727,6 +724,7 @@ properties:
     # This has been deprecated, cf-release 271
     #srv_api_uri: https://api.system.((domain_name))
     internal_service_hostname: cloud-controller-ng.service.((internal_domain))
+    # XXX XXX XXX XXX XXX
     buildpacks:
       blobstore_type: fog
       buildpack_directory_key: ((buildpack_bucket))
@@ -746,6 +744,7 @@ properties:
       blobstore_type: fog
       resource_directory_key: ((resource_bucket))
       fog_connection: *fog_s3_bucket_connection
+    # XXX XXX XXX XXX XXX
     bulk_api_password: ((bulk_api_password))
     db_encryption_key: ((db_encryption_secret))
     # public_networks for a running instance should be restricted to the bare essentials (eg Git repo server for Jenkins installs)
@@ -756,13 +755,13 @@ properties:
     install_buildpacks:
     - {name: staticfile_buildpack, package: staticfile-buildpack}
     - {name: python_buildpack, package: python-buildpack}
+    - {name: nodejs_buildpack, package: nodejs-buildpack}
     - {name: go_buildpack, package: go-buildpack}
     - {name: java_buildpack, package: java-buildpack}
     - {name: ruby_buildpack, package: ruby-buildpack}
-    - {name: nodejs_buildpack, package: nodejs-buildpack}
     - {name: php_buildpack, package: php-buildpack}
-    - {name: binary_buildpack, package: binary-buildpack}
     - {name: dotnet_core_buildpack, package: dotnet-core-buildpack}
+    - {name: binary_buildpack, package: binary-buildpack}
     internal_api_password: ((internal_api_password))
     quota_definitions:
       default:
@@ -782,10 +781,12 @@ properties:
       - {destination: 169.255.0.0-172.15.255.255, protocol: all}
       - {destination: 172.32.0.0-192.167.255.255, protocol: all}
       - {destination: 192.169.0.0-255.255.255.255, protocol: all}
+    # XXX XXX XXX XXX XXX
     - name: postgres_networks
       rules:
       - {destination: ((rds_az1_cidr)), ports: '5432', protocol: tcp}
       - {destination: ((rds_az2_cidr)), ports: '5432', protocol: tcp}
+    # XXX XXX XXX XXX XXX
     - name: rabbitmq_networks
       rules:
       - {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp}
@@ -800,10 +801,12 @@ properties:
       - {destination: ((rabbitmq_az2_cidr)), ports: '5672', protocol: tcp}
       - {destination: ((rabbitmq_az2_cidr)), ports: '15672', protocol: tcp}
       - {destination: ((rabbitmq_az2_cidr)), ports: '15674', protocol: tcp}
+    # XXX XXX XXX XXX XXX
     - name: redis_networks
       rules:
       - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp}
       - {destination: ((elasti_cache_az2_cidr)), ports: '6379', protocol: tcp}
+    # XXX XXX XXX XXX XXX
     staging_upload_password: ((staging_upload_password))
     staging_upload_user: staging_upload_user
   ccdb:
@@ -831,13 +834,11 @@ properties:
         - ((consul_az3_ip3))
     encrypt_keys:
     - ((consul_encrypt_keys_secret))
-    ca_cert: ((internal_ca_crt))
-    # server.dc1.$INTERNAL_DOMAIN
-    server_cert: ((consul_server_crt))
-    server_key: ((consul_server_key))
-    # agent.dc1.$INTERNAL_DOMAIN
-    agent_cert: ((consul_agent_crt))
-    agent_key: ((consul_agent_key))
+    ca_cert: ((consul_agent.ca))
+    server_cert: ((consul_server.certificate))
+    server_key: ((consul_server.private_key))
+    agent_cert: ((consul_agent.certificate))
+    agent_key: ((consul_agent.private_key))
   #databases:
   #  # RDS require uuid-ossp, pgcrypto, and citext
   #  # Apps RDS requires pgcrypto
@@ -852,25 +853,25 @@ properties:
   #  - {name: diego, password: ((diego_db_password)), tag: admin}
   description: Cloud Foundry - ((organisation))
   domain: system.((domain_name))
-  etcd:
-    advertise_urls_dns_suffix: cf-etcd.service.((internal_domain))
-    cluster:
-    - name: etcd
-      instances: 9
+#  etcd:
+#    advertise_urls_dns_suffix: cf-etcd.service.((internal_domain))
+#    cluster:
+#    - name: etcd
+#      instances: 9
 #    machines: ["cf-etcd.service.((internal_domain))"]
-    peer_require_ssl: true
-    require_ssl: true
-    ca_cert: ((internal_ca_crt))
-    # cf-etcd.service.$INTERNAL_DOMAIN, altnames: *.cf-etcd.service.$INTERNAL_DOMAIN, cf-etcd.service.$INTERNAL_DOMAIN
-    server_cert: ((cf_etcd_server_crt))
-    server_key: ((cf_etcd_server_key))
+#    peer_require_ssl: true
+#    require_ssl: true
+#    ca_cert: ((internal_ca_crt))
+#    # cf-etcd.service.$INTERNAL_DOMAIN, altnames: *.cf-etcd.service.$INTERNAL_DOMAIN, cf-etcd.service.$INTERNAL_DOMAIN
+#    server_cert: ((cf_etcd_server_crt))
+#    server_key: ((cf_etcd_server_key))
     # cf-etcd-client
-    client_cert: ((cf_etcd_client_crt))
-    client_key: ((cf_etcd_client_key))
-    peer_ca_cert: ((internal_ca_crt))
-    # cf-etcd.service.$INTERNAL_DOMAIN, altnames: *.cf-etcd.service.$INTERNAL_DOMAIN, cf-etcd.service.$INTERNAL_DOMAIN
-    peer_cert: ((cf_etcd_server_crt))
-    peer_key: ((cf_etcd_server_key))
+#    client_cert: ((cf_etcd_client_crt))
+#    client_key: ((cf_etcd_client_key))
+#    peer_ca_cert: ((internal_ca_crt))
+#    # cf-etcd.service.$INTERNAL_DOMAIN, altnames: *.cf-etcd.service.$INTERNAL_DOMAIN, cf-etcd.service.$INTERNAL_DOMAIN
+#    peer_cert: ((cf_etcd_server_crt))
+#    peer_key: ((cf_etcd_server_key))
 #  etcd_metrics_server:
 #    etcd:
 #      require_ssl: true
@@ -883,55 +884,53 @@ properties:
     maxRetainedLogMessages: 2000
     # Size of the internal buffer used by doppler to store messages for output to firehose or ‘cf logs’. If the buffer gets full doppler will drop the messages
     message_drain_buffer_size: 20000
-    etcd:
-      # clientName
-      client_cert: ((cf_etcd_client_crt))
-      client_key: ((cf_etcd_client_key))
-  traffic_controller:
-    etcd:
-      # clientName
-      client_cert: ((cf_etcd_client_crt))
-      client_key: ((cf_etcd_client_key))
-  syslog_drain_binder:
-    etcd:
-      # clientName
-      client_cert: ((cf_etcd_client_crt))
-      client_key: ((cf_etcd_client_key))
+#    etcd:
+#      # clientName
+#      client_cert: ((cf_etcd_client_crt))
+#      client_key: ((cf_etcd_client_key))
+#  traffic_controller:
+#    etcd:
+#      # clientName
+#      client_cert: ((cf_etcd_client_crt))
+#      client_key: ((cf_etcd_client_key))
+#  syslog_drain_binder:
+#    etcd:
+#      # clientName
+#      client_cert: ((cf_etcd_client_crt))
+#      client_key: ((cf_etcd_client_key))
   loggregator:
     uaa:
       client_secret: ((uaa_doppler_client_secret))
-    etcd:
-      require_ssl: true
-      machines: ["cf-etcd.service.((internal_domain))"]
-      ca_cert: ((internal_ca_crt))
+#    etcd:
+#      require_ssl: true
+#      machines: ["cf-etcd.service.((internal_domain))"]
+#      ca_cert: ((internal_ca_crt))
     tls:
-      ca_cert: ((internal_ca_crt))
+      ca_cert: ((loggregator_ca))
       doppler:
-        # doppler
-        cert: ((doppler_crt))
-        key: ((doppler_key))
+        cert: ((loggregator_tls_doppler.certificate))
+        key: ((loggregator_tls_doppler.private_key))
       trafficcontroller:
-        # trafficcontroller
-        cert: ((trafficcontroller_crt))
-        key: ((trafficcontroller_key))
+        cert: ((loggregator_tls_tc.certificate))
+        key: ((loggregator_tls_tc.private_key))
       cc_trafficcontroller:
-        # cc_trafficcontroller
-        cert: ((cc_trafficcontroller_crt))
-        key: ((cc_trafficcontroller_key))
+        cert: ((loggregator_tls_cc_tc.certificate))
+        key: ((loggregator_tls_cc_tc.private_key))
       metron:
-        # metron
-        cert: ((metron_crt))
-        key: ((metron_key))
-      syslogdrainbinder:
-        # syslogdrainbinder
-        cert: ((syslogdrainbinder_crt))
-        key: ((syslogdrainbinder_key))
-      statsd_injector:
-        # statsdinjector
-        cert: ((statsdinjector_crt))
-        key: ((statsdinjector_key))
-  statsd_injector:
-    deployment: ((bosh_deployment))
+        cert: ((loggregator_tls_metron.certificate))
+        key: ((loggregator_tls_metron.private_key))
+#      syslogdrainbinder:
+#        cert: ((syslogdrainbinder_crt))
+#        key: ((syslogdrainbinder_key))
+#      statsd_injector:
+#        cert: ((loggregator_tls_statsdinjector.certificate))
+#        key: ((loggregator_tls_statsdinjector.private_key))
+#      tls:
+#        ca_cert: ((loggregator_ca))
+#        cert: ((loggregator_crt)
+#        key: ((loggregator_key))
+#  statsd_injector:
+#    deployment: ((bosh_deployment))
   doppler_endpoint:
     shared_secret: ((doppler_shared_secret))
   loggregator_endpoint:
@@ -1044,7 +1043,7 @@ properties:
         active_key_id: key-id-1
         keys:
           key-id-1:
-            signingKey: ((jwt_key))
+            signingKey: ((uaa_jwt_signing_key.private_key))
     zones:
       internal:
         hostnames:
@@ -1055,10 +1054,8 @@ properties:
       port: 8443
     # Should no longer be used in cf-release 272
     url: https://uaa.system.((domain_name))
-    ca_cert: ((internal_ca_crt))
-    sslPrivateKey: ((uaa_key))
-    # uaa.service.$INTERNAL_DOMAIN
-    sslCertificate: ((uaa_crt))
+    sslPrivateKey: ((uaa_ssl.private_key))
+    sslCertificate: ((uaa_ssl.certificate))
     password:
       policy:
         global:
@@ -1072,13 +1069,13 @@ properties:
   capi:
     cc_uploader:
       mutual_tls:
-        ca_cert: ((internal_ca_crt))
-        server_cert: ((cc_uploader_mutual_crt))
-        server_key: ((cc_uploader_mutual_key))
+        ca_cert: ((cc_bridge_cc_uploader_server.ca))
+        server_cert: ((cc_bridge_cc_uploader_server.certificate))
+        server_key: ((cc_bridge_cc_uploader_server.private_key))
       cc:
-        ca_cert: ((internal_ca_crt))
-        client_cert: ((cc_uploader_cc_crt))
-        client_key: ((cc_uploader_cc_key))
+        ca_cert: ((cc_bridge_cc_uploader.ca))
+        client_cert: ((cc_bridge_cc_uploader.certificate))
+        client_key: ((cc_bridge_cc_uploader.private_key))
     nsync:
       bbs:
         ca_cert: ""
@@ -1097,11 +1094,9 @@ properties:
         client_key: ""
         require_ssl: false
       cc:
-        # $INTERNAL_DOMAIN
-        ca_cert: ((internal_ca_crt))
-        # tps_watcher
-        client_cert: ((tps_watcher_crt))
-        client_key: ((tps_watcher_key))
+        ca_cert: ((service_cf_internal_ca))
+        client_cert: ((cc_bridge_tps.certificate))
+        client_key: ((cc_bridge_tps.private_key))
         #base_url: https://api.system.((domain_name))
         base_url: https://cloud-controller-ng.service.((internal_domain)):9023
         basic_auth_password: ((internal_api_password))
@@ -1142,11 +1137,11 @@ properties:
       ca_cert: ""
       etcd:
         machines: ["cf-etcd.service.((internal_domain))"]
-        ca_cert: ((internal_ca_crt))
+#        ca_cert: ((internal_ca_crt))
         # clientName
-        client_cert: ((cf_etcd_client_crt))
-        client_key: ((cf_etcd_client_key))
-        require_ssl: true
+#        client_cert: ((cf_etcd_client_crt))
+#        client_key: ((cf_etcd_client_key))
+#        require_ssl: true
       require_ssl: false
       server_cert: ""
       server_key: ""
@@ -1191,7 +1186,7 @@ properties:
         client_cert: ""
         client_key: ""
         require_ssl: false
-      host_key: ((ssh_host_key))
+      host_key: ((diego_ssh_proxy_host_key.private_key))
       enable_cf_auth: true
       enable_diego_auth: false
       diego_credentials: ""
