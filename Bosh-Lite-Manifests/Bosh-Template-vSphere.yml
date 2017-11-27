@@ -163,11 +163,6 @@ addons:
 
 cloud_provider:
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
-  ssh_tunnel:
-    host: ((director_dns))
-    port: 22
-    user: vcap
-    private_key: ((bosh_ssh_key_file))
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
   properties:
     vsphere: *vcenter
