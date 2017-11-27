@@ -8,7 +8,6 @@ metadata:
   director_secret: ((director_password))
 
 releases:
-  # can use file:// URLs - then SHA1 not required
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
   url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.2.0
@@ -17,6 +16,8 @@ releases:
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=67
   sha1: cfcbc98affa9cad674087ab6b8bd4b1188b18439
+- name: postgresql-databases
+  version: latest
 
 resource_pools:
 - name: bosh_vm
@@ -34,7 +35,7 @@ resource_pools:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     # Sometimes, there are problems connecting disks. This seems to come and go between various releases.  Some AWS regions seem to suffer more than others
     #
-    # [CLI] 2017/10/16 09:49:42 ERROR - Deploying: Creating instance 'clementine-boshlite/0': Updating instance disks: Updating disks: Deploying disk: Mounting disk: Sending 'get_task' to the agent: Agent responded with error: Action Failed get_task: Task f4b307dc-b987-4d0f-6592-0cad27bd3586 result: Persistent disk with volume id 'vol-0fc18013ccfad16dd' could not be found 
+    # [CLI] 2017/10/16 09:49:42 ERROR - Deploying: Creating instance 'clementine-boshlite/0': Updating instance disks: Updating disks: Deploying disk: Mounting disk: Sending 'get_task' to the agent: Agent responded with error: Action Failed get_task: Task f4b307dc-b987-4d0f-6592-0cad27bd3586 result: Persistent disk with volume id 'vol-0fc18013ccfad16dd' could not be found
     #
     # To work around it, sometimes, you can just re-run the Bosh create-env task with a partially created env
     #
@@ -50,7 +51,7 @@ resource_pools:
     # Despite not having 'light' in the URL, this always seems to download the 'light' version' (2017/05/15)
     #
     # If the stemcell can't be reached from the bosh.io URL we can use the direct AWS S3 URL
-    #url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
+    # url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
     url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468.5
     sha1: cb4f2f51ff75b9b21429de2498ecc97b1c3a1ba2
 
@@ -84,130 +85,138 @@ jobs:
   instances: 1
   templates:
   - {name: nats, release: bosh}
-  - {name: postgres-9.4, release: bosh}
   - {name: blobstore, release: bosh}
   - {name: director, release: bosh}
   - {name: health_monitor, release: bosh}
   - {name: registry, release: bosh}
   - {name: aws_cpi, release: bosh-aws-cpi}
+  - {name: postgresql-databases, release: postgresql-databases}
   resource_pool: bosh_vm
   persistent_disk_pool: disks
   networks:
   - name: cf_director
     static_ips: [((bosh_lite_private_ip))]
     default: [dns, gateway]
-  properties: *bosh_lite_properties
-
-properties: &bosh_lite_properties
-  agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
-  aws: &aws
-    # Health Monitor doesn't support instance access profiles, but it may do one day....
-    #credentials_source: env_or_profile
-    credentials_source: static
-    access_key_id: ((bosh_aws_access_key_id))
-    secret_access_key: ((bosh_aws_secret_access_key))
-    default_key_name: ((bosh_ssh_key_name))
-    region: ((aws_region))
-    default_security_groups: [((director_instance_security_group))]
-    # All VMs need to be able to write to the blob store to create logs!
-    default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
-  blobstore:
-    #address: ((bosh_lite_private_ip))
-    provider: s3
-    s3_region: ((aws_region))
-    credentials_source: env_or_profile
-    bucket_name: ((blobstore_bucket))
-    #port: 25250
-    #provider: dav
-    director:
-      user: director
-      password: ((director_blobstore_password))
-    agent:
-      user: agent
-      password: ((agent_blobstore_password))
-  compiled_package_cache:
-    provider: s3
-    options:
+  properties:
+    agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
+    aws: &aws
+      # Health Monitor doesn't support instance access profiles, but it may do one day....
+      # credentials_source: env_or_profile
+      credentials_source: static
+      access_key_id: ((bosh_aws_access_key_id))
+      secret_access_key: ((bosh_aws_secret_access_key))
+      default_key_name: ((bosh_ssh_key_name))
+      region: ((aws_region))
+      default_security_groups: [((director_instance_security_group))]
+      # All VMs need to be able to write to the blob store to create logs!
+      default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
+    blobstore:
+      #address: ((bosh_lite_private_ip))
+      provider: s3
       s3_region: ((aws_region))
       credentials_source: env_or_profile
-      bucket_name: ((compiled_package_cache_bucket))
-  default_ssh_options:
-    gateway_host: ((director_dns))
-  director:
-    address: 127.0.0.1
-    name: ((deployment_name))
-    backup_destination:
+      bucket_name: ((blobstore_bucket))
+      #port: 25250
+      #provider: dav
+      director:
+        user: director
+        password: ((director_blobstore_password))
+      agent:
+        user: agent
+        password: ((agent_blobstore_password))
+    compiled_package_cache:
       provider: s3
       options:
         s3_region: ((aws_region))
         credentials_source: env_or_profile
-        bucket_name: ((director_backup_bucket))
-    #generate_vm_passwords: true
-    # https://bosh.io/docs/remove-dev-tools.html
-    #remove_dev_tools: true
-    db: *db
-    cpi_job: aws_cpi
-    enable_dedicated_status_worker: true
-    enable_nats_delivered_templates: true
-    enable_post_deploy: true
-    enable_snapshots: true
-    #snapshot_schedule: 0 0 7 * * * UTC
-    #self_snapshot_schedule: 0 0 6 * * * UTC
-    # To/from Director
-    #encryption: true
-    max_threads: 10
-    ssl:
-      key: ((director_ssl.private_key))
-      cert: ((director_ssl.certificate))
-    user_management:
-      provider: local
-      local:
-        users:
-        - {name: director, password: ((director_password))}
-        - {name: hm, password: ((hm_password))}
-  hm:
-    director_account:
-      user: hm
-      password: ((hm_password))
-      ca_cert: ((default_ca.certificate))
-    resurrector_enabled: true
-  nats:
-    address: 127.0.0.1
-    user: nats
-    password: ((nats_password))
-    tls:
-      ca: ((nats_ca.certificate))
-      server:
-        certificate: ((nats_server_tls.certificate))
-        private_key: ((nats_server_tls.private_key))
-      client_ca:
-        certificate: ((nats_ca.certificate))
-        private_key: ((nats_ca.private_key))
-      director:
-        certificate: ((nats_clients_director_tls.certificate))
-        private_key: ((nats_clients_director_tls.private_key))
-      health_monitor:
-        certificate: ((nats_clients_health_monitor_tls.certificate))
-        private_key: ((nats_clients_health_monitor_tls.private_key))
-  ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
-  postgres: &db
-    listen_address: 127.0.0.1
-    host: 127.0.0.1
-    user: postgres
-    password: ((postgres_password))
-    database: bosh
-    adapter: postgres
-  registry:
-    address: ((bosh_lite_private_ip))
-    host: ((bosh_lite_private_ip))
-    db: *db
-    http:
-      user: admin
-      password: ((http_password))
+        bucket_name: ((compiled_package_cache_bucket))
+    default_ssh_options:
+      gateway_host: ((director_dns))
+    director:
+      address: 127.0.0.1
+      name: ((deployment_name))
+      backup_destination:
+        provider: s3
+        options:
+          s3_region: ((aws_region))
+          credentials_source: env_or_profile
+          bucket_name: ((director_backup_bucket))
+      #generate_vm_passwords: true
+      # https://bosh.io/docs/remove-dev-tools.html
+      #remove_dev_tools: true
+      db: &db
+        host: ((bosh_rds_instance_dns))
+        port: ((bosh_rds_instance_port))
+        user: bosh
+        password: ((bosh_db_password))
+        database: bosh
+        adapter: postgres
+      cpi_job: aws_cpi
+      enable_dedicated_status_worker: true
+      enable_nats_delivered_templates: true
+      enable_post_deploy: true
+      enable_snapshots: true
+      #snapshot_schedule: 0 0 7 * * * UTC
+      #self_snapshot_schedule: 0 0 6 * * * UTC
+      # To/from Director
+      #encryption: true
+      max_threads: 10
+      ssl:
+        key: ((director_ssl.private_key))
+        cert: ((director_ssl.certificate))
+      user_management:
+        provider: local
+        local:
+          users:
+          - {name: director, password: ((director_password))}
+          - {name: hm, password: ((hm_password))}
+    hm:
+      director_account:
+        user: hm
+        password: ((hm_password))
+        ca_cert: ((default_ca.certificate))
+      resurrector_enabled: true
+    nats:
+      address: 127.0.0.1
+      user: nats
+      password: ((nats_password))
+      tls:
+        ca: ((nats_ca.certificate))
+        server:
+          certificate: ((nats_server_tls.certificate))
+          private_key: ((nats_server_tls.private_key))
+        client_ca:
+          certificate: ((nats_ca.certificate))
+          private_key: ((nats_ca.private_key))
+        director:
+          certificate: ((nats_clients_director_tls.certificate))
+          private_key: ((nats_clients_director_tls.private_key))
+        health_monitor:
+          certificate: ((nats_clients_health_monitor_tls.certificate))
+          private_key: ((nats_clients_health_monitor_tls.private_key))
+    ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
+    registry:
+      address: ((bosh_lite_private_ip))
+      db: *db
+      http:
+        user: admin
+        password: ((http_password))
+        port: 25777
+      username: admin
+      password: ((registry_password))
       port: 25777
-    username: admin
-    password: ((registry_password))
-    port: 25777
+    postgresql_databases:
+      admin_username: ((bosh_rds_instance_username))
+      admin_password: ((bosh_rds_instance_password))
+    admin_database: postgres
+    host: ((bosh_rds_instance_dns))
+    port: ((bosh_rds_instance_port))
+    bucket_name: ((backup_bucket))
+    credentials_source: env_or_profile
+    region: ((aws_region))
+    rds: true
+    databases:
+    - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext] }
 
 cloud_provider:
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
