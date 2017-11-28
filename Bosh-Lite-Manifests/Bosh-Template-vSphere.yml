@@ -23,9 +23,6 @@ resource_pools:
       #
       # c1oudc0w
       password: $6$GiQp7XJ3AYAnpUpZ$zGUSoI6OATmb4ff0k60ZFIk/pMNypGxqMoihspINUAS8Fk6p0Dz/PIMzFfguZIbLSeJPB5PkNMCNzkO4yJqp8/
-    # http_proxy:
-    # https_proxy:
-    # no_proxy:
   stemcell:
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     # https://bosh.io/stemcells/
@@ -54,8 +51,6 @@ networks:
     static: ["((director_az1_static_start)) - ((director_az1_static_stop))"]
     cloud_properties:
       subnet: ((director_az1_subnet))
-#- name: public
-#  type: vip
 
 jobs:
 - name: ((deployment_name))-boshlite
@@ -74,8 +69,6 @@ jobs:
   - name: cf_director
     static_ips: [((bosh_lite_private_ip))]
     default: [dns, gateway]
-  #- name: public
-  #  static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
   properties:
     agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
     vcenter: &vcenter
@@ -85,7 +78,7 @@ jobs:
       datacenters: [((vcenter_datacenters))]
       enable_auto_anti_affinity_drs_rules: ((vcenter_drs_enabled))
       #connection_options:
-        #ca_cert: ((vcenter_ca_certificateion))
+        #ca_cert: ((vcenter_ca_certificate))
     blobstore:
       address: ((bosh_lite_private_ip))
       port: 25250
@@ -163,11 +156,6 @@ addons:
 
 cloud_provider:
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
-  ssh_tunnel:
-    host: ((director_dns))
-    port: 22
-    user: vcap
-    private_key: ((bosh_ssh_key_file))
   template: {name: vsphere_cpi, release: bosh-vsphere-cpi}
   properties:
     vsphere: *vcenter
