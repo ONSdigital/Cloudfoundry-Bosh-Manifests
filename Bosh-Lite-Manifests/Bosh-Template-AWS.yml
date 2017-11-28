@@ -17,7 +17,7 @@ releases:
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=67
   sha1: cfcbc98affa9cad674087ab6b8bd4b1188b18439
 - name: postgresql-databases
-  url: ((postgresql-databases-release-url))
+  url: ((postgresql_databases_release_url))
   version: latest
 
 resource_pools:
@@ -53,8 +53,8 @@ resource_pools:
     #
     # If the stemcell can't be reached from the bosh.io URL we can use the direct AWS S3 URL
     # url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468.5
-    sha1: cb4f2f51ff75b9b21429de2498ecc97b1c3a1ba2
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468.11
+    sha1: 511618c25750e6b0d96ecca80e615bc8fe2391e1
 
   cloud_properties:
     instance_type: t2.medium
