@@ -17,6 +17,7 @@ releases:
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=67
   sha1: cfcbc98affa9cad674087ab6b8bd4b1188b18439
 - name: postgresql-databases
+  url: ((postgresql-databases-release-url))
   version: latest
 
 resource_pools:
@@ -196,7 +197,7 @@ jobs:
           private_key: ((nats_clients_health_monitor_tls.private_key))
     ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
     registry:
-      address: ((bosh_lite_private_ip))
+      host: ((bosh_lite_private_ip))
       db: *db
       http:
         user: admin
@@ -206,8 +207,17 @@ jobs:
       password: ((registry_password))
       port: 25777
     postgresql_databases:
-      admin_username: ((bosh_rds_instance_username))
-      admin_password: ((bosh_rds_instance_password))
+     admin_username: ((bosh_rds_instance_username))
+     admin_password: ((bosh_rds_instance_password))
+     admin_database: postgres
+     host: ((bosh_rds_instance_dns))
+     port: ((bosh_rds_instance_port))
+     bucket_name: ((backup_bucket))
+     credentials_source: env_or_profile
+     region: ((aws_region))
+     rds: true
+     databases:
+     - { name: bosh, extensions: [pgcrypto] }
     admin_database: postgres
     host: ((bosh_rds_instance_dns))
     port: ((bosh_rds_instance_port))
