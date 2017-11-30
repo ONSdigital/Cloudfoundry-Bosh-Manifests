@@ -217,16 +217,7 @@ jobs:
      region: ((aws_region))
      rds: true
      databases:
-     - { name: bosh, extensions: [pgcrypto] }
-    admin_database: postgres
-    host: ((bosh_db_dns))
-    port: ((bosh_db_port))
-    bucket_name: ((backup_bucket))
-    credentials_source: env_or_profile
-    region: ((aws_region))
-    rds: true
-    databases:
-    - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext] }
+     - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext] }
 
 cloud_provider:
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
