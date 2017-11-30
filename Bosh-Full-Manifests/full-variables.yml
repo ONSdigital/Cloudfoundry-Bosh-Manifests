@@ -199,7 +199,7 @@
   - name: router_ssl
     type: certificate
     options:
-      ca: routerCA
+      ca: router_ca
       common_name: routerSSL
       alternative_names:
       - "*.system.((domain_name))"
@@ -217,7 +217,7 @@
   - name: uaa_login_saml
     type: certificate
     options:
-      ca: uaaCA
+      ca: uaa_ca
       common_name: uaa_login_saml
   - name: cc_tls
     type: certificate
