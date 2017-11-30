@@ -1,6 +1,6 @@
 ---
 - type: replace
-  path: /variables
+  path: /variables?
   value:
   - name: bosh_db_password
     type: password
