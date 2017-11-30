@@ -207,8 +207,8 @@ jobs:
       password: ((registry_password))
       port: 25777
     postgresql_databases:
-     admin_username: ((bosh_rds_instance_username))
-     admin_password: ((bosh_rds_instance_password))
+     admin_username: ((bosh_db_admin_username))
+     admin_password: ((bosh_db_admin_password))
      admin_database: postgres
      host: ((bosh_rds_instance_dns))
      port: ((bosh_rds_instance_port))

@@ -58,8 +58,8 @@ jobs:
 #  - {name: postgresql-databases, release: postgresql-databases}
 #  properties:
 #   postgresql_databases:
-#     admin_username: ((apps_rds_instance_username))
-#     admin_password: ((apps_rds_instance_password))
+#     admin_username: ((apps_db_admin_username))
+#     admin_password: ((apps_db_admin_password))
 #     admin_database: postgres
 #     host: ((apps_rds_instance_dns))
 #     port: ((apps_rds_instance_port))
@@ -79,8 +79,8 @@ jobs:
 #  - {name: postgresql-databases, release: postgresql-databases}
 #  properties:
 #   postgresql_databases:
-#     admin_username: ((cf_rds_instance_username))
-#     admin_password: ((cf_rds_instance_password))
+#     admin_username: ((cf_db_admin_username))
+#     admin_password: ((cf_db_admin_password))
 #     admin_database: postgres
 #     host: ((cf_rds_instance_dns))
 #     port: ((cf_rds_instance_port))

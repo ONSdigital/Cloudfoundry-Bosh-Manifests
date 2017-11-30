@@ -2,8 +2,6 @@
 - type: replace
   path: /variables
   value:
-  - name: bosh_db_password
-    type: password
   - name: nats_password
     type: password
   - name: director_blobstore_password
