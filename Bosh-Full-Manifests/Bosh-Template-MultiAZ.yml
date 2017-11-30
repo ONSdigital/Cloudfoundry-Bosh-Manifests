@@ -634,6 +634,8 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
+  networks:
+  - name: cf_rabbitmq
   properties:
     route_registrar:
       routes:
@@ -645,8 +647,6 @@ jobs:
     consul:
       agent:
         services: {}
-  networks:
-  - name: cf_rabbitmq
 
 - name: rabbitmq-broker
   instances: 4
