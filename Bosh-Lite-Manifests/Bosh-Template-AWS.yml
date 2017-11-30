@@ -18,8 +18,6 @@ releases:
   sha1: cfcbc98affa9cad674087ab6b8bd4b1188b18439
 - name: postgresql-databases
   #url: ((postgresql_databases_release_url))
-  # Temproary
-  url: "file:///home/vcap/app/jenkins_home/workspace/Cloudfoundry Deployment/postgresql-databases-release/postgresql-databases-release.tgz"
   version: latest
 
 resource_pools:
