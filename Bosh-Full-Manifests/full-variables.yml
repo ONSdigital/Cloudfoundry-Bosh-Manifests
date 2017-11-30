@@ -2,6 +2,12 @@
 - type: replace
   path: /variables
   value:
+  - name: cc_db_password
+    type: password
+  - name: uaa_db_password
+    type: password
+  - name: diego_db_password
+    type: password
   - name: rabbitmq_broker_password
     type: password
   - name: uaa_admin_client_secret
