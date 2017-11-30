@@ -35,8 +35,8 @@ jobs:
      admin_username: ((apps_db_admin_username))
      admin_password: ((apps_db_admin_password))
      admin_database: postgres
-     host: ((apps_rds_instance_dns))
-     port: ((apps_rds_instance_port))
+     host: ((apps_db_dns))
+     port: ((apps_db_port))
      bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
      region: ((aws_region))
@@ -59,8 +59,8 @@ jobs:
      admin_username: ((bosh_db_admin_username))
      admin_password: ((bosh_db_admin_password))
      admin_database: postgres
-     host: ((bosh_rds_instance_dns))
-     port: ((bosh_rds_instance_port))
+     host: ((bosh_db_dns))
+     port: ((bosh_db_port))
      bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
      region: ((aws_region))
@@ -83,8 +83,8 @@ jobs:
      admin_username: ((cf_db_admin_username))
      admin_password: ((cf_db_admin_password))
      admin_database: postgres
-     host: ((cf_rds_instance_dns))
-     port: ((cf_rds_instance_port))
+     host: ((cf_db_dns))
+     port: ((cf_db_port))
      bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
      region: ((aws_region))

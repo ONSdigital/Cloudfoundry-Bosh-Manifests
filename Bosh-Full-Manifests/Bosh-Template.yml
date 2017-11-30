@@ -61,8 +61,8 @@ jobs:
 #     admin_username: ((apps_db_admin_username))
 #     admin_password: ((apps_db_admin_password))
 #     admin_database: postgres
-#     host: ((apps_rds_instance_dns))
-#     port: ((apps_rds_instance_port))
+#     host: ((apps_db_dns))
+#     port: ((apps_db_port))
 #     rds: true
 #     databases:
 #     - {name: all}
@@ -82,8 +82,8 @@ jobs:
 #     admin_username: ((cf_db_admin_username))
 #     admin_password: ((cf_db_admin_password))
 #     admin_database: postgres
-#     host: ((cf_rds_instance_dns))
-#     port: ((cf_rds_instance_port))
+#     host: ((cf_db_dns))
+#     port: ((cf_db_port))
 #     rds: true
 #     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
 #     databases:
@@ -534,8 +534,8 @@ jobs:
       cc:
         client_secret: ((uaa_cc_client_secret))
     uaadb:
-      address: ((cf_rds_instance_dns))
-      port: ((cf_rds_instance_port))
+      address: ((cf_db_dns))
+      port: ((cf_db_port))
       db_scheme: postgresql
       databases:
       - {name: uaadb, tag: uaa}
@@ -734,8 +734,8 @@ properties:
     staging_upload_user: staging_upload_user
   ccdb:
     db_scheme: postgres
-    address: ((cf_rds_instance_dns))
-    port: ((cf_rds_instance_port))
+    address: ((cf_db_dns))
+    port: ((cf_db_port))
     databases:
     - {name: ccdb, tag: cc}
     roles:
@@ -765,7 +765,7 @@ properties:
   #  - {name: ccdb, tag: cc, citext: true}
   #  - {name: uaadb, tag: uaa, citext: true}
   #  - {name: diego, tag: diego, citext: true}
-  #  port: ((cf_rds_instance_port))
+  #  port: ((cf_db_port))
   #  roles:
   #  - {name: ccadmin, password: ((cc_db_password)), tag: admin}
   #  - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
@@ -1066,8 +1066,8 @@ properties:
       server_key: ""
       sql:
         db_driver: postgres
-        db_host: ((cf_rds_instance_dns))
-        db_port: ((cf_rds_instance_port))
+        db_host: ((cf_db_dns))
+        db_port: ((cf_db_port))
         db_schema: diego
         db_username: diego
         db_password: ((diego_db_password))

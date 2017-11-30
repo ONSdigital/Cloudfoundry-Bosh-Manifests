@@ -146,8 +146,8 @@ jobs:
       # https://bosh.io/docs/remove-dev-tools.html
       #remove_dev_tools: true
       db: &db
-        host: ((bosh_rds_instance_dns))
-        port: ((bosh_rds_instance_port))
+        host: ((bosh_db_dns))
+        port: ((bosh_db_port))
         user: bosh
         password: ((bosh_db_password))
         database: bosh
@@ -210,8 +210,8 @@ jobs:
      admin_username: ((bosh_db_admin_username))
      admin_password: ((bosh_db_admin_password))
      admin_database: postgres
-     host: ((bosh_rds_instance_dns))
-     port: ((bosh_rds_instance_port))
+     host: ((bosh_db_dns))
+     port: ((bosh_db_port))
      bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
      region: ((aws_region))
@@ -219,8 +219,8 @@ jobs:
      databases:
      - { name: bosh, extensions: [pgcrypto] }
     admin_database: postgres
-    host: ((bosh_rds_instance_dns))
-    port: ((bosh_rds_instance_port))
+    host: ((bosh_db_dns))
+    port: ((bosh_db_port))
     bucket_name: ((backup_bucket))
     credentials_source: env_or_profile
     region: ((aws_region))
