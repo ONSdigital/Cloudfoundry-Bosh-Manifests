@@ -40,8 +40,6 @@
     type: password
   - name: uaa_cc_username_lookup_client_secret
     type: password
-  - name: uaa_doppler_client_secret
-    type: password
   - name: uaa_go_router_client_secret
     type: password
   - name: uaa_login_client_secret
