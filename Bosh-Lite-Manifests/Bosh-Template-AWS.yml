@@ -19,6 +19,8 @@ releases:
 - name: postgresql-databases
   #url: ((postgresql_databases_release_url))
   version: latest
+  # Temproary
+  url: "file:///home/vcap/app/jenkins_home/workspace/Cloudfoundry Deployment/postgresql-databases-release/postgresql-databases-release.tgz"
 
 resource_pools:
 - name: bosh_vm
