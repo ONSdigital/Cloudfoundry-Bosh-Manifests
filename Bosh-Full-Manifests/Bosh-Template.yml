@@ -30,6 +30,8 @@ releases:
 # Currently, we don't host a release of this anywhere
 - name: postgresql-databases
   version: latest
+  # Temproary
+  url: "file:///home/vcap/app/jenkins_home/workspace/Cloudfoundry Deployment/postgresql-databases-release/postgresql-databases-release.tgz"
 
 stemcells:
 - alias: default
