@@ -18,6 +18,8 @@
     type: password
   - name: router_status_password
     type: password
+  - name: router_route_services_secret
+    type: password
   - name: bulk_api_password
     type: password
   - name: db_encryption_secret
@@ -174,6 +176,14 @@
     extended_key_usage:
     - client_auth
     - server_auth
+  - name: loggregator_tls_doppler
+    type: certificate
+    options:
+      ca: loggregator_ca
+      common_name: doppler
+      extended_key_usage:
+      - client_auth
+      - server_auth
   - name: loggregator_tls_tc
     type: certificate
     options:
