@@ -92,7 +92,7 @@ jobs:
   - {name: health_monitor, release: bosh}
   - {name: registry, release: bosh}
   - {name: aws_cpi, release: bosh-aws-cpi}
-  - {name: postgresql-databases, release: postgresql-databases}
+  - {name: database-creation, release: postgresql-databases}
   resource_pool: bosh_vm
   persistent_disk_pool: disks
   networks:
@@ -207,18 +207,21 @@ jobs:
       username: admin
       password: ((registry_password))
       port: 25777
+    s3_config:
+      bucket_name: ((backup_bucket))
+      credentials_source: env_or_profile
+      region: ((aws_region))
     postgresql_databases:
-     admin_username: ((bosh_db_admin_username))
-     admin_password: ((bosh_db_admin_password))
-     admin_database: postgres
-     host: ((bosh_db_dns))
-     port: ((bosh_db_port))
-     bucket_name: ((backup_bucket))
-     credentials_source: env_or_profile
-     region: ((aws_region))
-     rds: true
-     databases:
-     - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext] }
+      admin_username: ((bosh_db_admin_username))
+      admin_password: ((bosh_db_admin_password))
+      admin_database: postgres
+      host: ((bosh_db_dns))
+      port: ((bosh_db_port))
+      rds: true
+      databases:
+      # We don't want to backup the Bosh database.  IF we need to backup a CF instance, we can just backup the CF databases & blobs
+      # then restore them with a new Bosh
+      - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext], no_restore: true }
 
 cloud_provider:
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
