@@ -231,7 +231,7 @@ jobs:
       databases:
       # We don't want to backup the Bosh database.  IF we need to backup a CF instance, we can just backup the CF databases & blobs
       # then restore them with a new Bosh
-      - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext], no_restore: true, drop_existing: false }
+      - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext], no_restore: true }
     - name: cloudfoundry
       admin_username: ((cf_db_admin_username))
       admin_password: ((cf_db_admin_password))
@@ -242,7 +242,7 @@ jobs:
       databases:
       - { name: ccdb, username: ccadmin, password: ((cc_db_password)), extensions: [pgcrypto,citext] }
       # The Diego DB only contains transient data, eg auction allocation status
-      - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext], no_restore: true, drop_existing: false }
+      - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext], no_restore: true }
       - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)), extensions: [pgcrypto,citext] }
 
 cloud_provider:
