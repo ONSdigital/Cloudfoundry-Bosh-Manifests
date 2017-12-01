@@ -55,7 +55,7 @@ jobs:
 #  - name: cf_private
 #  azs: [az1]
 #  templates:
-#  - {name: postgresql-databases, release: postgresql-databases}
+#  - {name: database-backup, release: postgresql-databases}
 #  properties:
 #   postgresql_databases:
 #     admin_username: ((apps_db_admin_username))
@@ -77,7 +77,7 @@ jobs:
 #  - name: cf_private
 #  azs: [az1]
 #  templates:
-#  - {name: postgresql-databases, release: postgresql-databases}
+#  - {name: database-backups, release: postgresql-databases}
 #  properties:
 #   postgresql_databases:
 #     admin_username: ((cf_db_admin_username))

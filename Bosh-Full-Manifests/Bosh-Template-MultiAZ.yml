@@ -67,28 +67,28 @@ jobs:
 #     databases:
 #     - {name: all}
 
-- name: backup-postgresql-databases-cf
-  instances: 1
-  lifecycle: errand
-  stemcell: default
-  vm_type: small_general_blobstore_backup
-  networks:
-  - name: cf_private
-  azs: [az1,az2]
-  templates:
-  - {name: postgresql-databases, release: postgresql-databases}
-  properties:
-   postgresql_databases:
-     admin_username: ((cf_db_admin_username))
-     admin_password: ((cf_db_admin_password))
-     admin_database: postgres
-     host: ((cf_db_dns))
-     port: ((cf_db_port))
-     rds: true
-     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
-     databases:
-     - {name: ccdb}
-     - {name: uaadb}
+#- name: backup-postgresql-databases-cf
+#  instances: 1
+#  lifecycle: errand
+#  stemcell: default
+#  vm_type: small_general_blobstore_backup
+#  networks:
+#  - name: cf_private
+#  azs: [az1,az2]
+#  templates:
+#  - {name: postgresql-databases, release: postgresql-databases}
+#  properties:
+#   postgresql_databases:
+#     admin_username: ((cf_db_admin_username))
+#     admin_password: ((cf_db_admin_password))
+#     admin_database: postgres
+#     host: ((cf_db_dns))
+#     port: ((cf_db_port))
+#     rds: true
+#     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
+#     databases:
+#     - {name: ccdb}
+#     - {name: uaadb}
 
 - name: rabbitmq-broker-registrar
   instances: 1
