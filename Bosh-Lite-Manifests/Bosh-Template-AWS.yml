@@ -10,12 +10,12 @@ metadata:
 releases:
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.3.0
-  sha1: dc0accf852839e16f17c4a88a8dc1213c79564b9
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.4.0
+  sha1: d4ce1253ebca7d8b7bb10a1170266af20caaf4e1
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=67
-  sha1: cfcbc98affa9cad674087ab6b8bd4b1188b18439
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=68
+  sha1: a8384b7a4916147b3d39b936e7552b65ab83c3a3
 - name: postgresql-databases
   #url: ((postgresql_databases_release_url))
   version: latest
