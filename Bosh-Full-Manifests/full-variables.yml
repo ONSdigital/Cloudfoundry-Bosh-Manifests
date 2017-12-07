@@ -40,6 +40,8 @@
     type: password
   - name: uaa_cf_services_secret
     type: password
+  - name: uaa_cf_secret
+    type: password
   - name: uaa_cc_username_lookup_client_secret
     type: password
   - name: uaa_go_router_client_secret
@@ -76,11 +78,90 @@
     options:
       is_ca: true
       common_name: internalCA
+  - name: bbs_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: bbsCA
+  - name: bbs_auctioneer_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-auctioneer-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_diego_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-diego-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_converger_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-converger-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_nsync_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-nsync-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_rep_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-rep-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_routeemitter_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-routeemitter-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_sshproxy_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-sshproxy-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_stager_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-stager-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_tps_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-tps-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_server
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs.service.cf.internal
+      extended_key_usage:
+      - client_auth
+      - server_auth
+      alternative_names:
+      - "*.bbs.service.cf.internal"
+      - bbs.service.cf.internal
   - name: blobstore_tls
     type: certificate
     options:
       ca: service_cf_internal_ca
-      common_name: blobstore.service.((internal_domain))
+      common_name: blobstore.service.cf.internal
   - name: consul_ca
     type: certificate
     options:
@@ -120,24 +201,6 @@
       alternative_names:
       - "*.auctioneer.service.cf.internal"
       - "auctioneer.service.cf.internal"
-  - name: diego_bbs_client
-    type: certificate
-    options:
-      ca: service_cf_internal_ca
-      common_name: bbs client
-      extended_key_usage:
-      - client_auth
-  - name: diego_bbs_server
-    type: certificate
-    options:
-      ca: service_cf_internal_ca
-      common_name: bbs.service.cf.internal
-      extended_key_usage:
-      - client_auth
-      - server_auth
-      alternative_names:
-      - "*.bbs.service.cf.internal"
-      - bbs.service.cf.internal
   - name: diego_rep_client
     type: certificate
     options:
@@ -156,6 +219,28 @@
       alternative_names:
       - "*.cell.service.cf.internal"
       - cell.service.cf.internal
+  - name: etcd_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: etcdCA
+  - name: etcd_server
+    type: certificate
+    options:
+      ca: etcd_ca
+      common_name: cf-etcd.service.cf.internal
+      extended_key_usage:
+      - client_auth
+      - server_auth
+      alternative_names:
+      - "*.cf-etcd.service.cf.internal"
+  - name: etcd_client
+    type: certificate
+    options:
+      ca: etcd_ca
+      common_name: etcd-client
+      extended_key_usage:
+      - client_auth
   - name: loggregator_ca
     type: certificate
     options:
@@ -166,6 +251,13 @@
     options:
       ca: loggregator_ca
       common_name: statsdinjector
+      extended_key_usage:
+      - client_auth
+  - name: loggregator_tls_syslogdrainbinder
+    type: certificate
+    options:
+      ca: loggregator_ca
+      common_name: syslogdrainbinder
       extended_key_usage:
       - client_auth
   - name: loggregator_tls_metron
@@ -221,7 +313,7 @@
     type: certificate
     options:
       ca: uaa_ca
-      common_name: uaa.service.((internal_domain))
+      common_name: uaa.service.cf.internal
   - name: uaa_login_saml
     type: certificate
     options:
@@ -231,7 +323,7 @@
     type: certificate
     options:
       ca: service_cf_internal_ca
-      common_name: cloud-controller-ng.service.((internal_domain))
+      common_name: cloud-controller-ng.service.cf.internal
   - name: cc_bridge_tps
     type: certificate
     options:
@@ -250,6 +342,6 @@
     type: certificate
     options:
       ca: service_cf_internal_ca
-      common_name: cc-uploader.service.((internal_domain))
+      common_name: cc-uploader.service.cf.internal
       extended_key_usage:
       - server_auth
