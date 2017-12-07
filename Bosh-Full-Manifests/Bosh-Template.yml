@@ -27,9 +27,9 @@ releases:
 - name: garden-runc
   url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release((garden_runc_version_url_suffix))"
   version: ((garden_runc_version))
-# Currently, we don't host a release of this anywhere
 - name: postgresql-databases
-  version: latest
+  url: ((postgresql_databases_url))
+  version: ((postgresql_databases_version))
 
 stemcells:
 - alias: default
@@ -224,9 +224,9 @@ jobs:
 #  vm_type: medium_general
 #  stemcell: default
 #  templates:
-#  - {name: postgres, release: cf}
-#  - {name: metron_agent, release: cf}
 #  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+#  - {name: metron_agent, release: cf}
+#  - {name: postgres, release: cf}
 #  networks:
 #  - name: cf_private
 #    static_ips: [((private_az1_cidr_prefix)).201]
@@ -257,8 +257,8 @@ jobs:
   vm_type: large_ram_large_disk
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -280,8 +280,8 @@ jobs:
   vm_type: large_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -303,8 +303,8 @@ jobs:
   vm_type: xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -326,8 +326,8 @@ jobs:
   vm_type: 2xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -349,8 +349,8 @@ jobs:
   vm_type: 4xlarge_ram_large_disk_spot
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -401,14 +401,15 @@ jobs:
   vm_type: medium_cc_general
   stemcell: default
   templates:
+  - {name: cloud_controller_clock, release: cf}
   - {name: cloud_controller_ng, release: cf}
   - {name: cloud_controller_worker, release: cf}
-  - {name: cloud_controller_clock, release: cf}
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: go-buildpack, release: cf}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
   - {name: statsd_injector, release: cf}
+  # Buildpacks
   - {name: binary-buildpack, release: cf}
   - {name: dotnet-core-buildpack, release: cf}
   - {name: java-buildpack, release: cf}
@@ -510,8 +511,6 @@ jobs:
     login:
       saml:
         serviceProviderKey: ((uaa_login_saml.private_key))
-        serviceProviderKeyPassword: ""
-        # uaa.service.((internal_domain))
         serviceProviderCertificate: ((uaa_login_saml.certificate))
       catalina_opts: -Xmx768m -XX:MaxPermSize=256m
     route_registrar:
@@ -637,15 +636,12 @@ properties:
     tracing:
       enable_zipkin: true
   networks: {apps: cf_private}
-  # https://docs.cloudfoundry.org/deploying/aws/cf-stub.html
   app_domains: [apps.((domain_name))]
   app_ssh:
     host_key_fingerprint: ((diego_ssh_proxy_host_key.public_key_fingerprint))
     oauth_client_id: ssh-proxy
   cc:
     disable_custom_buildpacks: true
-    # https://github.com/cloudfoundry/cloud_controller_ng/blob/master/bosh/jobs/cloud_controller_ng/spec
-    # quota_definitions & default_quota_definition
     maximum_app_disk_in_mb: 8192
     mutual_tls:
       ca_cert: ((cc_tls.ca))
@@ -658,9 +654,7 @@ properties:
     internal_api_user: internal_user
     external_port: 9022
     tls_port: 9023
-    # This has been deprecated, cf-release 271
-    #srv_api_uri: https://api.system.((domain_name))
-    internal_service_hostname: cloud-controller-ng.service.((internal_domain))
+    internal_service_hostname: cloud-controller-ng.service.cf.internal
     # XXX XXX XXX XXX XXX
     buildpacks:
       blobstore_type: fog
@@ -751,7 +745,7 @@ properties:
   consul:
     agent:
       log_level: null
-      domain: ((internal_domain))
+      domain: cf.internal
       servers:
         lan:
         - ((consul_az1_ip1))
@@ -778,60 +772,47 @@ properties:
   #  - {name: diego, password: ((diego_db_password)), tag: admin}
   description: Cloud Foundry - ((organisation))
   domain: system.((domain_name))
-#  etcd:
-#    advertise_urls_dns_suffix: cf-etcd.service.((internal_domain))
+  etcd:
+    advertise_urls_dns_suffix: cf-etcd.service.cf.internal
 #    cluster:
 #    - name: etcd
 #      instances: 9
-#    machines: ["cf-etcd.service.((internal_domain))"]
-#    peer_require_ssl: true
-#    require_ssl: true
-#    ca_cert: ((internal_ca_crt))
-#    # cf-etcd.service.$INTERNAL_DOMAIN, altnames: *.cf-etcd.service.$INTERNAL_DOMAIN, cf-etcd.service.$INTERNAL_DOMAIN
-#    server_cert: ((cf_etcd_server_crt))
-#    server_key: ((cf_etcd_server_key))
-    # cf-etcd-client
-#    client_cert: ((cf_etcd_client_crt))
-#    client_key: ((cf_etcd_client_key))
-#    peer_ca_cert: ((internal_ca_crt))
-#    # cf-etcd.service.$INTERNAL_DOMAIN, altnames: *.cf-etcd.service.$INTERNAL_DOMAIN, cf-etcd.service.$INTERNAL_DOMAIN
-#    peer_cert: ((cf_etcd_server_crt))
-#    peer_key: ((cf_etcd_server_key))
-#  etcd_metrics_server:
-#    etcd:
-#      require_ssl: true
-#      dns_suffix: cf-etcd.service.((internal_domain))
-#    nats:
-#      password: ((nats_password))
-#      username: nats
+    machines: ["cf-etcd.service.cf.internal"]
+    peer_require_ssl: true
+    require_ssl: true
+    ca_cert: ((etcd_server.ca))
+    client_cert: ((etcd_client.certificate))
+    client_key: ((etcd_client.private_key))
+    server_cert: ((etcd_server.certificate))
+    server_key: ((etcd_server.private_key))
+    peer_ca_cert: ((etcd_server.ca))
+    peer_cert: ((etcd_server.certificate))
+    peer_key: ((etcd_server.private_key))
   doppler:
     # Number of log messages to retain per application
     maxRetainedLogMessages: 2000
     # Size of the internal buffer used by doppler to store messages for output to firehose or ‘cf logs’. If the buffer gets full doppler will drop the messages
     message_drain_buffer_size: 20000
-#    etcd:
-#      # clientName
-#      client_cert: ((cf_etcd_client_crt))
-#      client_key: ((cf_etcd_client_key))
-#  traffic_controller:
-#    etcd:
-#      # clientName
-#      client_cert: ((cf_etcd_client_crt))
-#      client_key: ((cf_etcd_client_key))
-#  syslog_drain_binder:
-#    etcd:
-#      # clientName
-#      client_cert: ((cf_etcd_client_crt))
-#      client_key: ((cf_etcd_client_key))
+    etcd:
+      client_cert: ((etcd_client.certificate))
+      client_key: ((etcd_client.private_key))
+  traffic_controller:
+    etcd:
+      client_cert: ((etcd_client.certificate))
+      client_key: ((etcd_client.private_key))
+  syslog_drain_binder:
+    etcd:
+      client_cert: ((etcd_client.certificate))
+      client_key: ((etcd_client.private_key))
   loggregator:
     uaa:
       client_secret: ((uaa_doppler_client_secret))
-#    etcd:
-#      require_ssl: true
-#      machines: ["cf-etcd.service.((internal_domain))"]
-#      ca_cert: ((internal_ca_crt))
+    etcd:
+      require_ssl: true
+      machines: ["cf-etcd.service.cf.internal"]
+      ca_cert: ((etcd_server.ca))
     tls:
-      ca_cert: ((loggregator_ca))
+      ca_cert: ((loggregator_ca.certificate))
       doppler:
         cert: ((loggregator_tls_doppler.certificate))
         key: ((loggregator_tls_doppler.private_key))
@@ -844,16 +825,12 @@ properties:
       metron:
         cert: ((loggregator_tls_metron.certificate))
         key: ((loggregator_tls_metron.private_key))
-#      syslogdrainbinder:
-#        cert: ((syslogdrainbinder_crt))
-#        key: ((syslogdrainbinder_key))
-#      statsd_injector:
-#        cert: ((loggregator_tls_statsdinjector.certificate))
-#        key: ((loggregator_tls_statsdinjector.private_key))
-#      tls:
-#        ca_cert: ((loggregator_ca))
-#        cert: ((loggregator_crt)
-#        key: ((loggregator_key))
+      syslogdrainbinder:
+        cert: ((loggregator_tls_syslogdrainbinder.certificate))
+        key: ((loggregator_tls_syslogdrainbinder.private_key))
+      statsd_injector:
+        cert: ((loggregator_tls_statsdinjector.certificate))
+        key: ((loggregator_tls_statsdinjector.private_key))
 #  statsd_injector:
 #    deployment: ((bosh_deployment))
   doppler_endpoint:
@@ -897,7 +874,7 @@ properties:
         authorities: uaa.none
         authorized-grant-types: password,refresh_token
         autoapprove: true
-        secret: ''
+        secret: ((uaa_cf_secret))
         override: true
         refresh-token-validity: 604800
         scope: cloud_controller.read,cloud_controller.write,openid,password.write,cloud_controller.admin,scim.read,scim.write,doppler.firehose,uaa.user,routing.router_groups.read
@@ -972,8 +949,8 @@ properties:
     zones:
       internal:
         hostnames:
-        - uaa.service.((internal_domain))
-        - login.service.((internal_domain))
+        - uaa.service.cf.internal
+        - login.service.cf.internal
     ssl:
       # Internal UAA port
       port: 8443
@@ -1003,73 +980,71 @@ properties:
         client_key: ((cc_bridge_cc_uploader.private_key))
     nsync:
       bbs:
-        ca_cert: ""
-        client_cert: ""
-        client_key: ""
-        require_ssl: false
+        ca_cert: ((bbs_nsync_client.ca))
+        client_cert: ((bbs_nsync_client.certificate))
+        client_key: ((bbs_nsync_client.private_key))
+        require_ssl: true
       cc:
-        #base_url: https://api.system.((domain_name))
-        base_url: http://cloud-controller-ng.service.((internal_domain)):9022
+        base_url: http://cloud-controller-ng.service.cf.internal:9022
         basic_auth_password: ((internal_api_password))
       diego_privileged_containers: true
     tps:
       bbs:
-        ca_cert: ""
-        client_cert: ""
-        client_key: ""
-        require_ssl: false
+        ca_cert: ((bbs_server.ca))
+        client_cert: ((bbs_tps_client.certificate))
+        client_key: ((bbs_tps_client.private_key))
+        require_ssl: true
       cc:
         ca_cert: ((service_cf_internal_ca))
         client_cert: ((cc_bridge_tps.certificate))
         client_key: ((cc_bridge_tps.private_key))
-        #base_url: https://api.system.((domain_name))
-        base_url: https://cloud-controller-ng.service.((internal_domain)):9023
+        base_url: https://cloud-controller-ng.service.cf.internal:9023
         basic_auth_password: ((internal_api_password))
     tps_listener:
       bbs:
-        ca_cert: ""
-        client_cert: ""
-        client_key: ""
-        require_ssl: false
+        ca_cert: ((bbs_server.ca))
+        client_cert: ((bbs_tpslistener_client.certificate))
+        client_key: ((bbs_tpslistener_client.private_key))
+        require_ssl: true
       cc:
-        #base_url: https://api.system.((domain_name))
-        base_url: http://cloud-controller-ng.service.((internal_domain)):9022
+        base_url: http://cloud-controller-ng.service.cf.internal:9022
         basic_auth_password: ((internal_api_password))
     stager:
       # The default for this and diego.route_emitter.healthcheck_address is 127.0.0.1:17011 (2017/04/03)
       debug_addr: 127.0.0.1:17012
       bbs:
-        ca_cert: ""
-        client_cert: ""
-        client_key: ""
-        require_ssl: false
+        ca_cert: ((bbs_server.ca))
+        client_cert: ((bbs_stager_client.certificate))
+        client_key: ((bbs_stager_client.private_key))
+        require_ssl: true
       cc:
-        #base_url: https://api.system.((domain_name))
-        base_url: http://cloud-controller-ng.service.((internal_domain)):9022
+        base_url: http://cloud-controller-ng.service.cf.internal:9022
         basic_auth_password: ((internal_api_password))
   diego:
     auctioneer:
       bbs:
-        ca_cert: ""
-        client_cert: ""
-        client_key: ""
-        require_ssl: false
+        ca_cert: ((bbs_server.ca))
+        client_cert: ((bbs_auctioneer_client.certificate))
+        client_key: ((bbs_auctioneer_client.private_key))
+        require_ssl: true
     bbs:
       active_key_label: active
       encryption_keys:
       - label: active
         passphrase: ((bbs_password))
-      ca_cert: ""
       etcd:
-        machines: ["cf-etcd.service.((internal_domain))"]
-#        ca_cert: ((internal_ca_crt))
+        machines: ["cf-etcd.service.cf.internal"]
+        ca_cert: ((etcd_server.ca))
         # clientName
-#        client_cert: ((cf_etcd_client_crt))
-#        client_key: ((cf_etcd_client_key))
-#        require_ssl: true
-      require_ssl: false
-      server_cert: ""
-      server_key: ""
+        client_cert: ((etcd_client.certificate))
+        client_key: ((etcd_client.private_key))
+        require_ssl: true
+      require_ssl: true
+      client_cert: ((bbs_diego_client.certificate))
+      client_key: ((bbs_diego_client.private_key))
+      ca_cert: ((bbs_diego_client.ca))
+      server_cert: ((bbs_server.certificate))
+      server_key: ((bbs_server.private_key))
       sql:
         db_driver: postgres
         db_host: ((cf_db_dns))
@@ -1080,26 +1055,26 @@ properties:
         max_open_connections: 50
     converger:
       bbs:
-        ca_cert: ""
-        client_cert: ""
-        client_key: ""
-        require_ssl: false
+        ca_cert: ((bbs_converger_client.ca))
+        client_cert: ((bbs_converger_client.certificate))
+        client_key: ((bbs_converger_client.private_key))
+        require_ssl: true
     rep:
       bbs:
-        ca_cert: ""
-        client_cert: ""
-        client_key: ""
-        require_ssl: false
+        ca_cert: ((bbs_server.ca))
+        client_cert: ((bbs_rep_client.certificate))
+        client_key: ((bbs_rep_client.private_key))
+        require_ssl: true
       preloaded_rootfses: ["cflinuxfs2:/var/vcap/packages/cflinuxfs2/rootfs"]
     executor:
       memory_capacity_mb: 30720
       disk_capacity_mb: 163840
     route_emitter:
       bbs:
-        ca_cert: ""
-        client_cert: ""
-        client_key: ""
-        require_ssl: false
+        ca_cert: ((bbs_server.ca))
+        client_cert: ((bbs_routeemitter_client.certificate))
+        client_key: ((bbs_routeemitter_client.private_key))
+        require_ssl: true
       nats:
         machines: [((nats_az1_ip1))]
         password: ((nats_password))
@@ -1107,14 +1082,13 @@ properties:
         user: nats
     ssh_proxy:
       bbs:
-        ca_cert: ""
-        client_cert: ""
-        client_key: ""
-        require_ssl: false
+        ca_cert: ((bbs_server.ca))
+        client_cert: ((bbs_sshproxy_client.certificate))
+        client_key: ((bbs_sshproxy_client.private_key))
+        require_ssl: true
       host_key: ((diego_ssh_proxy_host_key.private_key))
       enable_cf_auth: true
       enable_diego_auth: false
-      diego_credentials: ""
       uaa_secret: ((uaa_ssh_proxy_secret))
       uaa_token_url: https://uaa.system.((domain_name))/oauth/token
       healthcheck_listen_addr: 0.0.0.0:2223
@@ -1139,7 +1113,7 @@ properties:
   rabbitmq-broker:
     route: rabbitbroker
     #cc_endpoint: https://api.system.((domain_name))
-    cc_endpoint: http://cloud-controller-ng.service.((internal_domain)):9022
+    cc_endpoint: http://cloud-controller-ng.service.cf.internal:9022
     service:
       #name: ((rabbitmq_product_name))
       name: rabbitmq
@@ -1147,7 +1121,7 @@ properties:
       password: ((rabbitmq_broker_password))
       url: http://rabbitmq-broker.system.((domain_name))
     rabbitmq:
-      hosts: rabbitmq-node.service.((internal_domain))
+      hosts: rabbitmq-node.service.cf.internal
       operator_set_policy:
         enabled: true
         policy_name: "operator_set_policy"
@@ -1171,7 +1145,7 @@ properties:
     stats:
       username: rabbitmq-stats
       password: ((rabbitmq_stats_password))
-#    server_ips: rabbitmq-node.service.((internal_domain))
+#    server_ips: rabbitmq-node.service.cf.internal
   rabbitmq-server:
     plugins:
     - rabbitmq_management
