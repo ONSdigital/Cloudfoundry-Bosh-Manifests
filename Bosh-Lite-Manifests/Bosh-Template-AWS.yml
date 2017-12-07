@@ -18,6 +18,7 @@ releases:
   sha1: a8384b7a4916147b3d39b936e7552b65ab83c3a3
 - name: postgresql-databases
   url: ((postgresql_databases_url))
+  version: latest
 
 resource_pools:
 - name: bosh_vm

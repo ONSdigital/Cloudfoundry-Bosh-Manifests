@@ -28,8 +28,7 @@ releases:
   url: "https://bosh.io/d/github.com/cloudfoundry/garden-runc-release((garden_runc_version_url_suffix))"
   version: ((garden_runc_version))
 - name: postgresql-databases
-  url: ((postgresql_databases_url))
-  version: ((postgresql_databases_version))
+  version: latest
 
 stemcells:
 - alias: default
