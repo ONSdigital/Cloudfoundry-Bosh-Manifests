@@ -994,7 +994,7 @@ properties:
         client_key: ((bbs_tps_client.private_key))
         require_ssl: true
       cc:
-        ca_cert: ((service_cf_internal_ca))
+        ca_cert: ((cc_bridge_tps.ca))
         client_cert: ((cc_bridge_tps.certificate))
         client_key: ((cc_bridge_tps.private_key))
         base_url: https://cloud-controller-ng.service.cf.internal:9023
