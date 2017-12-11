@@ -256,13 +256,6 @@
       common_name: statsdinjector
       extended_key_usage:
       - client_auth
-  - name: loggregator_tls_syslogdrainbinder
-    type: certificate
-    options:
-      ca: loggregator_ca
-      common_name: syslogdrainbinder
-      extended_key_usage:
-      - client_auth
   - name: loggregator_tls_metron
     type: certificate
     options:
@@ -287,13 +280,24 @@
       extended_key_usage:
       - client_auth
       - server_auth
+
   - name: loggregator_tls_cc_tc
     type: certificate
     options:
-      ca: loggregator_ca
+      # Should be signed by same CA as 
+      # https://github.com/cloudfoundry/cf-release/issues/1159
+      ca: service_cf_internal_ca
       common_name: trafficcontroller
       extended_key_usage:
       - client_auth
+  - name: loggregator_tls_syslogdrainbinder
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: syslogdrainbinder
+      extended_key_usage:
+      - client_auth
+
   - name: router_ca
     type: certificate
     options:
