@@ -232,7 +232,10 @@
       extended_key_usage:
       - client_auth
       - server_auth
+      # The etcd client seems to ignore the CN if a SAN(s) is present, so we have an extra
+      # SAN that matches the CN
       alternative_names:
+      - cf-etcd.service.cf.internal
       - "*.cf-etcd.service.cf.internal"
   - name: etcd_client
     type: certificate
