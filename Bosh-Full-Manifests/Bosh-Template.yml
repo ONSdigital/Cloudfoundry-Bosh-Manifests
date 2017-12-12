@@ -43,116 +43,93 @@ update:
   update_watch_time: 5000-600000
 
 jobs:
-# This one would only dump the rds_broker database, so its relatively pointless as it stands.  The backup job
-# would need to be adjusted to iterate over the list of databases and dump each one in turn (TODO)
-#- name: backup-postgresql-databases-apps
-#  instances: 1
-#  lifecycle: errand
-#  stemcell: default
-#  vm_type: small_general_blobstore_backup
-#  networks:
-#  - name: cf_private
-#  azs: [az1]
-#  templates:
-#  - {name: database-backup, release: postgresql-databases}
-#  properties:
-#   postgresql_databases:
-#     admin_username: ((apps_db_admin_username))
-#     admin_password: ((apps_db_admin_password))
-#     admin_database: postgres
-#     host: ((apps_db_dns))
-#     port: ((apps_db_port))
-#     rds: true
-#     databases:
-#     - {name: all}
-
 # https://github.com/cloudfoundry/bosh/issues/1639
-#- name: backup-postgresql-databases-cf
-#  instances: 1
-#  lifecycle: errand
-#  stemcell: default
-#  vm_type: small_general_blobstore_backup
-#  networks:
-#  - name: cf_private
-#  azs: [az1]
-#  templates:
-#  - {name: database-backups, release: postgresql-databases}
-#  properties:
-#   postgresql_databases:
-#     admin_username: ((cf_db_admin_username))
-#     admin_password: ((cf_db_admin_password))
-#     admin_database: postgres
-#     host: ((cf_db_dns))
-#     port: ((cf_db_port))
-#     rds: true
-#     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
-#     databases:
-#     - {name: ccdb}
-#     - {name: uaadb}
-#
-#- name: rabbitmq-broker-registrar
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: micro_general
-#  stemcell: default
-#  networks:
-#  - name: cf_private
-#  azs: [az1]
-#  templates:
-#  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
-#  properties:
-#    broker:
-#      service:
-#        name: rabbitmq
-#      name: rabbitmq
-#      protocol: https
-#      host: rabbitmq-broker.system.((domain_name))
-#      username: rabbitmq-broker
-#      password: ((rabbitmq_broker_password))
-#
-#- name: rabbitmq-broker-deregistrar
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: micro_general
-#  stemcell: default
-#  networks:
-#  - name: cf_private
-#  azs: [az1]
-#  templates:
-#  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
-#  properties:
-#    broker:
-#      service:
-#        name: rabbitmq
-#      name: rabbitmq
-#
-#- name: rabbitmq-broker-smoke-tests-az1
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: micro_general
-#  stemcell: default
-#  networks:
-#  - name: cf_private
-#  azs: [az1]
-#  templates:
-#  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
-#  properties:
-#    broker:
-#      name: rabbitmq
-#
-#- name: cf-smoke-tests-az1
-#  instances: 1
-#  lifecycle: errand
-#  stemcell: default
-#  vm_type: micro_general
-#  networks:
-#  - name: cf_private
-#  azs: [az1]
-#  templates:
-#  - {name: smoke_tests, release: cf-smoke-tests}
-#  properties:
-#    smoke_tests:
-#      etcd_ip_address: ((etcd_az1_ip1))
+- name: backup-postgresql-databases-cf
+  instances: 1
+  lifecycle: errand
+  stemcell: default
+  vm_type: small_general_blobstore_backup
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: database-backup, release: postgresql-databases}
+  properties:
+   postgresql_databases:
+     admin_username: ((cf_db_admin_username))
+     admin_password: ((cf_db_admin_password))
+     admin_database: postgres
+     host: ((cf_db_dns))
+     port: ((cf_db_port))
+     rds: true
+     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
+     databases:
+     - {name: ccdb}
+     - {name: uaadb}
+
+- name: rabbitmq-broker-registrar
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
+      protocol: https
+      host: rabbitmq-broker.system.((domain_name))
+      username: rabbitmq-broker
+      password: ((rabbitmq_broker_password))
+
+- name: rabbitmq-broker-deregistrar
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
+
+- name: rabbitmq-broker-smoke-tests-az1
+  instances: 1
+  lifecycle: errand
+  vm_type: micro_general
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      name: rabbitmq
+
+- name: cf-smoke-tests-az1
+  instances: 1
+  lifecycle: errand
+  stemcell: default
+  vm_type: micro_general
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: smoke_tests, release: cf-smoke-tests}
+  properties:
+    smoke_tests:
+      etcd_ip_address: ((etcd_az1_ip1))
 
 - name: nats
   instances: 1
