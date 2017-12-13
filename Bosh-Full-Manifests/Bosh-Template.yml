@@ -823,7 +823,7 @@ properties:
     port: 4222
     user: nats
   ssl:
-    skip_cert_verify: true
+    skip_cert_verify: false
   system_domain: system.((domain_name))
   system_domain_organization: ((organisation))
   login:

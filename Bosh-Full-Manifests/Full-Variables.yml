@@ -268,16 +268,14 @@
     options:
       ca: loggregator_ca
       common_name: metron
-    extended_key_usage:
-    - client_auth
-    - server_auth
+      extended_key_usage:
+      - client_auth
+      - server_auth
   - name: loggregator_tls_doppler
     type: certificate
     options:
       ca: loggregator_ca
-      common_name: doppler.service.cf.internal
-      alternative_names:
-      - doppler
+      common_name: doppler
       extended_key_usage:
       - client_auth
       - server_auth
@@ -289,14 +287,13 @@
       extended_key_usage:
       - client_auth
       - server_auth
-
   - name: loggregator_tls_cc_tc
     type: certificate
     options:
       # Should be signed by same CA as 
       # https://github.com/cloudfoundry/cf-release/issues/1159
       ca: service_cf_internal_ca
-      common_name: trafficcontroller
+      common_name: cc_trafficcontroller
       extended_key_usage:
       - client_auth
   - name: loggregator_tls_syslogdrainbinder
