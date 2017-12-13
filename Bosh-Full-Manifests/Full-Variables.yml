@@ -146,6 +146,13 @@
       common_name: bbs-tps-client
       extended_key_usage:
       - client_auth
+  - name: bbs_tpslistener_client
+    type: certificate
+    options:
+      ca: bbs_ca
+      common_name: bbs-tpslistener-client
+      extended_key_usage:
+      - client_auth
   - name: bbs_server
     type: certificate
     options:
