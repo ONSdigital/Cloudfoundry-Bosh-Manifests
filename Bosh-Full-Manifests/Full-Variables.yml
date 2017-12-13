@@ -275,7 +275,9 @@
     type: certificate
     options:
       ca: loggregator_ca
-      common_name: doppler
+      common_name: doppler.service.cf.internal
+      alternative_names:
+      - doppler
       extended_key_usage:
       - client_auth
       - server_auth
