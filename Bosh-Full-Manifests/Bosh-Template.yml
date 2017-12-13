@@ -47,8 +47,8 @@ jobs:
 - name: backup-postgresql-databases-cf
   instances: 1
   lifecycle: errand
-  stemcell: default
   vm_type: small_general_blobstore_backup
+  stemcell: default
   networks:
   - name: cf_private
   azs: [az1]
@@ -546,6 +546,8 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
+  networks:
+  - name: cf_rabbitmq
   properties:
     route_registrar:
       routes:
@@ -557,8 +559,6 @@ jobs:
     consul:
       agent:
         services: {}
-  networks:
-  - name: cf_rabbitmq
 
 - name: rabbitmq-broker
   instances: 1
@@ -566,13 +566,13 @@ jobs:
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
+  networks:
+  - name: cf_rabbitmq
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
   - {name: metron_agent, release: cf}
   - {name: rabbitmq-broker, release: cf-rabbitmq-multitenant-broker}
   - {name: route_registrar, release: cf}
-  networks:
-  - name: cf_rabbitmq
   properties:
     route_registrar:
       routes:
@@ -1104,7 +1104,7 @@ properties:
         policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
         policy_priority: 50
       management_domain: rabbitmq-mgnt.system.((domain_name))
-      ssl: false
+      ssl: true
       administrator:
         username: rabbitmq-broker
         password: ((rabbitmq_broker_password))
@@ -1143,11 +1143,10 @@ properties:
         username: rabbitmq-broker
         password: ((rabbitmq_broker_password))
     cluster_partition_handling: autoheal
-    #ssl:
-    #  security_options:
-    #  cert:
-    #  key:
-    #  cacert:
+    ssl:
+      cert: ((rabbitmq_server.certificate))
+      key: ((rabbitmq_server.private_key))
+      cacert: ((rabbitmq_server.ca))
   smoke_tests:
     api: https://api.system.((domain_name))
     apps_domain: [apps.((domain_name))]
