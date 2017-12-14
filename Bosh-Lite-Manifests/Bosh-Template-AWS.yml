@@ -10,8 +10,8 @@ metadata:
 releases:
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.4.0
-  sha1: d4ce1253ebca7d8b7bb10a1170266af20caaf4e1
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.5.0
+  sha1: c7133d0069b604e96bee203801bb8d686c9a98d9
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
   url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=69
