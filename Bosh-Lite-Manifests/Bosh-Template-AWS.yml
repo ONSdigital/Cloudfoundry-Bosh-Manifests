@@ -56,7 +56,7 @@ resource_pools:
     sha1: 50416e0f48ff2dc3d954ac5082dda0965d97b93a
 
   cloud_properties:
-    instance_type: t2.medium
+    instance_type: m4.large
     ephemeral_disk: {size: 10_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_instance_security_group))]

@@ -207,7 +207,7 @@ vm_types:
     spot_ondemand_fallback: true
 
 compilation:
-  workers: 10
+  workers: 20
   network: cf_private
   reuse_compilation_vms: true
   az: az1
