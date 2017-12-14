@@ -57,7 +57,7 @@ resource_pools:
 
   cloud_properties:
     instance_type: m4.large
-    ephemeral_disk: {size: 10_000, type: gp2}
+    ephemeral_disk: {size: 20_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_instance_security_group))]
     iam_instance_profile: ((director_instance_profile))
@@ -92,7 +92,11 @@ jobs:
   - {name: aws_cpi, release: bosh-aws-cpi}
   - {name: database-creation, release: postgresql-databases}
   resource_pool: bosh_vm
-  persistent_disk_pool: disks
+  # When AWS is under load, we seem to get this error:
+  # Agent responded with error: Action Failed get_task: Task 49126ffb-2ba6-47b5-7507-17db35da90ce result: Persistent disk with volume id 'vol-0d593817628ad380a' could not be found
+  #
+  # We are using an external database, so we shouldn't need a persistent disk
+  #persistent_disk_pool: disks
   networks:
   - name: cf_director
     static_ips: [((bosh_lite_private_ip))]
