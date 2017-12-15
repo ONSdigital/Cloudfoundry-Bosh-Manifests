@@ -64,8 +64,11 @@ resource_pools:
     elbs: [((director_elb))]
 
 disk_pools:
-- name: disks
+- name: medium_disk
   disk_size: 10_000
+  cloud_properties: {type: gp2}
+- name: small_disk
+  disk_size: 5_000
   cloud_properties: {type: gp2}
 
 networks:
@@ -93,10 +96,11 @@ jobs:
   - {name: database-creation, release: postgresql-databases}
   resource_pool: bosh_vm
   # When AWS is under load, we seem to get this error:
+  #
   # Agent responded with error: Action Failed get_task: Task 49126ffb-2ba6-47b5-7507-17db35da90ce result: Persistent disk with volume id 'vol-0d593817628ad380a' could not be found
   #
-  # We are using an external database, so we shouldn't need a persistent disk
-  #persistent_disk_pool: disks
+  # Bosh users its disk for its internal Blobstore and to store its task logs
+  persistent_disk_pool: small_disk
   networks:
   - name: cf_director
     static_ips: [((bosh_lite_private_ip))]

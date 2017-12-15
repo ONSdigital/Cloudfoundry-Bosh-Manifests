@@ -934,6 +934,7 @@ properties:
     url: https://uaa.system.((domain_name))
     sslPrivateKey: ((uaa_ssl.private_key))
     sslCertificate: ((uaa_ssl.certificate))
+    ca_cert: ((uaa_ssl.ca))
     password:
       policy:
         global:
