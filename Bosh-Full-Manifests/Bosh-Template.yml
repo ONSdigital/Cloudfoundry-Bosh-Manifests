@@ -56,9 +56,9 @@ jobs:
   - {name: database-backup, release: postgresql-databases}
   properties:
     s3_config:
-      region: ((aws_region))
       bucket_name: ((backup_bucket))
       credentials_source: env_or_profile
+      region: ((aws_region))
    postgresql_databases:
      admin_username: ((cf_db_admin_username))
      admin_password: ((cf_db_admin_password))
