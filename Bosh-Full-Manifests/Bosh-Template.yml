@@ -59,13 +59,11 @@ jobs:
      admin_username: ((cf_db_admin_username))
      admin_password: ((cf_db_admin_password))
      admin_database: postgres
-     host: ((cf_db_dns))
-     port: ((cf_db_port))
      rds: true
      # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
      databases:
-     - {name: ccdb}
-     - {name: uaadb}
+      - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
+      - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }
 
 - name: rabbitmq-broker-registrar
   instances: 1
