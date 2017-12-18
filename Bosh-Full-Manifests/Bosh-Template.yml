@@ -59,15 +59,15 @@ jobs:
       bucket_name: ((backup_bucket))
       credentials_source: env_or_profile
       region: ((aws_region))
-   postgresql_databases:
-     admin_username: ((cf_db_admin_username))
-     admin_password: ((cf_db_admin_password))
-     admin_database: postgres
-     rds: true
-     # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
-     databases:
-      - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
-      - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }
+    postgresql_databases:
+      admin_username: ((cf_db_admin_username))
+      admin_password: ((cf_db_admin_password))
+      admin_database: postgres
+      rds: true
+      # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
+      databases:
+       - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
+       - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }
 
 - name: rabbitmq-broker-registrar
   instances: 1
