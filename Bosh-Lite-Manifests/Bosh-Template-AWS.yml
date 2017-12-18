@@ -99,7 +99,7 @@ jobs:
   #
   # Agent responded with error: Action Failed get_task: Task 49126ffb-2ba6-47b5-7507-17db35da90ce result: Persistent disk with volume id 'vol-0d593817628ad380a' could not be found
   #
-  # Bosh users its disk for its internal Blobstore and to store its task logs
+  # Bosh users its disk for its internal Blobstore and to store its task logs
   persistent_disk_pool: small_disk
   networks:
   - name: cf_director
