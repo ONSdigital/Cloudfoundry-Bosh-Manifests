@@ -7,7 +7,6 @@ azs:
   cloud_properties:
     availability_zone: ((aws_availability_zone1))
 
-
 networks:
 - name: cf_private
   type: manual
