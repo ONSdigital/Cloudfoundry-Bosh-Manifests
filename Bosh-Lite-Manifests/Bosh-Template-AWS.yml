@@ -222,8 +222,8 @@ jobs:
       admin_username: ((apps_db_admin_username))
       admin_password: ((apps_db_admin_password))
       admin_database: postgres
-      host: ((apps_db_dns))
-      port: ((apps_db_port))
+      postgresql_host: ((apps_db_dns))
+      postgresql_port: ((apps_db_port))
       rds: true
       databases:
       - { name: rds_broker, extensions: [pgcrypto], ignore_existing: true }
@@ -242,8 +242,8 @@ jobs:
       admin_username: ((cf_db_admin_username))
       admin_password: ((cf_db_admin_password))
       admin_database: postgres
-      host: ((cf_db_dns))
-      port: ((cf_db_port))
+      postgresql_host: ((cf_db_dns))
+      postgresql_port: ((cf_db_port))
       rds: true
       databases:
       - { name: ccdb, username: ccadmin, password: ((cc_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
