@@ -32,17 +32,41 @@ jobs:
   - {name: postgresql-databases, release: postgresql-databases}
   properties:
    postgresql_databases:
-     admin_username: ((apps_rds_instance_username))
-     admin_password: ((apps_rds_instance_password))
+     admin_username: ((apps_db_admin_username))
+     admin_password: ((apps_db_admin_password))
      admin_database: postgres
-     host: ((apps_rds_instance_dns))
-     port: ((apps_rds_instance_port))
+     host: ((apps_db_dns))
+     port: ((apps_db_port))
      bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
      region: ((aws_region))
      rds: true
      databases:
      - { name: rds_broker, extensions: [pgcrypto] }
+
+- name: create-postgresql-databases-bosh
+  instances: 1
+  lifecycle: errand
+  stemcell: default
+  vm_type: small_general_blobstore_backup
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: postgresql-databases, release: postgresql-databases}
+  properties:
+   postgresql_databases:
+     admin_username: ((bosh_db_admin_username))
+     admin_password: ((bosh_db_admin_password))
+     admin_database: postgres
+     host: ((bosh_db_dns))
+     port: ((bosh_db_port))
+     bucket_name: ((backup_bucket))
+     credentials_source: env_or_profile
+     region: ((aws_region))
+     rds: true
+     databases:
+     - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext] }
 
 - name: create-postgresql-databases-cf
   instances: 1
@@ -56,11 +80,11 @@ jobs:
   - {name: postgresql-databases, release: postgresql-databases}
   properties:
    postgresql_databases:
-     admin_username: ((cf_rds_instance_username))
-     admin_password: ((cf_rds_instance_password))
+     admin_username: ((cf_db_admin_username))
+     admin_password: ((cf_db_admin_password))
      admin_database: postgres
-     host: ((cf_rds_instance_dns))
-     port: ((cf_rds_instance_port))
+     host: ((cf_db_dns))
+     port: ((cf_db_port))
      bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
      region: ((aws_region))
@@ -70,3 +94,13 @@ jobs:
      - { name: ccdb, username: ccadmin, password: ((cc_db_password)), extensions: [pgcrypto,citext] }
      - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext], no_backup: true }
      - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)), extensions: [pgcrypto,citext] }
+
+variables:
+- name: bosh_db_password
+  type: password
+- name: cc_db_password
+  type: password
+- name: diego_db_password
+  type: password
+- name: uaa_db_password
+  type: password

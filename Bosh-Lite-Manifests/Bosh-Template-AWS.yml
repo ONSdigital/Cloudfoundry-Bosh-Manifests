@@ -2,16 +2,23 @@
 ---
 name: ((deployment_name))
 
+# Pull out these values to enrich the bosh-config.sh
+metadata:
+  director_ca: ((default_ca.certificate))
+  director_secret: ((director_password))
+
 releases:
-  # can use file:// URLs - then SHA1 not required
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.2.0
-  sha1: 702537f942a09caabcb21d85cf1093cb0dcb9434
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.5.0
+  sha1: c7133d0069b604e96bee203801bb8d686c9a98d9
 - name: bosh-aws-cpi
   # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
-  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=67
-  sha1: cfcbc98affa9cad674087ab6b8bd4b1188b18439
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=69
+  sha1: 8abe70219244896ea6f7208fc01f2eac56179170
+- name: postgresql-databases
+  url: ((postgresql_databases_url))
+  version: latest
 
 resource_pools:
 - name: bosh_vm
@@ -23,16 +30,13 @@ resource_pools:
       #
       # c1oudc0w
       password: $6$GiQp7XJ3AYAnpUpZ$zGUSoI6OATmb4ff0k60ZFIk/pMNypGxqMoihspINUAS8Fk6p0Dz/PIMzFfguZIbLSeJPB5PkNMCNzkO4yJqp8/
+      mbus:
+        cert: ((mbus_bootstrap_ssl))
   stemcell:
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     # Sometimes, there are problems connecting disks. This seems to come and go between various releases.  Some AWS regions seem to suffer more than others
     #
-    # [CLI] 2017/10/16 09:49:42 ERROR - Deploying: Creating instance 'clementine-boshlite/0': Updating instance disks: Updating disks: Deploying disk: Mounting disk: Sending 'get_task' to the agent: Agent responded with error: Action Failed get_task: Task f4b307dc-b987-4d0f-6592-0cad27bd3586 result: Persistent disk with volume id 'vol-0fc18013ccfad16dd' could not be found 
-    #
-    # To work around it, sometimes, you can just re-run the Bosh create-env task with a partially created env. Some
-    #
-    # https://bosh.io/stemcells/
-    # https://bosh.io/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    # [CLI] 2017/10/16 09:49:42 ERROR - Deploying: Creating instance 'clementine-boshlite/0': Updating instance disks: Updating disks: Deploying disk: Mounting disk: Sending 'get_task' to the agent: Agent responded with error: Action Failed get_task: Task f4b307dc-b987-4d0f-6592-0cad27bd3586 result: Persistent disk with volume id 'vol-0fc18013ccfad16dd' could not be found
     #
     # Sometimes the version stays the same but the hash changes
     #
@@ -43,21 +47,28 @@ resource_pools:
     # Despite not having 'light' in the URL, this always seems to download the 'light' version' (2017/05/15)
     #
     # If the stemcell can't be reached from the bosh.io URL we can use the direct AWS S3 URL
-    #url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468.5
-    sha1: cb4f2f51ff75b9b21429de2498ecc97b1c3a1ba2
+    # url: https://s3.amazonaws.com/bosh-aws-light-stemcells/light-bosh-stemcell-3431.13-aws-xen-hvm-ubuntu-trusty-go_agent.tgz
+    #
+    # https://bosh.io/stemcells/
+    # https://bosh.io/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    #
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468.13
+    sha1: 50416e0f48ff2dc3d954ac5082dda0965d97b93a
 
   cloud_properties:
-    instance_type: t2.medium
-    ephemeral_disk: {size: 10_000, type: gp2}
+    instance_type: m4.large
+    ephemeral_disk: {size: 20_000, type: gp2}
     availability_zone: ((aws_availability_zone1))
     security_groups: [((director_instance_security_group))]
     iam_instance_profile: ((director_instance_profile))
     elbs: [((director_elb))]
 
 disk_pools:
-- name: disks
+- name: medium_disk
   disk_size: 10_000
+  cloud_properties: {type: gp2}
+- name: small_disk
+  disk_size: 5_000
   cloud_properties: {type: gp2}
 
 networks:
@@ -71,33 +82,34 @@ networks:
     static: ["((director_az1_static_start)) - ((director_az1_static_stop))"]
     cloud_properties:
       subnet: ((director_az1_subnet))
-#- name: public
-#  type: vip
 
 jobs:
 - name: ((deployment_name))-boshlite
   instances: 1
   templates:
   - {name: nats, release: bosh}
-  - {name: postgres-9.4, release: bosh}
   - {name: blobstore, release: bosh}
   - {name: director, release: bosh}
   - {name: health_monitor, release: bosh}
   - {name: registry, release: bosh}
   - {name: aws_cpi, release: bosh-aws-cpi}
+  - {name: database-creation, release: postgresql-databases}
   resource_pool: bosh_vm
-  persistent_disk_pool: disks
+  # When AWS is under load, we seem to get this error:
+  #
+  # Agent responded with error: Action Failed get_task: Task 49126ffb-2ba6-47b5-7507-17db35da90ce result: Persistent disk with volume id 'vol-0d593817628ad380a' could not be found
+  #
+  # Bosh users its disk for its internal Blobstore and to store its task logs
+  persistent_disk_pool: small_disk
   networks:
   - name: cf_director
     static_ips: [((bosh_lite_private_ip))]
     default: [dns, gateway]
-  #- name: public
-  #  static_ips: [((bosh_lite_public_ip))]                                                          # BOSH_ELASTIC_IP
   properties:
     agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
     aws: &aws
       # Health Monitor doesn't support instance access profiles, but it may do one day....
-      #credentials_source: env_or_profile
+      # credentials_source: env_or_profile
       credentials_source: static
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
@@ -140,7 +152,13 @@ jobs:
       #generate_vm_passwords: true
       # https://bosh.io/docs/remove-dev-tools.html
       #remove_dev_tools: true
-      db: *db
+      db: &db
+        host: ((bosh_db_dns))
+        port: ((bosh_db_port))
+        user: bosh
+        password: ((bosh_db_password))
+        database: bosh
+        adapter: postgres
       cpi_job: aws_cpi
       enable_dedicated_status_worker: true
       enable_nats_delivered_templates: true
@@ -152,8 +170,8 @@ jobs:
       #encryption: true
       max_threads: 10
       ssl:
-        key: ((director_key))
-        cert: ((director_crt))
+        key: ((director_ssl.private_key))
+        cert: ((director_ssl.certificate))
       user_management:
         provider: local
         local:
@@ -164,35 +182,28 @@ jobs:
       director_account:
         user: hm
         password: ((hm_password))
+        ca_cert: ((default_ca.certificate))
       resurrector_enabled: true
     nats:
       address: 127.0.0.1
       user: nats
       password: ((nats_password))
       tls:
-        ca: ((nats_ca_crt))
+        ca: ((nats_ca.certificate))
         server:
-          certificate: ((nats_server_crt))
-          private_key: ((nats_server_key))
+          certificate: ((nats_server_tls.certificate))
+          private_key: ((nats_server_tls.private_key))
         client_ca:
-          certificate: ((nats_clients_ca_crt))
-          private_key: ((nats_clients_ca_key))
+          certificate: ((nats_ca.certificate))
+          private_key: ((nats_ca.private_key))
         director:
-          certificate: ((nats_clients_director_crt))
-          private_key: ((nats_clients_director_key))
+          certificate: ((nats_clients_director_tls.certificate))
+          private_key: ((nats_clients_director_tls.private_key))
         health_monitor:
-          certificate: ((nats_clients_healthmonitor_crt))
-          private_key: ((nats_clients_healthmonitor_key))
+          certificate: ((nats_clients_health_monitor_tls.certificate))
+          private_key: ((nats_clients_health_monitor_tls.private_key))
     ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
-    postgres: &db
-      listen_address: 127.0.0.1
-      host: 127.0.0.1
-      user: postgres
-      password: ((postgres_password))
-      database: bosh
-      adapter: postgres
     registry:
-      address: ((bosh_lite_private_ip))
       host: ((bosh_lite_private_ip))
       db: *db
       http:
@@ -202,13 +213,47 @@ jobs:
       username: admin
       password: ((registry_password))
       port: 25777
-
-properties:
-
-addons:
+    s3_config:
+      bucket_name: ((backup_bucket))
+      credentials_source: env_or_profile
+      region: ((aws_region))
+    postgresql_databases:
+    - name: applications
+      admin_username: ((apps_db_admin_username))
+      admin_password: ((apps_db_admin_password))
+      admin_database: postgres
+      postgresql_host: ((apps_db_dns))
+      postgresql_port: ((apps_db_port))
+      rds: true
+      databases:
+      - { name: rds_broker, extensions: [pgcrypto], ignore_existing: true }
+    - name: bosh
+      admin_username: ((bosh_db_admin_username))
+      admin_password: ((bosh_db_admin_password))
+      admin_database: postgres
+      postgresql_host: ((bosh_db_dns))
+      postgresql_port: ((bosh_db_port))
+      rds: true
+      databases:
+      # We don't want to backup the Bosh database.  IF we need to backup a CF instance, we can just backup the CF databases & blobs
+      # then restore them with a new Bosh. We only use RDS for HA
+      - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext], no_restore: true, drop_existing: true }
+    - name: cloudfoundry
+      admin_username: ((cf_db_admin_username))
+      admin_password: ((cf_db_admin_password))
+      admin_database: postgres
+      postgresql_host: ((cf_db_dns))
+      postgresql_port: ((cf_db_port))
+      rds: true
+      databases:
+      - { name: ccdb, username: ccadmin, password: ((cc_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
+      # The Diego DB only contains transient data, eg auction allocation status
+      - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext], no_restore: true, ignore_existing: true }
+      - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
 
 cloud_provider:
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"
+  cert: ((mbus_bootstrap_ssl))
   ssh_tunnel:
     host: ((director_dns))
     port: 22
@@ -216,6 +261,7 @@ cloud_provider:
     private_key: ((bosh_ssh_key_file))
   template: {name: aws_cpi, release: bosh-aws-cpi}
   properties:
+    agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
     aws:
       access_key_id: ((bosh_aws_access_key_id))
       secret_access_key: ((bosh_aws_secret_access_key))
@@ -224,6 +270,9 @@ cloud_provider:
       default_security_groups: [((director_instance_security_group))]
       # All VMs need to be able to write to the blob store to create logs!
       default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
-    agent: {mbus: "https://mbus:((mbus_password))@0.0.0.0:6868"}
     blobstore: {provider: local, path: /var/vcap/micro_bosh/data/cache}
     ntp: *ntp
+
+addons:
+variables:
+

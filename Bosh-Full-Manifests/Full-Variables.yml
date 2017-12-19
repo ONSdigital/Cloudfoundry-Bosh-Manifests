@@ -1,0 +1,368 @@
+---
+- type: replace
+  path: /variables?
+  value:
+  - name: cc_db_password
+    type: password
+  - name: uaa_db_password
+    type: password
+  - name: diego_db_password
+    type: password
+  - name: rabbitmq_broker_password
+    type: password
+  - name: uaa_admin_client_secret
+    type: password
+  - name: uaa_batch_password
+    type: password
+  - name: uaa_cc_client_secret
+    type: password
+  - name: router_status_password
+    type: password
+  - name: router_route_services_secret
+    type: password
+  - name: bulk_api_password
+    type: password
+  - name: db_encryption_secret
+    type: password
+  - name: staging_upload_password
+    type: password
+  - name: consul_encrypt_keys_secret
+    type: password
+  - name: uaa_doppler_client_secret
+    type: password
+  - name: doppler_shared_secret
+    type: password
+  - name: uaa_cc_service_dashboard_client_secret
+    type: password
+  - name: uaa_cc_routing_client_secret
+    type: password
+  - name: uaa_cc_service_key_client_secret
+    type: password
+  - name: uaa_cf_services_secret
+    type: password
+  - name: uaa_cf_secret
+    type: password
+  - name: uaa_cc_username_lookup_client_secret
+    type: password
+  - name: uaa_go_router_client_secret
+    type: password
+  - name: uaa_login_client_secret
+    type: password
+  - name: uaa_ssh_proxy_secret
+    type: password
+  - name: uaa_tcp_emitter_client_secret
+    type: password
+  - name: uaa_tcp_router_client_secret
+    type: password
+  - name: admin_password
+    type: password
+  - name: smoke_tester_password
+    type: password
+  - name: internal_api_password
+    type: password
+  - name: bbs_password
+    type: password
+  - name: nats_password
+    type: password
+  - name: rabbitmq_stats_password
+    type: password
+  - name: rabbitmq_management_password
+    type: password
+  - name: diego_ssh_proxy_host_key
+    type: ssh
+  - name: uaa_jwt_signing_key
+    type: rsa
+
+  - name: service_cf_internal_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: internalCA
+  - name: bbs_auctioneer_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-auctioneer-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_diego_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-diego-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_converger_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-converger-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_nsync_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-nsync-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_rep_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-rep-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_routeemitter_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-routeemitter-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_sshproxy_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-sshproxy-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_stager_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-stager-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_tps_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-tps-client
+      extended_key_usage:
+      - client_auth
+  - name: bbs_tpslistener_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs-tpslistener-client
+      extended_key_usage:
+      - client_auth
+  - name: diego_bbs_server
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: bbs.service.cf.internal
+      extended_key_usage:
+      - client_auth
+      - server_auth
+      alternative_names:
+      - "*.bbs.service.cf.internal"
+      - bbs.service.cf.internal
+  - name: blobstore_tls
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: blobstore.service.cf.internal
+  - name: consul_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: consulCA
+  - name: consul_agent
+    type: certificate
+    options:
+      ca: consul_ca
+      common_name: consul_agent
+      extended_key_usage:
+      - client_auth
+      - server_auth
+      alternative_names: [127.0.0.1]
+  - name: consul_server
+    type: certificate
+    options:
+      ca: consul_ca
+      common_name: server.dc1.cf.internal
+      extended_key_usage:
+      - client_auth
+      - server_auth
+  - name: diego_auctioneer_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: auctioneer client
+      extended_key_usage:
+      - client_auth
+  - name: diego_auctioneer_server
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: auctioneer.service.cf.internal
+      extended_key_usage:
+      - server_auth
+      alternative_names:
+      - "*.auctioneer.service.cf.internal"
+      - "auctioneer.service.cf.internal"
+  - name: diego_rep_client
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: rep client
+      extended_key_usage:
+      - client_auth
+  - name: diego_rep_agent
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: cell.service.cf.internal
+      extended_key_usage:
+      - client_auth
+      - server_auth
+      alternative_names:
+      - "*.cell.service.cf.internal"
+      - cell.service.cf.internal
+  - name: etcd_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: etcdCA
+  - name: etcd_server
+    type: certificate
+    options:
+      ca: etcd_ca
+      common_name: cf-etcd.service.cf.internal
+      extended_key_usage:
+      - client_auth
+      - server_auth
+      # The etcd client seems to ignore the CN if a SAN(s) is present, so we have an extra
+      # SAN that matches the CN
+      alternative_names:
+      - cf-etcd.service.cf.internal
+      - "*.cf-etcd.service.cf.internal"
+  - name: etcd_client
+    type: certificate
+    options:
+      ca: etcd_ca
+      common_name: etcd-client
+      extended_key_usage:
+      - client_auth
+  - name: loggregator_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: loggregatorCA
+  - name: loggregator_tls_statsdinjector
+    type: certificate
+    options:
+      ca: loggregator_ca
+      common_name: statsdinjector
+      extended_key_usage:
+      - client_auth
+  - name: loggregator_tls_metron
+    type: certificate
+    options:
+      ca: loggregator_ca
+      common_name: metron
+      extended_key_usage:
+      - client_auth
+      - server_auth
+  - name: loggregator_tls_doppler
+    type: certificate
+    options:
+      ca: loggregator_ca
+      common_name: doppler
+      extended_key_usage:
+      - client_auth
+      - server_auth
+  - name: loggregator_tls_tc
+    type: certificate
+    options:
+      ca: loggregator_ca
+      common_name: trafficcontroller
+      extended_key_usage:
+      - client_auth
+      - server_auth
+  - name: loggregator_tls_cc_tc
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: cc_trafficcontroller
+      extended_key_usage:
+      - client_auth
+  - name: loggregator_tls_syslogdrainbinder
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: syslogdrainbinder
+      extended_key_usage:
+      - client_auth
+
+  - name: router_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: routerCA
+  - name: router_ssl
+    type: certificate
+    options:
+      ca: router_ca
+      common_name: routerSSL
+      alternative_names:
+      - "*.system.((domain_name))"
+      - system.((domain_name))
+  - name: uaa_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: uaaCA
+  - name: uaa_ssl
+    type: certificate
+    options:
+      ca: uaa_ca
+      common_name: uaa.service.cf.internal
+  - name: uaa_login_saml
+    type: certificate
+    options:
+      ca: uaa_ca
+      common_name: uaa_login_saml
+  - name: cc_tls
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: cloud-controller-ng.service.cf.internal
+      extended_key_usage:
+      - client_auth
+      - server_auth
+  - name: cc_bridge_tps
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: tps_watcher
+      extended_key_usage:
+      - client_auth
+  - name: cc_bridge_cc_uploader
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: cc_uploader
+      extended_key_usage:
+      - client_auth
+  - name: cc_bridge_cc_uploader_server
+    type: certificate
+    options:
+      ca: service_cf_internal_ca
+      common_name: cc-uploader.service.cf.internal
+      extended_key_usage:
+      - server_auth
+  - name: rabbitmq_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: rabbitmq|CA
+  - name: rabbitmq_server
+    type: certificate
+    options:
+      ca: rabbitmq_ca
+      common_name: rabbitmq-node.service.cf.internal
+      extended_key_usage:
+      - server_auth
