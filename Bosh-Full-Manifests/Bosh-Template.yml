@@ -44,30 +44,30 @@ update:
 
 jobs:
 # https://github.com/cloudfoundry/bosh/issues/1639
-- name: backup-postgresql-databases-cf
-  instances: 1
-  lifecycle: errand
-  vm_type: small_general_blobstore_backup
-  stemcell: default
-  networks:
-  - name: cf_private
-  azs: [az1]
-  templates:
-  - {name: database-backup, release: postgresql-databases}
-  properties:
-    s3_config:
-      bucket_name: ((backup_bucket))
-      credentials_source: env_or_profile
-      region: ((aws_region))
-    postgresql_databases:
-      admin_username: ((cf_db_admin_username))
-      admin_password: ((cf_db_admin_password))
-      admin_database: postgres
-      rds: true
-      # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
-      databases:
-       - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
-       - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }
+#- name: backup-postgresql-databases-cf
+#  instances: 1
+#  lifecycle: errand
+#  vm_type: small_general_blobstore_backup
+#  stemcell: default
+#  networks:
+#  - name: cf_private
+#  azs: [az1]
+#  templates:
+#  - {name: database-backup, release: postgresql-databases}
+#  properties:
+#    s3_config:
+#      bucket_name: ((backup_bucket))
+#      credentials_source: env_or_profile
+#      region: ((aws_region))
+#    postgresql_databases:
+#      admin_username: ((cf_db_admin_username))
+#      admin_password: ((cf_db_admin_password))
+#      admin_database: postgres
+#      rds: true
+#      # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
+#      databases:
+#       - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
+#       - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }
 
 - name: rabbitmq-broker-registrar
   instances: 1
@@ -156,7 +156,7 @@ jobs:
   stemcell: default
   persistent_disk: 10240
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: etcd, release: cf}
   - {name: metron_agent, release: cf}
   networks:
@@ -179,7 +179,16 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - name: consul_agent
+    release: cf
+    consumes:
+      consul_client: {from: consul_client_link}
+      consul_server: {from: consul_server_link}
+      consul_common: {from: consul_common_link}
+    provides:
+      consul_common: {as: consul_common_link, shared: true}
+      consul_server: {as: consul_server_link, shared: true}
+      consul_client: {as: consul_client_link, shared: true}
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
@@ -202,7 +211,7 @@ jobs:
 #  vm_type: medium_general
 #  stemcell: default
 #  templates:
-#  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+#  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
 #  - {name: metron_agent, release: cf}
 #  - {name: postgres, release: cf}
 #  networks:
@@ -220,7 +229,7 @@ jobs:
   vm_type: small_ssh_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: metron_agent, release: cf}
   - {name: ssh_proxy, release: diego}
   networks:
@@ -236,7 +245,7 @@ jobs:
   stemcell: default
   templates:
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -259,7 +268,7 @@ jobs:
   stemcell: default
   templates:
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -282,7 +291,7 @@ jobs:
   stemcell: default
   templates:
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -305,7 +314,7 @@ jobs:
   stemcell: default
   templates:
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -328,7 +337,7 @@ jobs:
   stemcell: default
   templates:
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: garden, release: garden-runc}
   - {name: metron_agent, release: cf}
   - {name: rep, release: diego}
@@ -353,7 +362,7 @@ jobs:
   - {name: auctioneer, release: diego}
   - {name: bbs, release: diego}
   - {name: cc_uploader, release: cf}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: file_server, release: diego}
   - {name: metron_agent, release: cf}
   - {name: nsync, release: cf}
@@ -382,7 +391,7 @@ jobs:
   - {name: cloud_controller_clock, release: cf}
   - {name: cloud_controller_ng, release: cf}
   - {name: cloud_controller_worker, release: cf}
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: go-buildpack, release: cf}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
@@ -410,8 +419,14 @@ jobs:
       - name: api
         registration_interval: 20s
         port: 9022
+        tags:
+          component: CloudController
         uris:
         - "api.system.((domain_name))"
+        health_check:
+          name: api-health-check
+          script_path: "/var/vcap/jobs/cloud_controller_ng/bin/cloud_controller_ng_health_check"
+          timeout: 3s
 
 - name: doppler
   instances: 1
@@ -419,7 +434,7 @@ jobs:
   vm_type: medium_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: doppler, release: cf}
   - {name: metron_agent, release: cf}
   - {name: syslog_drain_binder, release: cf}
@@ -443,7 +458,7 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: loggregator_trafficcontroller, release: cf}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
@@ -465,6 +480,10 @@ jobs:
         port: 8080
         uris:
         - "loggregator.system.((domain_name))"
+    consul:
+      agent:
+        services:
+          loggregator_trafficcontroller: {}
 
 - name: uaa
   instances: 1
@@ -472,7 +491,7 @@ jobs:
   vm_type: small_smtp_sender_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
   - {name: statsd_injector, release: cf}
@@ -525,7 +544,7 @@ jobs:
   vm_type: small_router_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: gorouter, release: cf}
   - {name: metron_agent, release: cf}
   networks:
@@ -544,7 +563,7 @@ jobs:
   vm_type: small_general
   stemcell: default
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: metron_agent, release: cf}
   - {name: rabbitmq-haproxy, release: cf-rabbitmq}
   - {name: route_registrar, release: cf}
@@ -571,7 +590,7 @@ jobs:
   networks:
   - name: cf_rabbitmq
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: metron_agent, release: cf}
   - {name: rabbitmq-broker, release: cf-rabbitmq-multitenant-broker}
   - {name: route_registrar, release: cf}
@@ -591,7 +610,7 @@ jobs:
   stemcell: default
   persistent_disk: 10240
   templates:
-  - {name: consul_agent, release: cf, consumes: {consul_client: nil, consul_server: nil, consul_common: nil}}
+  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
   - {name: metron_agent, release: cf}
   - {name: rabbitmq-server, release: cf-rabbitmq}
   networks:
@@ -628,7 +647,7 @@ properties:
     allow_app_ssh_access: true
     default_to_diego_backend: true
     default_app_memory: 64
-    default_app_disk_in_mb: 128
+    default_app_disk_in_mb: 512
     internal_api_user: internal_user
     external_port: 9022
     tls_port: 9023
@@ -782,7 +801,15 @@ properties:
     etcd:
       client_cert: ((etcd_client.certificate))
       client_key: ((etcd_client.private_key))
+  tls:
+    ca_cert: ((diego_rep_agent.ca))
+    cert: ((diego_rep_agent.certificate))
+    key: ((diego_rep_agent.private_key))
   loggregator:
+    use_v2_api: true
+    ca_cert: ((loggregator_tls_metron.ca))
+    cert: ((loggregator_tls_metron.certificate))
+    key: ((loggregator_tls_metron.private_key))
     uaa:
       client_secret: ((uaa_doppler_client_secret))
     etcd:
@@ -852,7 +879,8 @@ properties:
         authorities: uaa.none
         authorized-grant-types: password,refresh_token
         autoapprove: true
-        secret: ((uaa_cf_secret))
+#        secret: ((uaa_cf_secret))
+        secret: ''
         override: true
         refresh-token-validity: 604800
         scope: cloud_controller.read,cloud_controller.write,openid,password.write,cloud_controller.admin,scim.read,scim.write,doppler.firehose,uaa.user,routing.router_groups.read
@@ -964,12 +992,12 @@ properties:
         client_key: ((bbs_nsync_client.private_key))
         require_ssl: true
       cc:
-        base_url: http://cloud-controller-ng.service.cf.internal:9022
         basic_auth_password: ((internal_api_password))
+        base_url: http://cloud-controller-ng.service.cf.internal:9022
       diego_privileged_containers: true
     tps:
       bbs:
-        ca_cert: ((bbs_server.ca))
+        ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_tps_client.certificate))
         client_key: ((bbs_tps_client.private_key))
         require_ssl: true
@@ -977,36 +1005,48 @@ properties:
         ca_cert: ((cc_bridge_tps.ca))
         client_cert: ((cc_bridge_tps.certificate))
         client_key: ((cc_bridge_tps.private_key))
-        base_url: https://cloud-controller-ng.service.cf.internal:9023
-        basic_auth_password: ((internal_api_password))
-    tps_listener:
-      bbs:
-        ca_cert: ((bbs_server.ca))
-        client_cert: ((bbs_tpslistener_client.certificate))
-        client_key: ((bbs_tpslistener_client.private_key))
-        require_ssl: true
-      cc:
-        base_url: http://cloud-controller-ng.service.cf.internal:9022
         basic_auth_password: ((internal_api_password))
     stager:
       # The default for this and diego.route_emitter.healthcheck_address is 127.0.0.1:17011 (2017/04/03)
       debug_addr: 127.0.0.1:17012
       bbs:
-        ca_cert: ((bbs_server.ca))
+        ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_stager_client.certificate))
         client_key: ((bbs_stager_client.private_key))
         require_ssl: true
       cc:
-        base_url: http://cloud-controller-ng.service.cf.internal:9022
         basic_auth_password: ((internal_api_password))
   diego:
     auctioneer:
       bbs:
-        ca_cert: ((bbs_server.ca))
+        ca_cert: ((bbs_diego_client.ca))
+        client_cert: ((bbs_diego_client.certificate))
+        client_key: ((bbs_diego_client.private_key))
+      loggregator:
+        ca_cert: ((loggregator_tls_metron.ca))
+        cert: ((loggregator_tls_metron.certificate))
+        key: ((loggregator_tls_metron.private_key))
+      ca_cert: ((diego_auctioneer_server.ca))
+      server_cert: ((diego_auctioneer_server.certificate))
+      server_key: ((diego_auctioneer_server.private_key))
+      require_ssl: true
+      rep:
+        require_tls: true
+        ca_cert: ((diego_bbs_server.ca))
+        client_cert: ((bbs_rep_client.certificate))
+        client_key: ((bbs_rep_client.private_key))
+    bbs:
+      ca_cert: ((diego_bbs_server.ca))
+      client_cert: ((bbs_diego_client.certificate))
+      client_key: ((bbs_diego_client.private_key))
+      require_ssl: true
+      server_cert: ((diego_bbs_server.certificate))
+      server_key: ((diego_bbs_server.private_key))
+      auctioneer: &diego_auctioneer_client_properties
+        ca_cert: ((bbs_auctioneer_client.ca))
         client_cert: ((bbs_auctioneer_client.certificate))
         client_key: ((bbs_auctioneer_client.private_key))
-        require_ssl: true
-    bbs:
+        require_tls: true
       active_key_label: active
       encryption_keys:
       - label: active
@@ -1018,12 +1058,11 @@ properties:
         client_cert: ((etcd_client.certificate))
         client_key: ((etcd_client.private_key))
         require_ssl: true
-      require_ssl: true
-      client_cert: ((bbs_diego_client.certificate))
-      client_key: ((bbs_diego_client.private_key))
-      ca_cert: ((bbs_diego_client.ca))
-      server_cert: ((bbs_server.certificate))
-      server_key: ((bbs_server.private_key))
+      rep:
+        ca_cert: ((diego_bbs_server.ca))
+        client_cert: ((bbs_rep_client.certificate))
+        client_key: ((bbs_rep_client.private_key))
+        require_tls: true
       sql:
         db_driver: postgres
         db_host: ((cf_db_dns))
@@ -1040,17 +1079,22 @@ properties:
         require_ssl: true
     rep:
       bbs:
-        ca_cert: ((bbs_server.ca))
+        ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_rep_client.certificate))
         client_key: ((bbs_rep_client.private_key))
         require_ssl: true
       preloaded_rootfses: ["cflinuxfs2:/var/vcap/packages/cflinuxfs2/rootfs"]
+      require_tls: true
+      ca_cert: ((diego_rep_agent.ca))
+      server_cert: ((diego_rep_agent.certificate))
+      server_key: ((diego_rep_agent.private_key))
+      enable_legacy_api_endpoints: false
     executor:
       memory_capacity_mb: 30720
       disk_capacity_mb: 163840
     route_emitter:
       bbs:
-        ca_cert: ((bbs_server.ca))
+        ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_routeemitter_client.certificate))
         client_key: ((bbs_routeemitter_client.private_key))
         require_ssl: true
@@ -1061,7 +1105,7 @@ properties:
         user: nats
     ssh_proxy:
       bbs:
-        ca_cert: ((bbs_server.ca))
+        ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_sshproxy_client.certificate))
         client_key: ((bbs_sshproxy_client.private_key))
         require_ssl: true
