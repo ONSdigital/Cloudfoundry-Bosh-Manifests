@@ -559,7 +559,7 @@ jobs:
 
 - name: rabbitmq-mgnt
   instances: ((rabbitmq-mgnt_instances))
-  azs: (rabbitmq-mgnt_azs))
+  azs: ((rabbitmq-mgnt_azs))
   vm_type: small_general
   stemcell: default
   templates:
