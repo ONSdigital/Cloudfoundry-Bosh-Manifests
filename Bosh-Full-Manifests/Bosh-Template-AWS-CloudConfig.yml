@@ -2,27 +2,15 @@
 #
 ---
 
-azs:
-- name: az1
-  cloud_properties:
-    availability_zone: ((aws_availability_zone1))
+azs: ((azs))
 
 networks:
 - name: cf_private
   type: manual
-  subnets:
-  - range: ((private_az1_cidr))
-    gateway: ((private_az1_default_route))
-    dns: [((dns_ip))]
-    az: az1
-    reserved: ["((private_az1_reserved_start)) - ((private_az1_reserved_stop))"]
-    static: ["((private_az1_static_start)) - ((private_az1_static_stop))"]
-    cloud_properties:
-      subnet: ((private_az1_subnet))
-      security_groups: [((private_security_group))]
+  subnets: ((cf_private_subnets))
 - name: cf_rabbitmq
   type: manual
-  subnets:
+  subnets: ((cf_rabbitmq_subnets))
   - range: ((rabbitmq_az1_cidr))
     gateway: ((rabbitmq_az1_default_route))
     dns: [((dns_ip))]
