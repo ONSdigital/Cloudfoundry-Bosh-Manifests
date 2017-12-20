@@ -134,8 +134,8 @@ jobs:
       etcd_ip_address: ((etcd_az1_ip1))
 
 - name: nats
-  instances: 1
-  azs: [az1]
+  instances: ((nats_instances))
+  azs: ((nats_azs))
   vm_type: small_general
   stemcell: default
   templates:
@@ -150,8 +150,8 @@ jobs:
       zone: z1
 
 - name: etcd
-  instances: 1
-  azs: [az1]
+  instances: ((etcd_instances))
+  azs: ((etcd_azs))
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
@@ -173,8 +173,8 @@ jobs:
             name: cf-etcd
 
 - name: consul
-  instances: 3
-  azs: [az1]
+  instances: ((consul_instances))
+  azs: ((consul_azs))
   persistent_disk: 1024
   vm_type: small_general
   stemcell: default
@@ -224,8 +224,8 @@ jobs:
 #      zone: z1
 
 - name: ssh_proxy
-  instances: 1
-  azs: [az1]
+  instances: ((ssh_proxy_instances))
+  azs: ((ssh_proxy_azs))
   vm_type: small_ssh_general
   stemcell: default
   templates:
@@ -239,8 +239,8 @@ jobs:
       zone: z1
 
 - name: diego_cell
-  instances: 1
-  azs: [az1]
+  instances: ((diego_cell_instances))
+  azs: ((diego_cell_azs))
   vm_type: large_ram_large_disk
   stemcell: default
   templates:
@@ -354,8 +354,8 @@ jobs:
         zone: z1
 
 - name: diego_brain
-  instances: 1
-  azs: [az1]
+  instances: ((diego_brain_instances))
+  azs: ((diego_brain_azs))
   vm_type: small_general
   stemcell: default
   templates:
@@ -383,8 +383,8 @@ jobs:
         services: {}
 
 - name: api
-  instances: 1
-  azs: [az1]
+  instances: ((api_instances))
+  azs: ((api_azs))
   vm_type: medium_cc_general
   stemcell: default
   templates:
@@ -429,8 +429,8 @@ jobs:
           timeout: 3s
 
 - name: doppler
-  instances: 1
-  azs: [az1]
+  instances: ((doppler_instances))
+  azs: ((doppler_azs))
   vm_type: medium_general
   stemcell: default
   templates:
@@ -453,8 +453,8 @@ jobs:
           doppler: {}
 
 - name: loggregator_trafficcontroller
-  instances: 1
-  azs: [az1]
+  instances: ((loggregator_trafficcontroller_instances))
+  azs: ((loggregator_trafficcontroller_azs))
   vm_type: small_general
   stemcell: default
   templates:
@@ -486,8 +486,8 @@ jobs:
           loggregator_trafficcontroller: {}
 
 - name: uaa
-  instances: 1
-  azs: [az1]
+  instances: ((uaa_instances))
+  azs: ((uaa_azs))
   vm_type: small_smtp_sender_general
   stemcell: default
   templates:
@@ -539,8 +539,8 @@ jobs:
       - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
 
 - name: router
-  instances: 1
-  azs: [az1]
+  instances: ((router_instances))
+  azs: ((router_azs))
   vm_type: small_router_general
   stemcell: default
   templates:
@@ -558,8 +558,8 @@ jobs:
     dropsonde: {enabled: true}
 
 - name: rabbitmq-mgnt
-  instances: 1
-  azs: [az1]
+  instances: ((rabbitmq-mgnt_instances))
+  azs: (rabbitmq-mgnt_azs))
   vm_type: small_general
   stemcell: default
   templates:
@@ -582,8 +582,8 @@ jobs:
         services: {}
 
 - name: rabbitmq-broker
-  instances: 1
-  azs: [az1]
+  instances: ((rabbitmq-broker_instances))
+  azs: ((rabbitmq-broker_azs))
   vm_type: micro_general
   stemcell: default
   persistent_disk: 10240
@@ -604,8 +604,8 @@ jobs:
         - rabbitmq-broker.system.((domain_name))
 
 - name: rabbitmq-node
-  instances: 1
-  azs: [az1]
+  instances: ((rabbitmq-node_instances))
+  azs: ((rabbitmq-node_azs))
   vm_type: small_general
   stemcell: default
   persistent_disk: 10240
@@ -716,13 +716,7 @@ properties:
       - {destination: ((rds_az2_cidr)), ports: '5432', protocol: tcp}
     # XXX XXX XXX XXX XXX
     - name: rabbitmq_networks
-      rules:
-      - {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp}
-      - {destination: ((rabbitmq_az1_cidr)), ports: '8883', protocol: tcp}
-      - {destination: ((rabbitmq_az1_cidr)), ports: '5671', protocol: tcp}
-      - {destination: ((rabbitmq_az1_cidr)), ports: '5672', protocol: tcp}
-      - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp}
-      - {destination: ((rabbitmq_az1_cidr)), ports: '15674', protocol: tcp}
+      rules: ((rabbitmq_network_rules))
     # XXX XXX XXX XXX XXX
     - name: redis_networks
       rules:
@@ -771,9 +765,6 @@ properties:
   domain: system.((domain_name))
   etcd:
     advertise_urls_dns_suffix: cf-etcd.service.cf.internal
-#    cluster:
-#    - name: etcd
-#      instances: 9
     machines: ["cf-etcd.service.cf.internal"]
     peer_require_ssl: true
     require_ssl: true
@@ -836,8 +827,6 @@ properties:
       statsd_injector:
         cert: ((loggregator_tls_statsdinjector.certificate))
         key: ((loggregator_tls_statsdinjector.private_key))
-#  statsd_injector:
-#    deployment: ((bosh_deployment))
   doppler_endpoint:
     shared_secret: ((doppler_shared_secret))
   loggregator_endpoint:
@@ -879,7 +868,6 @@ properties:
         authorities: uaa.none
         authorized-grant-types: password,refresh_token
         autoapprove: true
-#        secret: ((uaa_cf_secret))
         secret: ''
         override: true
         refresh-token-validity: 604800
@@ -1168,7 +1156,6 @@ properties:
     stats:
       username: rabbitmq-stats
       password: ((rabbitmq_stats_password))
-#    server_ips: rabbitmq-node.service.cf.internal
   rabbitmq-server:
     plugins:
     - rabbitmq_management
