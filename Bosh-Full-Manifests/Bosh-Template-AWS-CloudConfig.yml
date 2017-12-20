@@ -11,14 +11,6 @@ networks:
 - name: cf_rabbitmq
   type: manual
   subnets: ((cf_rabbitmq_subnets))
-  - range: ((rabbitmq_az1_cidr))
-    gateway: ((rabbitmq_az1_default_route))
-    dns: [((dns_ip))]
-    az: az1
-    reserved: ["((rabbitmq_az1_reserved_start)) - ((rabbitmq_az1_reserved_stop))"]
-    cloud_properties:
-      subnet: ((rabbitmq_az1_subnet))
-      security_groups: [((rabbitmq_security_group))]
 
 vm_types:
 - name: micro_general
