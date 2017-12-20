@@ -1,0 +1,30 @@
+# Single AZ + HA
+---
+etcd_instances: 3
+etcd_azs: [az1]
+nats_instances: 2
+nats_azs: [az1]
+consul_instances: 3
+consul_azs: [az1]
+ssh_proxy_instances: 2
+ssh_proxy_azs: [az1]
+diego_cell_instances: 2
+diego_cell_azs: [az1]
+diego_brain_instances: 2
+diego_brain_azs: [az1]
+api_instances: 2
+api_azs: [az1]
+doppler_instances: 2
+doppler_azs: [az1]
+loggregator_trafficcontroller_instances: 2
+loggregator_trafficcontroller_azs: [az1]
+uaa_instances: 2
+uaa_azs: [az1]
+router_instances: 2
+router_azs: [az1]
+rabbitmq-mgnt_instances: 2
+rabbitmq-mgnt_azs: [az1]
+rabbitmq-broker_instances: 2
+rabbitmq-broker_azs: [az1]
+rabbitmq-node_instances: 2
+rabbitmq-node_azs: [az1]
