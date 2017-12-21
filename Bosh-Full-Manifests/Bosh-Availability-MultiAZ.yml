@@ -1,33 +1,76 @@
 # MultiAZ
 ---
-etcd_instances: 9
-etcd_azs: [az1,az2,az3]
-nats_instances: 4
-nats_azs: [az1,az2]
-consul_instances: 9
-consul_azs: [az1,az2,az3]
-ssh_proxy_instances: 4
-ssh_proxy_azs: [az1,az2]
-diego_cell_instances: 4
-diego_cell_azs: [az1,az2]
-diego_brain_instances: 4
-diego_brain_azs: [az1,az2]
 api_instances: 4
 api_azs: [az1,az2]
+#
+consul_instances: 9
+consul_azs: [az1,az2,az3]
+consul_static_ips:
+- ((consul_az1_ip1))
+- ((consul_az1_ip2))
+- ((consul_az1_ip3))
+- ((consul_az2_ip1))
+- ((consul_az2_ip2))
+- ((consul_az2_ip3))
+- ((consul_az3_ip1))
+- ((consul_az3_ip2))
+- ((consul_az3_ip3))
+#
+#
+diego_cell_instances: 4
+diego_cell_azs: [az1,az2]
+#
+diego_brain_instances: 4
+diego_brain_azs: [az1,az2]
+#
 doppler_instances: 4
 doppler_azs: [az1,az2]
+- ((doppler_az1_ip1))
+- ((doppler_az1_ip2))
+- ((doppler_az2_ip1))
+- ((doppler_az2_ip2))
+#
+etcd_instances: 9
+etcd_azs: [az1,az2,az3]
+etcd_static_ips:
+- ((etcd_az1_ip1))
+- ((etcd_az1_ip2))
+- ((etcd_az1_ip3))
+- ((etcd_az2_ip1))
+- ((etcd_az2_ip2))
+- ((etcd_az2_ip3))
+- ((etcd_az3_ip1))
+- ((etcd_az3_ip2))
+- ((etcd_az3_ip3))
+#
 loggregator_trafficcontroller_instances: 4
 loggregator_trafficcontroller_azs: [az1,az2]
-uaa_instances: 4
-uaa_azs: [az1,az2]
+#
+nats_instances: 4
+nats_azs: [az1,az2]
+nats_static_ips:
+- ((nats_az1_ip1))
+- ((nats_az1_ip2))
+- ((nats_az2_ip1))
+- ((nats_az2_ip2))
+#
 router_instances: 4
 router_azs: [az1,az2]
-rabbitmq-mgnt_instances: 4
-rabbitmq-mgnt_azs: [az1,az2]
+#
 rabbitmq-broker_instances: 4
 rabbitmq-broker_azs: [az1,az2]
+#
+rabbitmq-mgnt_instances: 4
+rabbitmq-mgnt_azs: [az1,az2]
+#
 rabbitmq-node_instances: 4
 rabbitmq-node_azs: [az1,az2]
+#
+ssh_proxy_instances: 4
+ssh_proxy_azs: [az1,az2]
+#
+uaa_instances: 4
+uaa_azs: [az1,az2]
 
 rabbitmq_network_rules:
 - {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp}

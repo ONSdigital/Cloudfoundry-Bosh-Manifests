@@ -1,33 +1,59 @@
 # Single AZ + HA
 ---
-etcd_instances: 3
-etcd_azs: [az1]
-nats_instances: 2
-nats_azs: [az1]
+api_instances: 2
+api_azs: [az1]
+#
 consul_instances: 3
 consul_azs: [az1]
-ssh_proxy_instances: 2
-ssh_proxy_azs: [az1]
+consul_static_ips:
+- ((consul_az1_ip1))
+- ((consul_az1_ip2))
+- ((consul_az1_ip3))
+#
 diego_cell_instances: 2
 diego_cell_azs: [az1]
 diego_brain_instances: 2
 diego_brain_azs: [az1]
-api_instances: 2
-api_azs: [az1]
+#
 doppler_instances: 2
 doppler_azs: [az1]
+doppler_static_ips:
+- ((doppler_az1_ip1))
+- ((doppler_az1_ip2))
+#
+etcd_instances: 3
+etcd_azs: [az1]
+etcd_static_ips:
+- ((etcd_az1_ip1))
+- ((etcd_az1_ip2))
+- ((etcd_az1_ip3))
+#
 loggregator_trafficcontroller_instances: 2
 loggregator_trafficcontroller_azs: [az1]
-uaa_instances: 2
-uaa_azs: [az1]
-router_instances: 2
-router_azs: [az1]
-rabbitmq-mgnt_instances: 2
-rabbitmq-mgnt_azs: [az1]
+#
+nats_instances: 2
+nats_azs: [az1]
+nats_static_ips:
+- ((nats_az1_ip1))
+- ((nats_az1_ip2))
+#
 rabbitmq-broker_instances: 2
 rabbitmq-broker_azs: [az1]
+#
+rabbitmq-mgnt_instances: 2
+rabbitmq-mgnt_azs: [az1]
+#
 rabbitmq-node_instances: 2
 rabbitmq-node_azs: [az1]
+#
+router_instances: 2
+router_azs: [az1]
+#
+ssh_proxy_instances: 2
+ssh_proxy_azs: [az1]
+#
+uaa_instances: 2
+uaa_azs: [az1]
 
 rabbitmq_network_rules:
 - {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp}

@@ -143,8 +143,7 @@ jobs:
   - {name: nats, release: cf}
   networks:
   - name: cf_private
-    static_ips:
-    - ((nats_az1_ip1))
+    static_ips: ((nats_static_ips))
   properties:
     metron_agent:
       zone: z1
@@ -161,8 +160,7 @@ jobs:
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips:
-    - ((etcd_az1_ip1))
+    static_ips: ((etcd_static_ips))
   properties:
     metron_agent:
       zone: z1
@@ -192,10 +190,7 @@ jobs:
   - {name: metron_agent, release: cf}
   networks:
   - name: cf_private
-    static_ips:
-    - ((consul_az1_ip1))
-    - ((consul_az1_ip2))
-    - ((consul_az1_ip3))
+    static_ips: ((consul_static_ips))
   properties:
     metron_agent:
       zone: z1
@@ -440,8 +435,7 @@ jobs:
   - {name: syslog_drain_binder, release: cf}
   networks:
   - name: cf_private
-    static_ips:
-    - ((doppler_az1_ip1))
+    static_ips: ((doppler_static_ips))
   properties:
     metron_agent:
       zone: z1
