@@ -17,4 +17,4 @@ nats_az1_ip1: ((private_az1_static_ip9))
 nats_az1_ip2: ((private_az1_static_ip10))
 #
 router_az1_ip1: ((private_az1_static_ip11))
-router_az1_ip2: ((private_az2_static_ip12))
+router_az1_ip2: ((private_az1_static_ip12))
