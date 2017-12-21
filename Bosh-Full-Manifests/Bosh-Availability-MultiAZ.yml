@@ -25,6 +25,7 @@ diego_brain_azs: [az1,az2]
 #
 doppler_instances: 4
 doppler_azs: [az1,az2]
+doppler_static_ips:
 - ((doppler_az1_ip1))
 - ((doppler_az1_ip2))
 - ((doppler_az2_ip1))
