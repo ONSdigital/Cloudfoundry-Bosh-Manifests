@@ -30,6 +30,15 @@ cf_private_subnets:
   cloud_properties:
     subnet: ((private_az2_subnet))
     security_groups: [((private_security_group))]
+- range: ((private_az3_cidr))
+  gateway: ((private_az3_default_route))
+  dns: [((dns_ip))]
+  az: az3
+  reserved: ["((private_az3_reserved_start)) - ((private_az3_reserved_stop))"]
+  static: ["((private_az3_static_start)) - ((private_az3_static_stop))"]
+  cloud_properties:
+    subnet: ((private_az3_subnet))
+    security_groups: [((private_security_group))]
 
 cf_rabbitmq_subnets:
 - range: ((rabbitmq_az1_cidr))
