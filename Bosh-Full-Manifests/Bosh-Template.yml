@@ -72,7 +72,7 @@ jobs:
 - name: rabbitmq-broker-registrar
   instances: 1
   lifecycle: errand
-  vm_type: micro_general
+  vm_type: ((rabbitmq-broker-registrar_vm_type))
   stemcell: default
   networks:
   - name: cf_private
@@ -92,7 +92,7 @@ jobs:
 - name: rabbitmq-broker-deregistrar
   instances: 1
   lifecycle: errand
-  vm_type: micro_general
+  vm_type: ((rabbitmq-broker-deregistrar_vm_type))
   stemcell: default
   networks:
   - name: cf_private
@@ -108,7 +108,7 @@ jobs:
 - name: rabbitmq-broker-smoke-tests-az1
   instances: 1
   lifecycle: errand
-  vm_type: micro_general
+  vm_type: ((rabbitmq-broker-smoke-tests-az1_vm_type))
   stemcell: default
   networks:
   - name: cf_private
@@ -136,7 +136,7 @@ jobs:
 - name: nats
   instances: ((nats_instances))
   azs: ((nats_azs))
-  vm_type: small_general
+  vm_type: ((nats_vm_type))
   stemcell: default
   templates:
   - {name: metron_agent, release: cf}
@@ -151,7 +151,7 @@ jobs:
 - name: etcd
   instances: ((etcd_instances))
   azs: ((etcd_azs))
-  vm_type: micro_general
+  vm_type: ((etcd_vm_type))
   stemcell: default
   persistent_disk: 10240
   templates:
@@ -174,7 +174,7 @@ jobs:
   instances: ((consul_instances))
   azs: ((consul_azs))
   persistent_disk: 1024
-  vm_type: small_general
+  vm_type: ((consul_vm_type))
   stemcell: default
   templates:
   - name: consul_agent
@@ -221,7 +221,7 @@ jobs:
 - name: ssh_proxy
   instances: ((ssh_proxy_instances))
   azs: ((ssh_proxy_azs))
-  vm_type: small_ssh_general
+  vm_type: ((ssh_proxy_vm_type))
   stemcell: default
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
@@ -236,7 +236,7 @@ jobs:
 - name: diego_cell
   instances: ((diego_cell_instances))
   azs: ((diego_cell_azs))
-  vm_type: large_ram_large_disk
+  vm_type: ((diego_cell_vm_type))
   stemcell: default
   templates:
   - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
@@ -256,102 +256,33 @@ jobs:
       rep:
         zone: z1
 
-- name: diego_cell_large_spot
-  instances: 0
-  azs: [az1]
-  vm_type: large_ram_large_disk_spot
-  stemcell: default
-  templates:
-  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
-  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
-  - {name: garden, release: garden-runc}
-  - {name: metron_agent, release: cf}
-  - {name: rep, release: diego}
-  networks:
-  - name: cf_private
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z1
-    diego:
-      rep:
-        zone: z1
-
-- name: diego_cell_xlarge_spot
-  instances: 0
-  azs: [az1]
-  vm_type: xlarge_ram_large_disk_spot
-  stemcell: default
-  templates:
-  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
-  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
-  - {name: garden, release: garden-runc}
-  - {name: metron_agent, release: cf}
-  - {name: rep, release: diego}
-  networks:
-  - name: cf_private
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z1
-    diego:
-      rep:
-        zone: z1
-
-- name: diego_cell_2xlarge_spot
-  instances: 0
-  azs: [az1]
-  vm_type: 2xlarge_ram_large_disk_spot
-  stemcell: default
-  templates:
-  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
-  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
-  - {name: garden, release: garden-runc}
-  - {name: metron_agent, release: cf}
-  - {name: rep, release: diego}
-  networks:
-  - name: cf_private
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z1
-    diego:
-      rep:
-        zone: z1
-
-- name: diego_cell_4xlarge_spot
-  instances: 0
-  azs: [az1]
-  vm_type: 4xlarge_ram_large_disk_spot
-  stemcell: default
-  templates:
-  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
-  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
-  - {name: garden, release: garden-runc}
-  - {name: metron_agent, release: cf}
-  - {name: rep, release: diego}
-  networks:
-  - name: cf_private
-  update:
-    serial: true
-    max_in_flight: 1
-  properties:
-    metron_agent:
-      zone: z1
-    diego:
-      rep:
-        zone: z1
+#- name: diego_cell_large_spot
+#  instances: 0
+#  azs: [az1]
+#  vm_type: large_ram_large_disk_spot
+#  stemcell: default
+#  templates:
+#  - {name: cflinuxfs2-rootfs-setup, release: cflinuxfs2}
+#  - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
+#  - {name: garden, release: garden-runc}
+#  - {name: metron_agent, release: cf}
+#  - {name: rep, release: diego}
+#  networks:
+#  - name: cf_private
+#  update:
+#    serial: true
+#    max_in_flight: 1
+#  properties:
+#    metron_agent:
+#      zone: z1
+#    diego:
+#      rep:
+#        zone: z1
 
 - name: diego_brain
   instances: ((diego_brain_instances))
   azs: ((diego_brain_azs))
-  vm_type: small_general
+  vm_type: ((diego_brain_vm_type))
   stemcell: default
   templates:
   - {name: auctioneer, release: diego}
@@ -380,7 +311,7 @@ jobs:
 - name: api
   instances: ((api_instances))
   azs: ((api_azs))
-  vm_type: medium_cc_general
+  vm_type: ((api_vm_type))
   stemcell: default
   templates:
   - {name: cloud_controller_clock, release: cf}
@@ -391,7 +322,7 @@ jobs:
   - {name: metron_agent, release: cf}
   - {name: route_registrar, release: cf}
   - {name: statsd_injector, release: cf}
-  # Buildpacks
+  # Buildpacks - delete these for internal
   - {name: binary-buildpack, release: cf}
   - {name: dotnet-core-buildpack, release: cf}
   - {name: java-buildpack, release: cf}
@@ -426,7 +357,7 @@ jobs:
 - name: doppler
   instances: ((doppler_instances))
   azs: ((doppler_azs))
-  vm_type: medium_general
+  vm_type: ((doppler_vm_type))
   stemcell: default
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
@@ -449,7 +380,7 @@ jobs:
 - name: loggregator_trafficcontroller
   instances: ((loggregator_trafficcontroller_instances))
   azs: ((loggregator_trafficcontroller_azs))
-  vm_type: small_general
+  vm_type: ((loggregator_trafficcontroller_vm_type))
   stemcell: default
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
@@ -482,7 +413,7 @@ jobs:
 - name: uaa
   instances: ((uaa_instances))
   azs: ((uaa_azs))
-  vm_type: small_smtp_sender_general
+  vm_type: ((uaa_vm_type))
   stemcell: default
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
@@ -535,7 +466,7 @@ jobs:
 - name: router
   instances: ((router_instances))
   azs: ((router_azs))
-  vm_type: small_router_general
+  vm_type: ((router_vm_type))
   stemcell: default
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
@@ -554,7 +485,7 @@ jobs:
 - name: rabbitmq-mgnt
   instances: ((rabbitmq-mgnt_instances))
   azs: ((rabbitmq-mgnt_azs))
-  vm_type: small_general
+  vm_type: ((rabbitmq-mgnt_vm_type))
   stemcell: default
   templates:
   - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
@@ -578,7 +509,7 @@ jobs:
 - name: rabbitmq-broker
   instances: ((rabbitmq-broker_instances))
   azs: ((rabbitmq-broker_azs))
-  vm_type: micro_general
+  vm_type: ((rabbitmq-broker_vm_type))
   stemcell: default
   persistent_disk: 10240
   networks:
@@ -599,8 +530,8 @@ jobs:
 
 - name: rabbitmq-node
   instances: ((rabbitmq-node_instances))
-  azs: ((rabbitmq-node_azs))
-  vm_type: small_general
+  azs: ((rabbitmq-node_azs)
+  vm_type: ((rabbitmq-node_vm_type))
   stemcell: default
   persistent_disk: 10240
   templates:
