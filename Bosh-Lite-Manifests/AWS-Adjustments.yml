@@ -23,7 +23,7 @@
 
 - type: replace
   path: /networks/name=cf_director/subnets/cloud_properties/subnet?
-  value:  ((director_az1_subnet))
+  value: ((director_az1_subnet))
 
 - type: replace
   path: /resource_pools/name=bosh_vm/cloud_properties?
