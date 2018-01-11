@@ -530,7 +530,7 @@ jobs:
 
 - name: rabbitmq-node
   instances: ((rabbitmq-node_instances))
-  azs: ((rabbitmq-node_azs)
+  azs: ((rabbitmq-node_azs))
   vm_type: ((rabbitmq-node_vm_type))
   stemcell: default
   persistent_disk: 10240
