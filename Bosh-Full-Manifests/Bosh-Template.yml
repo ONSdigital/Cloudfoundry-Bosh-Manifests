@@ -577,27 +577,6 @@ properties:
     external_port: 9022
     tls_port: 9023
     internal_service_hostname: cloud-controller-ng.service.cf.internal
-    # XXX XXX XXX XXX XXX
-    buildpacks:
-      blobstore_type: fog
-      buildpack_directory_key: ((buildpack_bucket))
-      fog_connection: &fog_s3_bucket_connection
-        provider: AWS
-        region: ((aws_region))
-        use_iam_profile: true
-    droplets:
-      blobstore_type: fog
-      droplet_directory_key: ((droplet_bucket))
-      fog_connection: *fog_s3_bucket_connection
-    packages:
-      blobstore_type: fog
-      app_package_directory_key: ((package_bucket))
-      fog_connection: *fog_s3_bucket_connection
-    resource_pool:
-      blobstore_type: fog
-      resource_directory_key: ((resource_bucket))
-      fog_connection: *fog_s3_bucket_connection
-    # XXX XXX XXX XXX XXX
     bulk_api_password: ((bulk_api_password))
     db_encryption_key: ((db_encryption_secret))
     # public_networks for a running instance should be restricted to the bare essentials (eg Git repo server for Jenkins installs)
@@ -1042,12 +1021,6 @@ properties:
     domain: ((domain_name))
     admin_username: admin
     admin_password: ((admin_password))
-  # XXX XXX XXX XXX XXX
-  postgresql_databases:
-     bucket_name: ((backup_bucket))
-     credentials_source: env_or_profile
-     region: ((aws_region))
-  # XXX XXX XXX XXX XXX
   rabbitmq-broker:
     route: rabbitbroker
     #cc_endpoint: https://api.system.((domain_name))

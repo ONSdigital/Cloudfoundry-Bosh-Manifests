@@ -70,17 +70,16 @@
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/properties/aws?
   value:
-    aws: &aws
-      # Health Monitor doesn't support instance access profiles, but it may do one day....
-      # credentials_source: env_or_profile
-      credentials_source: static
-      access_key_id: ((bosh_aws_access_key_id))
-      secret_access_key: ((bosh_aws_secret_access_key))
-      default_key_name: ((bosh_ssh_key_name))
-      region: ((aws_region))
-      default_security_groups: [((director_instance_security_group))]
-      # All VMs need to be able to write to the blob store to create logs!
-      default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
+    # Health Monitor doesn't support instance access profiles, but it may do one day....
+    # credentials_source: env_or_profile
+    credentials_source: static
+    access_key_id: ((bosh_aws_access_key_id))
+    secret_access_key: ((bosh_aws_secret_access_key))
+    default_key_name: ((bosh_ssh_key_name))
+    region: ((aws_region))
+    default_security_groups: [((director_instance_security_group))]
+    # All VMs need to be able to write to the blob store to create logs!
+    default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
 
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/properties/blobstore?
@@ -89,6 +88,13 @@
     s3_region: ((aws_region))
     credentials_source: env_or_profile
     bucket_name: ((blobstore_bucket))
+    # Without these templates/read_users.erb fails to render
+    director:
+      user: director
+      password: ((director_blobstore_password))
+    agent:
+      user: agent
+      password: ((agent_blobstore_password))
 
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/properties/compiled_package_cache?
