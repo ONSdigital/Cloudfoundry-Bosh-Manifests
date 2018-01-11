@@ -36,6 +36,16 @@
     elbs: [((director_elb))]
 
 - type: replace
+  path: /jobs/name=((deployment_name))-boshlite/properties/director/db
+  value: &db
+    host: ((bosh_db_dns))
+    port: ((bosh_db_port))
+    user: bosh
+    password: ((bosh_db_password))
+    database: bosh
+    adapter: postgres
+
+- type: replace
   path: /jobs/name=((deployment_name))-boshlite/templates/name=aws_cpi?
   value:
   - name: aws_cpi
@@ -48,7 +58,7 @@
     release: postgresql-databases
 
 - type: replace
-  path: /jobs/properties/aws?
+  path: /jobs/name=((deployment_name))-boshlite/properties/aws?
   value:
     aws: &aws
       # Health Monitor doesn't support instance access profiles, but it may do one day....
@@ -63,7 +73,7 @@
       default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
 
 - type: replace
-  path: /jobs/properties/blobstore
+  path: /jobs/name=((deployment_name))-boshlite/properties/blobstore
   value:
     provider: s3
     s3_region: ((aws_region))
@@ -71,7 +81,7 @@
     bucket_name: ((blobstore_bucket))
 
 - type: replace
-  path: /jobs/properties/compiled_package_cache
+  path: /jobs/name=((deployment_name))-boshlite/properties/compiled_package_cache
   value:
     provider: s3
     options:
@@ -80,7 +90,7 @@
       bucket_name: ((compiled_package_cache_bucket))
 
 - type: replace
-  path: /jobs/properties/director/backup_destination?
+  path: /jobs/name=((deployment_name))-boshlite/properties/director/backup_destination?
   value:
     provider: s3
     options:
@@ -89,11 +99,11 @@
       bucket_name: ((director_backup_bucket))
 
 - type: replace
-  path: /jobs/properties/default_ssh_options?
+  path: /jobs/name=((deployment_name))-boshlite/properties/default_ssh_options?
   value: ((director_dns))
 
 - type: replace
-  path: /jobs/properties/director/cpi_job
+  path: /jobs/name=((deployment_name))-boshlite/properties/director/cpi_job
   value: aws_cpi
 
 - type: replace
@@ -104,7 +114,7 @@
     region: ((aws_region))
 
 - type: replace
-  path: /jobs/properties/postgresql_databases?
+  path: /jobs/name=((deployment_name))-boshlite/properties/postgresql_databases?
   value:
   - name: applications
     admin_username: ((apps_db_admin_username))
