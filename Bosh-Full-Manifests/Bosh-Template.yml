@@ -1042,10 +1042,12 @@ properties:
     domain: ((domain_name))
     admin_username: admin
     admin_password: ((admin_password))
+  # XXX XXX XXX XXX XXX
   postgresql_databases:
      bucket_name: ((backup_bucket))
      credentials_source: env_or_profile
      region: ((aws_region))
+  # XXX XXX XXX XXX XXX
   rabbitmq-broker:
     route: rabbitbroker
     #cc_endpoint: https://api.system.((domain_name))
