@@ -116,7 +116,6 @@ jobs:
     ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
     registry:
       host: ((bosh_lite_private_ip))
-      db: *db
       http:
         user: admin
         password: ((http_password))

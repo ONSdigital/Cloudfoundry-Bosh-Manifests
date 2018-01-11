@@ -37,7 +37,17 @@
 
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/properties/director/db
-  value: &db
+  value:
+    host: ((bosh_db_dns))
+    port: ((bosh_db_port))
+    user: bosh
+    password: ((bosh_db_password))
+    database: bosh
+    adapter: postgres
+
+- type: replace
+  path: /jobs/name=((deployment_name))-boshlite/properties/registry/db
+  value:
     host: ((bosh_db_dns))
     port: ((bosh_db_port))
     user: bosh
