@@ -1,0 +1,104 @@
+---
+- type: replace
+  path: /releases/name=bosh-vsphere-cpi
+  value:
+  - name: bosh-vsphere-cpi
+    # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?all=1 - this may, eventually change to not-incubator
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=45
+    sha1: b5f3c53c800d6c8a9182b263ec239a952f33ba67
+
+- type: delete
+  path: /releases/name=postgresql-databases?
+
+- type: replace
+  path: /resource_pools/name=bosh_vm/stemcell
+  value:
+    name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
+    # https://bosh.io/stemcells/
+    # https://bosh.io/stemcells/bosh-vcloud-esxi-ubuntu-trusty-go_agent
+    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3468.5
+    sha1: 7cc32c725c22486908637b060bf8587f64c07aae
+
+- type: replace
+  path: /resource_pools/name=bosh_vm/cloud_properties?
+  value:
+
+- type: replace
+  path: /jobs/name=((deployment_name))-boshlite/templates/name=vsphere_cpi?
+  value:
+  - name: vsphere_cpi
+    release: bosh-vsphere-cpi
+
+- type: delete
+  path: /jobs/name=((deployment_name))-boshlite/templates/name=database-creation?
+
+- type: replace
+  path: /jobs/properties/vcenter?
+  value: &vcenter
+    address: [((vcenter_address))]
+    user: [((vcenter_username))]
+    password: [((vcenter_password))]
+    datacenters: [((vcenter_datacenters))]
+    enable_auto_anti_affinity_drs_rules: ((vcenter_drs_enabled))
+    #connection_options:
+      #ca_cert: ((vcenter_ca_certificate))
+
+- type: replace
+  path: /jobs/properties/blobstore
+  value:
+    address: ((bosh_lite_private_ip))
+    port: 25250
+    provider: dav
+    director:
+      user: director
+      password: ((director_blobstore_password))
+    agent:
+      user: agent
+      password: ((agent_blobstore_password))
+
+- type: replace
+  path: /jobs/properties/compiled_package_cache
+  value:
+    address: ((bosh_lite_private_ip))
+    port: 25250
+    provider: dav
+
+- type: replace
+  path: /jobs/properties/director/backup_destination?
+  value:
+    provider: s3
+    options:
+      s3_region: ((aws_region))
+      credentials_source: env_or_profile
+      bucket_name: ((director_backup_bucket))
+
+- type: delete
+  path: /jobs/properties/default_ssh_options?
+
+- type: replace
+  path: /jobs/properties/director/cpi_job
+  value: vsphere_cpi
+
+- type: replace
+  path: /jobs/properties/s3_config
+  value:
+    bucket_name: ((backup_bucket))
+    credentials_source: env_or_profile
+    region: ((aws_region))
+
+- type: replace
+  path: /jobs/properties/postgres?
+  value: &db
+    listen_address: 127.0.0.1
+    host: 127.0.0.1
+    user: postgres
+    password: ((postgres_password))
+    database: bosh
+    adapter: postgres
+
+- type: delete
+  path: /cloud_provider/ssh_tunnel?
+
+- type: replace
+  path: /cloud_provider/properties/vsphere
+  value: *vcenter

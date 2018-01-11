@@ -1,0 +1,159 @@
+---
+- type: replace
+  path: /releases/name=bosh-aws-cpi
+  value:
+  - name: bosh-aws-cpi
+    # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=69
+    sha1: 8abe70219244896ea6f7208fc01f2eac56179170
+
+- type: replace
+  path: /releases/name=postgresql-databases
+  value:
+  - name: postgresql-databases
+    url: ((postgresql_databases_url))
+    version: latest
+
+- type: replace
+  path: /resource_pools/name=bosh_vm/stemcell
+  value:
+  - name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468.17
+    sha1: c09040e9e0fcef6dffaece68f8d4173066e4f458
+
+- type: replace
+  path: /networks/name=cf_director/subnets/cloud_properties/subnet?
+  value:  ((director_az1_subnet))
+
+- type: replace
+  path: /resource_pools/name=bosh_vm/cloud_properties?
+  value:
+    instance_type: m4.large
+    ephemeral_disk: {size: 20_000 }
+    availability_zone: ((aws_availability_zone1))
+    security_groups: [((director_instance_security_group))]
+    iam_instance_profile: ((director_instance_profile))
+    elbs: [((director_elb))]
+
+- type: replace
+  path: /jobs/name=((deployment_name))-boshlite/templates/name=aws_cpi?
+  value:
+  - name: aws_cpi
+    release: bosh-aws-cpi
+
+- type: replace
+  path: /jobs/name=((deployment_name))-boshlite/templates/name=database-creation?
+  value:
+  - name:  database-creation:
+    release: postgresql-databases
+
+- type: replace
+  path: /jobs/properties/aws?
+  value:
+    aws: &aws
+      # Health Monitor doesn't support instance access profiles, but it may do one day....
+      # credentials_source: env_or_profile
+      credentials_source: static
+      access_key_id: ((bosh_aws_access_key_id))
+      secret_access_key: ((bosh_aws_secret_access_key))
+      default_key_name: ((bosh_ssh_key_name))
+      region: ((aws_region))
+      default_security_groups: [((director_instance_security_group))]
+      # All VMs need to be able to write to the blob store to create logs!
+      default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
+
+- type: replace
+  path: /jobs/properties/blobstore
+  value:
+    provider: s3
+    s3_region: ((aws_region))
+    credentials_source: env_or_profile
+    bucket_name: ((blobstore_bucket))
+
+- type: replace
+  path: /jobs/properties/compiled_package_cache
+  value:
+    provider: s3
+    options:
+      s3_region: ((aws_region))
+      credentials_source: env_or_profile
+      bucket_name: ((compiled_package_cache_bucket))
+
+- type: replace
+  path: /jobs/properties/director/backup_destination?
+  value:
+    provider: s3
+    options:
+      s3_region: ((aws_region))
+      credentials_source: env_or_profile
+      bucket_name: ((director_backup_bucket))
+
+- type: replace
+  path: /jobs/properties/default_ssh_options?
+  value: ((director_dns))
+
+- type: replace
+  path: /jobs/properties/director/cpi_job
+  value: aws_cpi
+
+- type: replace
+  path: /jobs/properties/s3_config
+  value:
+    bucket_name: ((backup_bucket))
+    credentials_source: env_or_profile
+    region: ((aws_region))
+
+- type: replace
+  path: /jobs/properties/postgresql_databases?
+  value:
+  - name: applications
+    admin_username: ((apps_db_admin_username))
+    admin_password: ((apps_db_admin_password))
+    admin_database: postgres
+    postgresql_host: ((apps_db_dns))
+    postgresql_port: ((apps_db_port))
+    rds: true
+    databases:
+    - { name: rds_broker, extensions: [pgcrypto], ignore_existing: true }
+  - name: bosh
+    admin_username: ((bosh_db_admin_username))
+    admin_password: ((bosh_db_admin_password))
+    admin_database: postgres
+    postgresql_host: ((bosh_db_dns))
+    postgresql_port: ((bosh_db_port))
+    rds: true
+    databases:
+    # We don't want to backup the Bosh database.  IF we need to backup a CF instance, we can just backup the CF databases & blobs
+    # then restore them with a new Bosh. We only use RDS for HA
+    - { name: bosh, username: bosh, password: ((bosh_db_password)), extensions: [pgcrypto,citext], no_restore: true, drop_existing: true }
+  - name: cloudfoundry
+    admin_username: ((cf_db_admin_username))
+    admin_password: ((cf_db_admin_password))
+    admin_database: postgres
+    postgresql_host: ((cf_db_dns))
+    postgresql_port: ((cf_db_port))
+    rds: true
+    databases:
+    - { name: ccdb, username: ccadmin, password: ((cc_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
+    # The Diego DB only contains transient data, eg auction allocation status
+    - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext], no_restore: true, ignore_existing: true }
+    - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
+
+- type: replace
+  path: /cloud_provider/ssh_tunnel?
+  value:
+    host: ((director_dns))
+    port: 22
+    user: vcap
+    private_key: ((bosh_ssh_key_file))
+
+- type: replace
+  path: /cloud_provider/properties/aws?
+  value:
+    access_key_id: ((bosh_aws_access_key_id))
+    secret_access_key: ((bosh_aws_secret_access_key))
+    default_key_name: ((bosh_ssh_key_name))
+    region: ((aws_region))
+    default_security_groups: [((director_instance_security_group))]
+    # All VMs need to be able to write to the blob store to create logs!
+    default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
