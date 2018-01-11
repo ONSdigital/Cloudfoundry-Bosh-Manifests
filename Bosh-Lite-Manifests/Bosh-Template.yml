@@ -52,7 +52,7 @@ jobs:
   - {name: registry, release: bosh}
   - {name: database-creation, release: postgresql-databases}
   resource_pool: bosh_vm
-  persistent_disk_pool: tiny_disk
+  #persistent_disk_pool: tiny_disk
   networks:
   - name: cf_director
     static_ips: [((bosh_lite_private_ip))]
