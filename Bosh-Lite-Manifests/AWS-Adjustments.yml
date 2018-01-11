@@ -1,28 +1,28 @@
 ---
 - type: replace
-  path: /releases/name=bosh-aws-cpi
+  path: /releases/name=bosh-aws-cpi?
   value:
-  - name: bosh-aws-cpi
+    name: bosh-aws-cpi
     # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?all=1 - this may, eventually change to not-incubator
     url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-aws-cpi-release?v=69
     sha1: 8abe70219244896ea6f7208fc01f2eac56179170
 
 - type: replace
-  path: /releases/name=postgresql-databases
+  path: /releases/name=postgresql-databases?
   value:
-  - name: postgresql-databases
+    name: postgresql-databases
     url: ((postgresql_databases_url))
     version: latest
 
 - type: replace
-  path: /resource_pools/name=bosh_vm/stemcell
+  path: /resource_pools/name=bosh_vm/stemcell?
   value:
-  - name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468.17
     sha1: c09040e9e0fcef6dffaece68f8d4173066e4f458
 
 - type: replace
-  path: /networks/name=cf_director/subnets/cloud_properties/subnet?
+  path: /networks/name=cf_director/subnets/range=((director_az1_cidr))/cloud_properties?/subnet?
   value: ((director_az1_subnet))
 
 - type: replace
@@ -36,7 +36,7 @@
     elbs: [((director_elb))]
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/director/db
+  path: /jobs/name=((deployment_name))-boshlite/properties/director/db?
   value:
     host: ((bosh_db_dns))
     port: ((bosh_db_port))
@@ -46,7 +46,7 @@
     adapter: postgres
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/registry/db
+  path: /jobs/name=((deployment_name))-boshlite/properties/registry/db?
   value:
     host: ((bosh_db_dns))
     port: ((bosh_db_port))
@@ -58,13 +58,13 @@
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/templates/name=aws_cpi?
   value:
-  - name: aws_cpi
+    name: aws_cpi
     release: bosh-aws-cpi
 
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/templates/name=database-creation?
   value:
-  - name:  database-creation
+    name:  database-creation
     release: postgresql-databases
 
 - type: replace
@@ -83,7 +83,7 @@
       default_iam_instance_profile: ((blobstore_bucket_access_instance_profile))
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/blobstore
+  path: /jobs/name=((deployment_name))-boshlite/properties/blobstore?
   value:
     provider: s3
     s3_region: ((aws_region))
@@ -91,7 +91,7 @@
     bucket_name: ((blobstore_bucket))
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/compiled_package_cache
+  path: /jobs/name=((deployment_name))-boshlite/properties/compiled_package_cache?
   value:
     provider: s3
     options:
@@ -113,11 +113,11 @@
   value: ((director_dns))
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/director/cpi_job
+  path: /jobs/name=((deployment_name))-boshlite/properties/director/cpi_job?
   value: aws_cpi
 
 - type: replace
-  path: /jobs/properties/s3_config
+  path: /jobs/name=((deployment_name))-boshlite/properties/s3_config?
   value:
     bucket_name: ((backup_bucket))
     credentials_source: env_or_profile
@@ -158,6 +158,12 @@
     # The Diego DB only contains transient data, eg auction allocation status
     - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext], no_restore: true, ignore_existing: true }
     - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
+
+- type: replace
+  path: /cloud_provider/template?
+  value:
+    name: aws_cpi
+    release: bosh-aws-cpi
 
 - type: replace
   path: /cloud_provider/ssh_tunnel?

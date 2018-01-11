@@ -96,6 +96,12 @@
     database: bosh
     adapter: postgres
 
+- type: replace
+  path: /cloud_provider/template/name=aws_cpi?
+  value:
+    name: aws_cpi
+    release: bosh-aws-cpi
+
 - type: delete
   path: /cloud_provider/ssh_tunnel?
 
