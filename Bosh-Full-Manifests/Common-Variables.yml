@@ -2,6 +2,10 @@
 - type: replace
   path: /variables?
   value:
+  - name: blobstore_password
+    type: password
+  - name: blobstore_secret
+    type: password
   - name: cc_db_password
     type: password
   - name: uaa_db_password
