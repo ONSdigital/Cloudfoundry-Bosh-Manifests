@@ -36,173 +36,35 @@ networks:
 vm_types:
 - name: micro_general
   cloud_properties:
-    instance_type: t2.micro
-- name: micro_general_blobstore_backup
-  cloud_properties:
-    instance_type: t2.micro
-    iam_instance_profile: ((blobstore_backup_bucket_access_instance_profile))
+    cpu: 2
+    ram: 1024
+    disk: 12288
 - name: small_general
   cloud_properties:
-    instance_type: t2.small
-- name: small_general_blobstore_backup
-  cloud_properties:
-    instance_type: t2.small
-    iam_instance_profile: ((blobstore_backup_bucket_access_instance_profile))
-- name: small_ssh_general
-  cloud_properties:
-    instance_type: t2.small
-    elbs: [((cf_ssh_elb))]
-    security_groups: [((cf_ssh_instance_security_group)),((private_security_group))]
-- name: small_router_general
-  cloud_properties:
-    instance_type: t2.small
-    lb_target_groups:
-    - ((application_elb_target_group80))
-    - ((application_elb_target_group443))
-    security_groups: [((router_security_group)),((private_security_group))]
+    cpu: 2
+    ram: 2048
+    disk: 12288
 - name: medium_general
   cloud_properties:
-    instance_type: t2.medium
-- name: medium_router_general
-  cloud_properties:
-    instance_type: t2.medium
-    lb_target_groups:
-    - ((application_elb_target_group80))
-    - ((application_elb_target_group443))
-    security_groups: [((router_security_group)),((private_security_group))]
-- name: medium_cc_general
-  cloud_properties:
-    instance_type: t2.medium
-    iam_instance_profile: ((cc_bucket_access_instance_profile))
+    cpu: 2
+    ram: 4096
+    disk: 12288
 - name: large_compute
   cloud_properties:
-    instance_type: c4.large
-- name: large_compute_spot
-  cloud_properties:
-    instance_type: c4.large
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.05
-- name: large_compute_spot_fallback
-  cloud_properties:
-    instance_type: c4.large
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.05
-    spot_ondemand_fallback: true
-- name: large_cc_compute_spot
-  cloud_properties:
-    instance_type: c4.large
-    iam_instance_profile: ((cc_bucket_access_instance_profile))
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.05
-- name: large_cc_compute_spot_fallback
-  cloud_properties:
-    instance_type: c4.large
-    iam_instance_profile: ((cc_bucket_access_instance_profile))
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.05
-    spot_ondemand_fallback: true
+    cpu: 4
+    ram: 8192
+    disk: 12288
 - name: xlarge_compute
   cloud_properties:
-    instance_type: c4.xlarge
-- name: xlarge_compute_spot
-  cloud_properties:
-    instance_type: c4.xlarge
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.1
-- name: xlarge_compute_spot_fallback
-  cloud_properties:
-    instance_type: c4.xlarge
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.1
-    spot_ondemand_fallback: true
-# Its probably better to use more large instances, and less xlarge instances - the cost is the same, the
-# ram will be virtually the same, ignoring base OS overhead, but the availability will be better
-- name: large_ram_large_disk
-  cloud_properties:
-    instance_type: r4.large
-    ephemeral_disk:
-      size: 80000
-- name: large_ram_large_disk_spot
-  cloud_properties:
-    instance_type: r4.large
-    ephemeral_disk:
-      size: 80000
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.05
-- name: large_ram_large_disk_spot_fallback
-  cloud_properties:
-    ephemeral_disk:
-      size: 80000
-    instance_type: r4.large
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.05
-    spot_ondemand_fallback: true
-- name: xlarge_ram_large_disk
-  cloud_properties:
-    ephemeral_disk:
-      size: 160000
-    instance_type: r4.xlarge
-- name: xlarge_ram_large_disk_spot
-  cloud_properties:
-    ephemeral_disk:
-      size: 160000
-    instance_type: r4.xlarge
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.1
-- name: xlarge_ram_large_disk_spot_fallback
-  cloud_properties:
-    ephemeral_disk:
-      size: 160000
-    instance_type: r4.xlarge
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.1
-    spot_ondemand_fallback: true
-- name: 2xlarge_ram_large_disk
-  cloud_properties:
-    ephemeral_disk:
-      size: 160000
-    instance_type: r4.2xlarge
-- name: 2xlarge_ram_large_disk_spot
-  cloud_properties:
-    ephemeral_disk:
-      size: 160000
-    instance_type: r4.2xlarge
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.1
-- name: 2xlarge_ram_large_disk_spot_fallback
-  cloud_properties:
-    ephemeral_disk:
-      size: 160000
-    instance_type: r4.2xlarge
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.1
-    spot_ondemand_fallback: true
-- name: 4xlarge_ram_large_disk
-  cloud_properties:
-    ephemeral_disk:
-      size: 160000
-    instance_type: r4.4xlarge
-- name: 4xlarge_ram_large_disk_spot
-  cloud_properties:
-    ephemeral_disk:
-      size: 160000
-    instance_type: r4.4xlarge
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.15
-- name: 4xlarge_ram_large_disk_spot_fallback
-  cloud_properties:
-    ephemeral_disk:
-      size: 160000
-    instance_type: r4.4xlarge
-    # Ensure this is set to a sensible value
-    spot_bid_price: 0.15
-    spot_ondemand_fallback: true
+    cpu: 4
+    ram: 16384
+    disk: 12288
 
 compilation:
   workers: 10
   network: cf_private
   reuse_compilation_vms: true
-  az: az1
+  az: ((
   cloud_properties:
     # Using large VMs decreases initial deployment time massively
     #instance_type: m4.large
