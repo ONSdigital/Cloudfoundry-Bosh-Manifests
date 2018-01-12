@@ -454,14 +454,6 @@ jobs:
         username: batch_user
       cc:
         client_secret: ((uaa_cc_client_secret))
-    uaadb:
-      address: ((cf_db_dns))
-      port: ((cf_db_port))
-      db_scheme: postgresql
-      databases:
-      - {name: uaadb, tag: uaa}
-      roles:
-      - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
 
 - name: router
   instances: ((router_instances))
@@ -867,6 +859,14 @@ properties:
           requireLowerCaseCharacter: 1
           requireSpecialCharacter: 1
           requireUpperCaseCharacter: 1
+  uaadb:
+    address: ((cf_db_dns))
+    port: ((cf_db_port))
+    db_scheme: postgresql
+    databases:
+    - {name: uaadb, tag: uaa}
+    roles:
+    - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
   capi:
     cc_uploader:
       mutual_tls:
