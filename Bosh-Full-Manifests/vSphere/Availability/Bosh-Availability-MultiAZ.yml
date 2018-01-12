@@ -1,0 +1,54 @@
+# MultiAZ
+---
+azs:
+- name: az1
+  cloud_properties:
+    availability_zone: ((vsphere_availability_zone1))
+- name: az2
+  cloud_properties:
+    availability_zone: ((vsphere_availability_zone2))
+- name: az3
+  cloud_properties:
+    availability_zone: ((vsphere_availability_zone3))
+
+cf_private_subnets:
+- range: ((private_az1_cidr))
+  gateway: ((private_az1_default_route))
+  dns: [((dns_ip))]
+  az: az1
+  reserved: ["((private_az1_reserved_start)) - ((private_az1_reserved_stop))"]
+  static: ["((private_az1_static_start)) - ((private_az1_static_stop))"]
+  cloud_properties:
+    subnet: ((private_az1_subnet))
+- range: ((private_az2_cidr))
+  gateway: ((private_az2_default_route))
+  dns: [((dns_ip))]
+  az: az2
+  reserved: ["((private_az2_reserved_start)) - ((private_az2_reserved_stop))"]
+  static: ["((private_az2_static_start)) - ((private_az2_static_stop))"]
+  cloud_properties:
+    subnet: ((private_az2_subnet))
+- range: ((private_az3_cidr))
+  gateway: ((private_az3_default_route))
+  dns: [((dns_ip))]
+  az: az3
+  reserved: ["((private_az3_reserved_start)) - ((private_az3_reserved_stop))"]
+  static: ["((private_az3_static_start)) - ((private_az3_static_stop))"]
+  cloud_properties:
+    subnet: ((private_az3_subnet))
+
+cf_rabbitmq_subnets:
+- range: ((rabbitmq_az1_cidr))
+  gateway: ((rabbitmq_az1_default_route))
+  dns: [((dns_ip))]
+  az: az1
+  reserved: ["((rabbitmq_az1_reserved_start)) - ((rabbitmq_az1_reserved_stop))"]
+  cloud_properties:
+    subnet: ((rabbitmq_az1_subnet))
+- range: ((rabbitmq_az2_cidr))
+  gateway: ((rabbitmq_az2_default_route))
+  dns: [((dns_ip))]
+  az: az2
+  reserved: ["((rabbitmq_az2_reserved_start)) - ((rabbitmq_az2_reserved_stop))"]
+  cloud_properties:
+    subnet: ((rabbitmq_az2_subnet))

@@ -1,5 +1,5 @@
 ---
-# Single AZ no HA
+# Single AZ + HA
 - name: az1
   cloud_properties:
     availability_zone: ((vsphere_availability_zone1))
