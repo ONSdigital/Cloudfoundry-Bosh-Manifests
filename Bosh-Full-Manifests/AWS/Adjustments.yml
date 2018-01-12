@@ -16,14 +16,12 @@
     droplet_directory_key: ((droplet_bucket))
     fog_connection: *fog_s3_bucket_connection
 
-
 - type: replace
   path: /properties/cc/packages?
   value:
     blobstore_type: fog
     app_package_directory_key: ((package_bucket))
     fog_connection: *fog_s3_bucket_connection
-
 
 - type: replace
   path: /properties/cc/resource_pool?
@@ -38,4 +36,3 @@
     bucket_name: ((backup_bucket))
     credentials_source: env_or_profile
     region: ((aws_region))
-
