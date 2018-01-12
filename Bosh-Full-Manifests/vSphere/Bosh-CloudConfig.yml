@@ -2,36 +2,15 @@
 #
 ---
 
-azs:
-- name: az1
-  cloud_properties:
-    availability_zone: ((vsphere_availability_zone1))
-
+azs: ((azs))
 
 networks:
 - name: cf_private
   type: manual
-  subnets:
-  - range: ((private_az1_cidr))
-    gateway: ((private_az1_default_route))
-    dns: [((dns_ip))]
-    az: az1
-    reserved: ["((private_az1_reserved_start)) - ((private_az1_reserved_stop))"]
-    static: ["((private_az1_static_start)) - ((private_az1_static_stop))"]
-    cloud_properties:
-      subnet: ((private_az1_subnet))
-      security_groups: [((private_security_group))]
+  subnets: ((cf_private_subnets))
 - name: cf_rabbitmq
   type: manual
-  subnets:
-  - range: ((rabbitmq_az1_cidr))
-    gateway: ((rabbitmq_az1_default_route))
-    dns: [((dns_ip))]
-    az: az1
-    reserved: ["((rabbitmq_az1_reserved_start)) - ((rabbitmq_az1_reserved_stop))"]
-    cloud_properties:
-      subnet: ((rabbitmq_az1_subnet))
-      security_groups: [((rabbitmq_security_group))]
+  subnets: ((cf_rabbitmq_subnets))
 
 vm_types:
 - name: micro_general
@@ -64,15 +43,10 @@ compilation:
   workers: 10
   network: cf_private
   reuse_compilation_vms: true
-  az: ((
+  az: az1
   cloud_properties:
-    # Using large VMs decreases initial deployment time massively
-    #instance_type: m4.large
-    instance_type: t2.large
+    cpu: 4
+    ram: 8192
+    disk: 12288
     ephemeral_disk:
       size: 160000
-    # Spot instances can take longer to come up and if no capacity is available things may time out before the fallback starts
-    #spot_bid_price: 0.2
-    #spot_ondemand_fallback: true
-    security_groups: [((private_security_group))]
-    iam_instance_profile: ((compile_nodes_bucket_access_instance_profile))
