@@ -1,17 +1,18 @@
 ---
 - type: replace
-  path: /releases/name=bosh-vsphere-cpi
+  path: /releases/name=bosh-vsphere-cpi?
   value:
   - name: bosh-vsphere-cpi
     # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?all=1 - this may, eventually change to not-incubator
     url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=45
     sha1: b5f3c53c800d6c8a9182b263ec239a952f33ba67
 
+# This release is not, currently, used by vSphere, but it will be in the future
 - type: delete
   path: /releases/name=postgresql-databases?
 
 - type: replace
-  path: /resource_pools/name=bosh_vm/stemcell
+  path: /resource_pools/name=bosh_vm/stemcell?
   value:
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     # https://bosh.io/stemcells/
@@ -20,8 +21,16 @@
     sha1: 7cc32c725c22486908637b060bf8587f64c07aae
 
 - type: replace
-  path: /resource_pools/name=bosh_vm/cloud_properties?
-  value:
+  path: /resource_pools/name=bosh_vm/cloud_properties/availability_zone?
+  value: z1
+     
+- type: replace
+  path: /resource_pools/name=bosh_vm/cloud_properties/cpu?
+  value: 2
+
+- type: replace
+  path: /resource_pools/name=bosh_vm/cloud_properties/ram?
+  value: 4096
 
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/templates/name=vsphere_cpi?
@@ -29,22 +38,34 @@
   - name: vsphere_cpi
     release: bosh-vsphere-cpi
 
+- type: replace
+  path: /jobs/name=((deployment_name))-boshlite/persistent_disk_pool?
+  value: large_disk
+
 - type: delete
   path: /jobs/name=((deployment_name))-boshlite/templates/name=database-creation?
 
+# Also exists further down
 - type: replace
-  path: /jobs/properties/vcenter?
-  value: &vcenter
+  path: /jobs/name=((deployment_name))-boshlite/properties/vcenter?
+  value:
     address: [((vcenter_address))]
     user: [((vcenter_username))]
     password: [((vcenter_password))]
-    datacenters: [((vcenter_datacenters))]
     enable_auto_anti_affinity_drs_rules: ((vcenter_drs_enabled))
     #connection_options:
       #ca_cert: ((vcenter_ca_certificate))
+    datacenters:
+    - name: ((vcenter_datacentre_name))
+      vm_folder: ((vcenter_vm_folder))
+      template_folder: ((vcenter_template_folder))
+      disk_path: ((vcenter_disk_path))
+      datastore_pattern: '((vcenter_datastore_pattern))'
+      persistent_datastore_pattern: '((vcenter_persistent_datastore_pattern))'
+      clusters: [((vcenter_clusters))]
 
 - type: replace
-  path: /jobs/properties/blobstore
+  path: /jobs/name=((deployment_name))-boshlite/properties/blobstore?
   value:
     address: ((bosh_lite_private_ip))
     port: 25250
@@ -57,14 +78,14 @@
       password: ((agent_blobstore_password))
 
 - type: replace
-  path: /jobs/properties/compiled_package_cache
+  path: /jobs/name=((deployment_name))-boshlite/properties/compiled_package_cache?
   value:
     address: ((bosh_lite_private_ip))
     port: 25250
     provider: dav
 
 - type: replace
-  path: /jobs/properties/director/backup_destination?
+  path: /jobs/name=((deployment_name))-boshlite/properties/director/backup_destination?
   value:
     provider: s3
     options:
@@ -73,26 +94,22 @@
       bucket_name: ((director_backup_bucket))
 
 - type: delete
-  path: /jobs/properties/default_ssh_options?
+  path: /jobs/name=((deployment_name))-boshlite/properties/default_ssh_options?
 
 - type: replace
-  path: /jobs/properties/director/cpi_job
+  path: /jobs/name=((deployment_name))-boshlite/properties/director/cpi_job?
   value: vsphere_cpi
 
-- type: replace
-  path: /jobs/properties/s3_config
-  value:
-    bucket_name: ((backup_bucket))
-    credentials_source: env_or_profile
-    region: ((aws_region))
+- type: delete
+  path: /jobs/name=((deployment_name))-boshlite/properties/s3_config?
 
 - type: replace
-  path: /jobs/properties/postgres?
-  value: &db
+  path: /jobs/name=((deployment_name))-boshlite/properties/postgres?
+  value:
     listen_address: 127.0.0.1
     host: 127.0.0.1
-    user: postgres
-    password: ((postgres_password))
+    user: bosh
+    password: ((bosh_db_password))
     database: bosh
     adapter: postgres
 
@@ -106,5 +123,19 @@
   path: /cloud_provider/ssh_tunnel?
 
 - type: replace
-  path: /cloud_provider/properties/vsphere
-  value: *vcenter
+  path: /cloud_provider/properties/vsphere?
+  value:
+    address: [((vcenter_address))]
+    user: [((vcenter_username))]
+    password: [((vcenter_password))]
+    enable_auto_anti_affinity_drs_rules: ((vcenter_drs_enabled))
+    #connection_options:
+      #ca_cert: ((vcenter_ca_certificate))
+    datacenters:
+    - name: ((vcenter_datacentre_name))
+      vm_folder: ((vcenter_vm_folder))
+      template_folder: ((vcenter_template_folder))
+      disk_path: ((vcenter_disk_path))
+      datastore_pattern: '((vcenter_datastore_pattern))'
+      persistent_datastore_pattern: '((vcenter_persistent_datastore_pattern))'
+      clusters: [((vcenter_clusters))]

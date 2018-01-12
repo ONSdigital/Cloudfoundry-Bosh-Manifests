@@ -25,11 +25,16 @@ resource_pools:
       password: $6$GiQp7XJ3AYAnpUpZ$zGUSoI6OATmb4ff0k60ZFIk/pMNypGxqMoihspINUAS8Fk6p0Dz/PIMzFfguZIbLSeJPB5PkNMCNzkO4yJqp8/
       mbus:
         cert: ((mbus_bootstrap_ssl))
+  cloud_properties:
+    ephemeral_disk: {size: 20_000 }
 
 disk_pools:
 - name: tiny_disk
   disk_size: 1_000
-  cloud_properties: {type: gp2}
+- name: small_disk 
+  disk_size: 10_000
+- name: large_disk
+  disk_size: 100_000
 
 networks:
 - name: cf_director
@@ -52,7 +57,6 @@ jobs:
   - {name: registry, release: bosh}
   - {name: database-creation, release: postgresql-databases}
   resource_pool: bosh_vm
-  #persistent_disk_pool: tiny_disk
   networks:
   - name: cf_director
     static_ips: [((bosh_lite_private_ip))]
@@ -68,6 +72,18 @@ jobs:
           s3_region: ((aws_region))
           credentials_source: env_or_profile
           bucket_name: ((director_backup_bucket))
+      db:
+        host: ((bosh_db_dns))
+        port: ((bosh_db_port))
+        user: bosh
+        password: ((bosh_db_password))
+        database: bosh
+        adapter: postgreshost: ((bosh_db_dns))
+        port: ((bosh_db_port))
+        user: bosh
+        password: ((bosh_db_password))
+        database: bosh
+        adapter: postgres
       #generate_vm_passwords: true
       # https://bosh.io/docs/remove-dev-tools.html
       #remove_dev_tools: true
@@ -123,6 +139,18 @@ jobs:
       username: admin
       password: ((registry_password))
       port: 25777
+      db:
+        host: ((bosh_db_dns))
+        port: ((bosh_db_port))
+        user: bosh
+        password: ((bosh_db_password))
+        database: bosh
+        adapter: postgres
+        port: ((bosh_db_port))
+        user: bosh
+        password: ((bosh_db_password))
+        database: bosh
+        adapter: postgres
 
 cloud_provider:
   mbus: "https://mbus:((mbus_password))@((director_dns)):6868"

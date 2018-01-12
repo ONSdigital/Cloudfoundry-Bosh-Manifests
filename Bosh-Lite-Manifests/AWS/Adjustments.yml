@@ -22,38 +22,34 @@
     sha1: c09040e9e0fcef6dffaece68f8d4173066e4f458
 
 - type: replace
+# Currently AWS has trouble attaching this disktype: replace
   path: /networks/name=cf_director/subnets/range=((director_az1_cidr))/cloud_properties?/subnet?
   value: ((director_az1_subnet))
 
 - type: replace
-  path: /resource_pools/name=bosh_vm/cloud_properties?
-  value:
-    instance_type: m4.large
-    ephemeral_disk: {size: 20_000 }
-    availability_zone: ((aws_availability_zone1))
-    security_groups: [((director_instance_security_group))]
-    iam_instance_profile: ((director_instance_profile))
-    elbs: [((director_elb))]
+  path: /resource_pools/name=bosh_vm/cloud_properties/instance_type?
+  value: m4.large
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/director/db?
-  value:
-    host: ((bosh_db_dns))
-    port: ((bosh_db_port))
-    user: bosh
-    password: ((bosh_db_password))
-    database: bosh
-    adapter: postgres
+  path: /resource_pools/name=bosh_vm/cloud_properties/availability_zone?
+  value: ((aws_availability_zone1))
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/registry/db?
-  value:
-    host: ((bosh_db_dns))
-    port: ((bosh_db_port))
-    user: bosh
-    password: ((bosh_db_password))
-    database: bosh
-    adapter: postgres
+  path: /resource_pools/name=bosh_vm/cloud_properties/security_groups?
+  value: [((director_instance_security_group))]
+
+- type: replace
+  path: /resource_pools/name=bosh_vm/cloud_properties/iam_instance_profile?
+  value: ((director_instance_profile))
+
+- type: replace
+  path: /resource_pools/name=bosh_vm/cloud_properties/elbs?
+  value: [((director_elb))]
+
+# Currently AWS has trouble attaching this disk
+#- type: replace
+#  path: /jobs/name=((deployment_name))-boshlite/persistent_disk_pool?
+#  value: large_disk
 
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/templates/name=aws_cpi?
@@ -121,6 +117,9 @@
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/properties/director/cpi_job?
   value: aws_cpi
+
+- type: delete
+  path: /jobs/name=((deployment_name))-boshlite/properties/postgres?
 
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/properties/s3_config?
