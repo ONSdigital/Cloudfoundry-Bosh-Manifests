@@ -15,6 +15,8 @@ etcd_az1_ip3: ((private_az1_static_ip8))
 #
 nats_az1_ip1: ((private_az1_static_ip9))
 nats_az1_ip2: ((private_az1_static_ip10))
+# Not used if AWS RDS is used
+postgres_az1_ip1: ((private_az1_static_ip11))
 #
-router_az1_ip1: ((private_az1_static_ip11))
-router_az1_ip2: ((private_az1_static_ip12))
+router_az1_ip1: ((private_az1_static_ip12))
+router_az1_ip2: ((private_az1_static_ip13))
