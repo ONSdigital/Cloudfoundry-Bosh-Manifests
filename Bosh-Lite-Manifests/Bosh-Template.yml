@@ -78,7 +78,8 @@ jobs:
         user: bosh
         password: ((bosh_db_password))
         database: bosh
-        adapter: postgreshost: ((bosh_db_dns))
+        adapter: postgres
+        host: ((bosh_db_dns))
         port: ((bosh_db_port))
         user: bosh
         password: ((bosh_db_password))
