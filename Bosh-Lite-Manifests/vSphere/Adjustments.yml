@@ -8,7 +8,7 @@
     sha1: b5f3c53c800d6c8a9182b263ec239a952f33ba67
 
 # This release is not, currently, used by vSphere, but it will be in the future
-- type: delete
+- type: remove
   path: /releases/name=postgresql-databases?
 
 - type: replace
@@ -42,7 +42,7 @@
   path: /jobs/name=((deployment_name))-boshlite/persistent_disk_pool?
   value: large_disk
 
-- type: delete
+- type: remove
   path: /jobs/name=((deployment_name))-boshlite/templates/name=database-creation?
 
 # Also exists further down
@@ -93,14 +93,14 @@
       credentials_source: env_or_profile
       bucket_name: ((director_backup_bucket))
 
-- type: delete
+- type: remove
   path: /jobs/name=((deployment_name))-boshlite/properties/default_ssh_options?
 
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/properties/director/cpi_job?
   value: vsphere_cpi
 
-- type: delete
+- type: remove
   path: /jobs/name=((deployment_name))-boshlite/properties/s3_config?
 
 - type: replace
@@ -119,7 +119,7 @@
     name: aws_cpi
     release: bosh-aws-cpi
 
-- type: delete
+- type: remove
   path: /cloud_provider/ssh_tunnel?
 
 - type: replace

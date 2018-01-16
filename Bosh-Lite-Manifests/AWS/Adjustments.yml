@@ -118,7 +118,7 @@
   path: /jobs/name=((deployment_name))-boshlite/properties/director/cpi_job?
   value: aws_cpi
 
-- type: delete
+- type: remove
   path: /jobs/name=((deployment_name))-boshlite/properties/postgres?
 
 - type: replace
