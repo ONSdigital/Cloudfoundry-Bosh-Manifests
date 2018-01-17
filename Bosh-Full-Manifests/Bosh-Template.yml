@@ -634,10 +634,7 @@ properties:
       log_level: null
       domain: cf.internal
       servers:
-        lan:
-        - ((consul_az1_ip1))
-        - ((consul_az1_ip2))
-        - ((consul_az1_ip3))
+        lan: ((consul_static_ips))
     encrypt_keys:
     - ((consul_encrypt_keys_secret))
     ca_cert: ((consul_agent.ca))
@@ -732,7 +729,7 @@ properties:
   metron_agent:
     deployment: ((deployment_name))
   nats:
-    machines: [((nats_az1_ip1))]
+    machines: ((nats_static_ips))
     password: ((nats_password))
     port: 4222
     user: nats
@@ -975,7 +972,7 @@ properties:
         client_cert: ((bbs_rep_client.certificate))
         client_key: ((bbs_rep_client.private_key))
         require_ssl: true
-      preloaded_rootfses: ["cflinuxfs2:/var/vcap/packages/cflinuxfs2/rootfs"]
+      preloaded_rootfses: ["cflinuxfs2:/var/vcap/packages/cflinuxfs2/rootfs.tar"]
       require_tls: true
       ca_cert: ((diego_rep_agent.ca))
       server_cert: ((diego_rep_agent.certificate))
@@ -991,7 +988,7 @@ properties:
         client_key: ((bbs_routeemitter_client.private_key))
         require_ssl: true
       nats:
-        machines: [((nats_az1_ip1))]
+        machines: ((nats_static_ips))
         password: ((nats_password))
         port: 4222
         user: nats
@@ -1011,8 +1008,6 @@ properties:
     ssl:
       skip_cert_verify: true
   garden:
-    graph_cleanup_threshold_in_mb: 0
-    persistent_image_list: ["/var/vcap/packages/cflinuxfs2/rootfs"]
     deny_networks:
     - 0.0.0.0/0
   cf:
