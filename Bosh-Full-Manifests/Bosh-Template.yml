@@ -431,6 +431,11 @@ jobs:
         services:
           uaa: {}
     login:
+      prompt:
+        username:
+          text: Username
+        #password:
+        #  text: Password
       saml:
         serviceProviderKey: ((uaa_login_saml.private_key))
         serviceProviderCertificate: ((uaa_login_saml.certificate))

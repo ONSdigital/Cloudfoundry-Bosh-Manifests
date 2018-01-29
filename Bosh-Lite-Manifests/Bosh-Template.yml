@@ -79,12 +79,6 @@ jobs:
         password: ((bosh_db_password))
         database: bosh
         adapter: postgres
-        host: ((bosh_db_dns))
-        port: ((bosh_db_port))
-        user: bosh
-        password: ((bosh_db_password))
-        database: bosh
-        adapter: postgres
       #generate_vm_passwords: true
       # https://bosh.io/docs/remove-dev-tools.html
       #remove_dev_tools: true
