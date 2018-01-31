@@ -4,8 +4,8 @@
   value:
   - name: bosh-vsphere-cpi
     # https://bosh.io/releases/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?all=1 - this may, eventually change to not-incubator
-    url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=45
-    sha1: b5f3c53c800d6c8a9182b263ec239a952f33ba67
+    url: https://bosh.io/d/github.com/cloudfoundry-incubator/bosh-vsphere-cpi-release?v=45.1
+    sha1: 49164212bcd6a35515db6664bcb26bef2fcc6b6c
 
 # This release is not, currently, used by vSphere, but it will be in the future
 - type: remove
@@ -17,8 +17,8 @@
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     # https://bosh.io/stemcells/
     # https://bosh.io/stemcells/bosh-vcloud-esxi-ubuntu-trusty-go_agent
-    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3468.5
-    sha1: 7cc32c725c22486908637b060bf8587f64c07aae
+    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3468.21
+    sha1: 9de0274aee02a4ab8ad210cd8f19021c43ba6b5b
 
 - type: replace
   path: /resource_pools/name=bosh_vm/cloud_properties/availability_zone?

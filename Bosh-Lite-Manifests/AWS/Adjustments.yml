@@ -20,8 +20,8 @@
     name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
     # https://bosh.io/stemcells/
     # https://bosh.io/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent
-    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468.17
-    sha1: c09040e9e0fcef6dffaece68f8d4173066e4f458
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3468.21
+    sha1: d4975f4610e0856c4f2e4a37f973a5ddd4263860
 
 - type: replace
 # Currently AWS has trouble attaching this disktype: replace
