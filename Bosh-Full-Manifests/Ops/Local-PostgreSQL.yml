@@ -1,0 +1,52 @@
+---
+- type: remove
+  path: /jobs/name=backup-postgresql-databases-cf?
+
+- type: remove
+  path: /properties/cc/security_group_definitions/name=postgres_networks?
+
+- type: replace
+  path: /jobs/name=postgres?
+  value:
+    name: postgres
+    instances: 1
+    azs:
+    persistent_disk: 10240
+    vm_type: medium_vm
+    stemcell: default
+    templates:
+    - {name: postgres, release: cf}
+    - {name: metron_agent, release: cf}
+    - {name: consul_agent, release: cf, consumes: {consul_client: {from: consul_client_link}, consul_server: nil, consul_common: {from: consul_common_link}}}
+    networks:
+    - name: cf_private
+      static_ips: [((postgres_az1_ip1))
+    update:
+      serial: true
+    properties:
+      metron_agent:
+        zone: z1
+
+- type: replace
+  path: /properties/ccdb/address?
+  value: ((postgres_az1_ip1))
+
+- type: replace
+  path: /properties/ccdb/port
+  value: 5432
+
+- type: replace
+  path: /properties/diego/bbs/sql/db_host?
+  value: ((postgres_az1_ip1))
+
+- type: replace
+  path: /properties/diego/bbs/sql/db_port?
+  value: 5432
+
+- type: replace
+  path: /properties/uaadb/address?
+  value: ((postgres_az1_ip1))
+
+- type: replace
+  path: /properties/uaadb/port
+  value: 5432

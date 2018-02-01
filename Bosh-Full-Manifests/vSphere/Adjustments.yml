@@ -1,4 +1,10 @@
 ---
+- type: remove
+  path: /jobs/name=backup-postgresql-databases-cf?
+
+- type: remove
+  path: /properties/cc/security_group_definitions/name=postgres_networks?
+
 - type: replace
   path: /jobs/name=postgres?
   value:
