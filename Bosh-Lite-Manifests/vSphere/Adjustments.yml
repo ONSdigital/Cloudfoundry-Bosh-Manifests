@@ -42,9 +42,6 @@
   path: /jobs/name=((deployment_name))-boshlite/persistent_disk_pool?
   value: large_disk
 
-- type: remove
-  path: /jobs/name=((deployment_name))-boshlite/templates/name=database-creation?
-
 # Also exists further down
 - type: replace
   path: /jobs/name=((deployment_name))-boshlite/properties/vcenter?
@@ -102,16 +99,6 @@
 
 - type: remove
   path: /jobs/name=((deployment_name))-boshlite/properties/s3_config?
-
-- type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/postgres?
-  value:
-    listen_address: 127.0.0.1
-    host: 127.0.0.1
-    user: bosh
-    password: ((bosh_db_password))
-    database: bosh
-    adapter: postgres
 
 - type: replace
   path: /cloud_provider/template/name=aws_cpi?
