@@ -178,7 +178,10 @@
     host: ((director_dns))
     port: 22
     user: vcap
-    private_key: ((bosh_ssh_key_file))
+    # We only want the name of the file here.  The full path will change depending when/where its deployed
+    # Previously, if a relative path was used this would end up being under the Bosh Lite manifest folder.  It now appears, this has
+    # changed to be in the same folder that contains the Bosh Lite state file
+    private_key: ((bosh_ssh_key_filename))
 
 - type: replace
   path: /cloud_provider/properties/aws?
