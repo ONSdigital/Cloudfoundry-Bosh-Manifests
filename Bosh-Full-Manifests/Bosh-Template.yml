@@ -660,6 +660,8 @@ properties:
   #  - {name: uaaadmin, password: ((uaa_db_password)), tag: admin}
   #  - {name: diego, password: ((diego_db_password)), tag: admin}
   description: Cloud Foundry - ((organisation))
+  build: ((build_hash)) ((build_date))
+  #support_address
   domain: system.((domain_name))
   etcd:
     advertise_urls_dns_suffix: cf-etcd.service.cf.internal
