@@ -31,8 +31,8 @@ vm_types:
   cloud_properties:
     instance_type: t2.small
     lb_target_groups:
-    - ((application_elb_target_group80))
-    - ((application_elb_target_group443))
+    - ((application_elb_target_group_tcp_80))
+    - ((application_elb_target_group_tcp_443))
     security_groups: [((router_security_group)),((private_security_group))]
 - name: small_smtp_sender_general
   cloud_properties:
@@ -54,8 +54,8 @@ vm_types:
   cloud_properties:
     instance_type: t2.medium
     lb_target_groups:
-    - ((application_elb_target_group80))
-    - ((application_elb_target_group443))
+    - ((application_elb_target_group_tcp_80))
+    - ((application_elb_target_group_tcp_443))
     security_groups: [((router_security_group)),((private_security_group))]
 - name: medium_smtp_sender_general
   cloud_properties:
