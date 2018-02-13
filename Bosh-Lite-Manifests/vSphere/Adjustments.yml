@@ -17,8 +17,8 @@
     name: bosh-vsphere-esxi-ubuntu-trusty-go_agent
     # https://bosh.io/stemcells/
     # https://bosh.io/stemcells/bosh-vcloud-esxi-ubuntu-trusty-go_agent
-    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3468.21
-    sha1: 9de0274aee02a4ab8ad210cd8f19021c43ba6b5b
+    url: https://bosh.io/d/stemcells/bosh-vsphere-esxi-ubuntu-trusty-go_agent?v=3541.2
+    sha1: c9c6e54fcdeff270426abd477d0df9cd56c4c8b3
 
 - type: replace
   path: /resource_pools/name=bosh_vm/cloud_properties/availability_zone?
