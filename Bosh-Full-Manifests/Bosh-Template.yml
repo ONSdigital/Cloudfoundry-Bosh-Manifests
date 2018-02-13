@@ -661,7 +661,6 @@ properties:
   #  - {name: diego, password: ((diego_db_password)), tag: admin}
   name: ((bosh_deployment))
   description: Cloud Foundry - ((organisation))
-  build: ((build_date)) ((build_hash))
   domain: system.((domain_name))
   etcd:
     advertise_urls_dns_suffix: cf-etcd.service.cf.internal
