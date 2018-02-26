@@ -14,12 +14,7 @@
     type: password
   - name: rabbitmq_broker_password
     type: password
-  - name: uaa_admin_client_secret
-    type: password
-  - name: uaa_batch_password
-    type: password
-  - name: uaa_cc_client_secret
-    type: password
+
   - name: router_status_password
     type: password
   - name: router_route_services_secret
@@ -36,11 +31,19 @@
     type: password
   - name: doppler_shared_secret
     type: password
+  - name: uaa_admin_client_secret
+    type: password
+  - name: uaa_batch_password
+    type: password
+  - name: uaa_cc_client_secret
+    type: password
   - name: uaa_cc_service_dashboard_client_secret
     type: password
   - name: uaa_cc_routing_client_secret
     type: password
   - name: uaa_cc_service_key_client_secret
+    type: password
+  - name: uaa_cf_admin_secret
     type: password
   - name: uaa_cf_services_secret
     type: password
