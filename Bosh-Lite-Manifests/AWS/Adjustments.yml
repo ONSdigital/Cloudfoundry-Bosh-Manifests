@@ -139,6 +139,8 @@
     admin_database: postgres
     postgresql_host: ((apps_db_dns))
     postgresql_port: ((apps_db_port))
+    # These extensions get installed into the template1 database, so all new databases are created with them
+    global_extensions: [pgcrypto]
     rds: true
     databases:
     - { name: rds_broker, extensions: [pgcrypto], ignore_existing: true }
