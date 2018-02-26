@@ -451,7 +451,6 @@ jobs:
         - "login.system.((domain_name))"
         - "*.login.system.((domain_name))"
     uaa:
-      # UAA admin, not CF admin
       admin:
         client_secret: ((uaa_admin_client_secret))
       batch:
@@ -459,6 +458,8 @@ jobs:
         username: batch_user
       cc:
         client_secret: ((uaa_cc_client_secret))
+      cf_admin:
+        client_secret: ((uaa_cf_admin_client_secret))
 
 - name: router
   instances: ((router_instances))
@@ -815,7 +816,6 @@ properties:
     scim:
       userids_enabled: true
       users:
-      # CF admin, not UAA admin
       - name: admin
         password: ((admin_password))
         groups:
@@ -828,6 +828,14 @@ properties:
         - doppler.firehose
         - routing.router_groups.read
         - routing.router_groups.write
+      - name: cf_admin
+        password: ((cf_admin_password))
+        # May need to add more permissions
+        groups:
+        - cloud_controller.admin
+        - uaa.admin
+        - scim.read
+        - scim.write
       - name: smoke_tester
         password: ((smoke_tester_password))
         groups:
