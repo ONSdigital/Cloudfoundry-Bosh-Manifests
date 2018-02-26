@@ -45,6 +45,8 @@
     type: password
   - name: uaa_cf_admin_secret
     type: password
+  - name: cf_admin_password
+    type: password
   - name: uaa_cf_services_secret
     type: password
   - name: uaa_cf_secret
