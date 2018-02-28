@@ -1064,14 +1064,9 @@ properties:
         password: ((rabbitmq_broker_password))
   rabbitmq-haproxy:
     ports:
-    - 5671
-    - 5672
-    - 1883
-    - 8883
-    - 61613
-    - 61614
-    - 15672
-    - 15674
+    - 5671	# AMQPS
+    - 8883	# MQTT+SSL	
+    - 15672	# management+SSL
     stats:
       username: rabbitmq-stats
       password: ((rabbitmq_stats_password))
@@ -1080,14 +1075,9 @@ properties:
     - rabbitmq_management
     - rabbitmq_mqtt
     ports:
-    - 5671
-    - 5672
-    - 1883
-    - 8883
-    - 61613
-    - 61614
-    - 15672
-    - 15674
+    - 5671	# AMQPS
+    - 8883	# MQTT+SSL
+    - 15672	# management+SSL
     administrators:
       management:
         username: rabbitmq-management

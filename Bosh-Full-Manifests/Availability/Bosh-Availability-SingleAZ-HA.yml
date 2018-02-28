@@ -56,9 +56,6 @@ uaa_instances: 2
 uaa_azs: [az1]
 
 rabbitmq_network_rules:
-- {destination: ((rabbitmq_az1_cidr)), ports: '1883', protocol: tcp}
 - {destination: ((rabbitmq_az1_cidr)), ports: '8883', protocol: tcp}
 - {destination: ((rabbitmq_az1_cidr)), ports: '5671', protocol: tcp}
-- {destination: ((rabbitmq_az1_cidr)), ports: '5672', protocol: tcp}
 - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp}
-- {destination: ((rabbitmq_az1_cidr)), ports: '15674', protocol: tcp}
