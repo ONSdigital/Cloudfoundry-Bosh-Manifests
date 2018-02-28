@@ -1065,29 +1065,16 @@ properties:
   rabbitmq-haproxy:
     ports:
     - 5671
-    - 5672
-    - 1883
-    - 8883
-    - 61613
-    - 61614
     - 15672
-    - 15674
     stats:
       username: rabbitmq-stats
       password: ((rabbitmq_stats_password))
   rabbitmq-server:
     plugins:
     - rabbitmq_management
-    - rabbitmq_mqtt
     ports:
     - 5671
-    - 5672
-    - 1883
-    - 8883
-    - 61613
-    - 61614
     - 15672
-    - 15674
     administrators:
       management:
         username: rabbitmq-management
