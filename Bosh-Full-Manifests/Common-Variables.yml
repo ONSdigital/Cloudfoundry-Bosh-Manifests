@@ -375,3 +375,4 @@
       common_name: rabbitmq-node.service.cf.internal
       extended_key_usage:
       - server_auth
+      - client_auth
