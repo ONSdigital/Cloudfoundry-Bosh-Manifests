@@ -8,6 +8,7 @@ doppler_vm_type: medium_general
 etcd_vm_type: micro_general
 loggregator_trafficcontroller_vm_type: small_general
 nats_vm_type: small_general
+postgresql_backup_vm_type: micro_general_blobstore_backup
 rabbitmq-broker-deregistrar_vm_type: micro_general
 rabbitmq-broker-registrar_vm_type: micro_general
 rabbitmq-broker-smoke-tests-az1_vm_type: micro_general
