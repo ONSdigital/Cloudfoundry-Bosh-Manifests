@@ -1056,6 +1056,7 @@ properties:
   rabbitmq-haproxy:
     ports:
     - 5671
+    - 5672
     - 15672
     stats:
       username: rabbitmq-stats
@@ -1065,6 +1066,7 @@ properties:
     - rabbitmq_management
     ports:
     - 5671
+    - 5672
     - 15672
     administrators:
       management:
@@ -1078,6 +1080,20 @@ properties:
       cert: ((rabbitmq_server.certificate))
       key: ((rabbitmq_server.private_key))
       cacert: ((rabbitmq_server.ca))
+      verification_depth: 4
+      ciphers:
+      - ECDHE-ECDSA-AES256-GCM-SHA384
+      - ECDHE-RSA-AES256-GCM-SHA384
+      - ECDHE-ECDSA-AES256-SHA384
+      - ECDHE-RSA-AES256-SHA384
+      - ECDHE-ECDSA-DES-CBC3-SHA
+      - ECDH-ECDSA-AES256-GCM-SHA384
+      - ECDH-RSA-AES256-GCM-SHA384
+      - ECDH-ECDSA-AES256-SHA384
+      - ECDH-RSA-AES256-SHA384
+      - DHE-DSS-AES256-GCM-SHA384
+      - DHE-DSS-AES256-SHA256
+      - AES256-GCM-SHA384
   smoke_tests:
     api: https://api.system.((domain_name))
     apps_domain: [apps.((domain_name))]
