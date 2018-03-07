@@ -44,30 +44,30 @@ update:
 
 jobs:
 # https://github.com/cloudfoundry/bosh/issues/1639
-#- name: backup-postgresql-databases-cf
-#  instances: 1
-#  lifecycle: errand
-#  vm_type: small_general_blobstore_backup
-#  stemcell: default
-#  networks:
-#  - name: cf_private
-#  azs: [az1]
-#  templates:
-#  - {name: database-backup, release: postgresql-databases}
-#  properties:
-#    s3_config:
-#      bucket_name: ((backup_bucket))
-#      credentials_source: env_or_profile
-#      region: ((aws_region))
-#    postgresql_databases:
-#      admin_username: ((cf_db_admin_username))
-#      admin_password: ((cf_db_admin_password))
-#      admin_database: postgres
-#      rds: true
-#      # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
-#      databases:
-#       - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
-#       - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }
+- name: backup-postgresql-databases-cf
+  instances: 1
+  lifecycle: errand
+  vm_type: small_general_blobstore_backup
+  stemcell: default
+  networks:
+  - name: cf_private
+  azs: [az1]
+  templates:
+  - {name: database-backup, release: postgresql-databases}
+  properties:
+    s3_config:
+      bucket_name: ((backup_bucket))
+      credentials_source: env_or_profile
+      region: ((aws_region))
+    postgresql_databases:
+      admin_username: ((cf_db_admin_username))
+      admin_password: ((cf_db_admin_password))
+      admin_database: postgres
+      rds: true
+      # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
+      databases:
+       - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
+       - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }
 
 - name: rabbitmq-broker-registrar
   instances: 1
