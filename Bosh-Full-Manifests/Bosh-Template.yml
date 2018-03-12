@@ -1021,6 +1021,9 @@ properties:
       enable_diego_auth: false
       uaa_secret: ((uaa_ssh_proxy_secret))
       uaa_token_url: https://uaa.system.((domain_name))/oauth/token
+      uaa:
+        port: 8443
+        ca_cert: ((uaa_ssl.ca))
       healthcheck_listen_addr: 0.0.0.0:2223
       listen_addr: 0.0.0.0:2222
     ssl:
