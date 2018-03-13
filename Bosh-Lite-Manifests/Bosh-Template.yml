@@ -10,8 +10,8 @@ metadata:
 releases:
 - name: bosh
   # https://bosh.io/releases/github.com/cloudfoundry/bosh?all=1
-  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=264.8.0
-  sha1: 3c6a1d5d9f1b191adccbeb9336395974f96acd0d
+  url: https://bosh.io/d/github.com/cloudfoundry/bosh?v=265.1.0
+  sha1: f86549c6ddec61c707a6bf359a9a2188951a7d93
 
 resource_pools:
 - name: bosh_vm
