@@ -897,7 +897,6 @@ properties:
         ca_cert: ((bbs_nsync_client.ca))
         client_cert: ((bbs_nsync_client.certificate))
         client_key: ((bbs_nsync_client.private_key))
-        require_ssl: true
       cc:
         basic_auth_password: ((internal_api_password))
         base_url: http://cloud-controller-ng.service.cf.internal:9022
@@ -907,7 +906,6 @@ properties:
         ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_tps_client.certificate))
         client_key: ((bbs_tps_client.private_key))
-        require_ssl: true
       cc:
         ca_cert: ((cc_bridge_tps.ca))
         client_cert: ((cc_bridge_tps.certificate))
@@ -920,7 +918,6 @@ properties:
         ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_stager_client.certificate))
         client_key: ((bbs_stager_client.private_key))
-        require_ssl: true
       cc:
         basic_auth_password: ((internal_api_password))
   diego:
@@ -936,9 +933,7 @@ properties:
       ca_cert: ((diego_auctioneer_server.ca))
       server_cert: ((diego_auctioneer_server.certificate))
       server_key: ((diego_auctioneer_server.private_key))
-      require_ssl: true
       rep:
-        require_tls: true
         ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_rep_client.certificate))
         client_key: ((bbs_rep_client.private_key))
@@ -946,14 +941,12 @@ properties:
       ca_cert: ((diego_bbs_server.ca))
       client_cert: ((bbs_diego_client.certificate))
       client_key: ((bbs_diego_client.private_key))
-      require_ssl: true
       server_cert: ((diego_bbs_server.certificate))
       server_key: ((diego_bbs_server.private_key))
       auctioneer: &diego_auctioneer_client_properties
         ca_cert: ((bbs_auctioneer_client.ca))
         client_cert: ((bbs_auctioneer_client.certificate))
         client_key: ((bbs_auctioneer_client.private_key))
-        require_tls: true
       active_key_label: active
       encryption_keys:
       - label: active
@@ -964,12 +957,10 @@ properties:
         # clientName
         client_cert: ((etcd_client.certificate))
         client_key: ((etcd_client.private_key))
-        require_ssl: true
       rep:
         ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_rep_client.certificate))
         client_key: ((bbs_rep_client.private_key))
-        require_tls: true
       sql:
         db_driver: postgres
         db_host: ((cf_db_dns))
@@ -983,15 +974,12 @@ properties:
         ca_cert: ((bbs_converger_client.ca))
         client_cert: ((bbs_converger_client.certificate))
         client_key: ((bbs_converger_client.private_key))
-        require_ssl: true
     rep:
       bbs:
         ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_rep_client.certificate))
         client_key: ((bbs_rep_client.private_key))
-        require_ssl: true
       preloaded_rootfses: ["cflinuxfs2:/var/vcap/packages/cflinuxfs2/rootfs.tar"]
-      require_tls: true
       ca_cert: ((diego_rep_agent.ca))
       server_cert: ((diego_rep_agent.certificate))
       server_key: ((diego_rep_agent.private_key))
@@ -1004,7 +992,6 @@ properties:
         ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_routeemitter_client.certificate))
         client_key: ((bbs_routeemitter_client.private_key))
-        require_ssl: true
       nats:
         machines: ((nats_static_ips))
         password: ((nats_password))
@@ -1015,7 +1002,6 @@ properties:
         ca_cert: ((diego_bbs_server.ca))
         client_cert: ((bbs_sshproxy_client.certificate))
         client_key: ((bbs_sshproxy_client.private_key))
-        require_ssl: true
       host_key: ((diego_ssh_proxy_host_key.private_key))
       enable_cf_auth: true
       enable_diego_auth: false
