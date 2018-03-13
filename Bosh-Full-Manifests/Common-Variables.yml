@@ -230,6 +230,8 @@
       alternative_names:
       - "*.cell.service.cf.internal"
       - cell.service.cf.internal
+      # Diego 2.1.0 (with Locket disabled)
+      - 127.0.0.1
   - name: etcd_ca
     type: certificate
     options:

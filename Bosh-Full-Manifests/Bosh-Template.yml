@@ -636,7 +636,7 @@ properties:
     roles:
     - {name: ccadmin, password: ((cc_db_password)), tag: admin}
   # Temporary until manifests have been adjusted to support Locket
-  cell_registration:
+  cell_registrations:
     locket:
       enabled: false
   consul:
