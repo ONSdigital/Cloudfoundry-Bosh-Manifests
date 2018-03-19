@@ -2,7 +2,7 @@
 
 Series of Bosh manifests to create a Cloudfoundry installation
 
-- Bosh-Lite-Manifests
+- Bosh-Director-Manifests
   - Bosh-Template-AWS.yml
     - This contains the manifest require to create an initial Bosh environment (eg bosh create-env)
     - AWS specific
