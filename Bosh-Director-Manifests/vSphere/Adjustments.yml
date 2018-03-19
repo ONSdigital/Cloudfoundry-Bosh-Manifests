@@ -33,18 +33,18 @@
   value: 4096
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/templates/name=vsphere_cpi?
+  path: /jobs/name=((deployment_name))-bosh-director/templates/name=vsphere_cpi?
   value:
   - name: vsphere_cpi
     release: bosh-vsphere-cpi
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/persistent_disk_pool?
+  path: /jobs/name=((deployment_name))-bosh-director/persistent_disk_pool?
   value: large_disk
 
 # Also exists further down
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/vcenter?
+  path: /jobs/name=((deployment_name))-bosh-director/properties/vcenter?
   value:
     address: [((vcenter_address))]
     user: [((vcenter_username))]
@@ -62,9 +62,9 @@
       clusters: [((vcenter_clusters))]
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/blobstore?
+  path: /jobs/name=((deployment_name))-bosh-director/properties/blobstore?
   value:
-    address: ((bosh_lite_private_ip))
+    address: ((bosh_director_private_ip))
     port: 25250
     provider: dav
     director:
@@ -75,14 +75,14 @@
       password: ((agent_blobstore_password))
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/compiled_package_cache?
+  path: /jobs/name=((deployment_name))-bosh-director/properties/compiled_package_cache?
   value:
-    address: ((bosh_lite_private_ip))
+    address: ((bosh_director_private_ip))
     port: 25250
     provider: dav
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/director/backup_destination?
+  path: /jobs/name=((deployment_name))-bosh-director/properties/director/backup_destination?
   value:
     provider: s3
     options:
@@ -91,14 +91,14 @@
       bucket_name: ((director_backup_bucket))
 
 - type: remove
-  path: /jobs/name=((deployment_name))-boshlite/properties/default_ssh_options?
+  path: /jobs/name=((deployment_name))-bosh-director/properties/default_ssh_options?
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/director/cpi_job?
+  path: /jobs/name=((deployment_name))-bosh-director/properties/director/cpi_job?
   value: vsphere_cpi
 
 - type: remove
-  path: /jobs/name=((deployment_name))-boshlite/properties/s3_config?
+  path: /jobs/name=((deployment_name))-bosh-director/properties/s3_config?
 
 - type: replace
   path: /cloud_provider/template/name=aws_cpi?

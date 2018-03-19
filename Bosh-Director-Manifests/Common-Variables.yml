@@ -32,13 +32,13 @@
     options:
       ca: default_ca
       common_name: director.((domain_name))
-      alternative_names: [((bosh_lite_private_ip))]
+      alternative_names: [((bosh_director_private_ip))]
   - name: mbus_bootstrap_ssl
     type: certificate
     options:
       ca: default_ca
       common_name: director.((domain_name))
-      alternative_names: [((bosh_lite_private_ip))]
+      alternative_names: [((bosh_director_private_ip))]
   - name: nats_ca
     type: certificate
     options:
@@ -49,7 +49,7 @@
     options:
       ca: nats_ca
       common_name: default.nats.bosh-internal
-      alternative_names: [((bosh_lite_private_ip)),director.((domain_name))]
+      alternative_names: [((bosh_director_private_ip)),director.((domain_name))]
       extended_key_usage:
       - server_auth
   - name: nats_clients_director_tls
