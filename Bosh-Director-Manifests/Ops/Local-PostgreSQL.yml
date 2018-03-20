@@ -3,10 +3,10 @@
   path: /releases/name=postgresql-databases?
 
 - type: remove
-  path: /jobs/name=((deployment_name))-boshlite/templates/name=database-creation?
+  path: /jobs/name=((deployment_name))-bosh-director/templates/name=database-creation?
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/properties/postgres?
+  path: /jobs/name=((deployment_name))-bosh-director/properties/postgres?
   value:
     listen_address: 127.0.0.1
     host: 127.0.0.1
@@ -16,7 +16,7 @@
     adapter: postgres
 
 - type: replace
-  path: /jobs/name=((deployment_name))-boshlite/templates/name=postgres-9.4?
+  path: /jobs/name=((deployment_name))-bosh-director/templates/name=postgres-9.4?
   value:
   - name: postgres-9.4
     release: bosh
