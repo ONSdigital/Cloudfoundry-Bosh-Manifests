@@ -12,7 +12,7 @@ Series of Bosh manifests to create a Cloudfoundry installation
 - Bosh-static-ips.yml
   - List of static/reserved IPs
 
-## Bosh-Full-Manifests
+## Bosh-CF-Manifests
 - Bosh-Template-AWS-CloudConfig.yml
   - AWS CPI manifest, single AZ
 - Bosh-Template-AWS-CloudConfig-MultiAZ.yml

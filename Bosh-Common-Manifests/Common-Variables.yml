@@ -1,4 +1,4 @@
-# Variables shared across director & full deployments
+# Variables shared across director & CF deployments
 ---
 variables:
   - name: cc_db_password
