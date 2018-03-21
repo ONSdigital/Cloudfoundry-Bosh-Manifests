@@ -1,0 +1,4 @@
+---
+- type: replace
+  path: /cloud_provider/mbus
+  value: "https://mbus:((mbus_password))@((director_dns)):6868"

@@ -1,0 +1,6 @@
+---
+- type: replace
+  path: /instance_groups/name=bosh/properties/director/user_management/local/users/name=admin
+  value:
+    name: director
+    password: ((director_password))

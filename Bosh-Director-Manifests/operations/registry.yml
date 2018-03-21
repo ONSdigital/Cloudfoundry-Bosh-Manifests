@@ -1,0 +1,19 @@
+---
+- type: replace
+  path: /instance_groups/name=bosh/properties/registry?
+  value:
+    host: ((internal_ip))
+    http:
+      user: admin
+      password: ((http_password))
+      port: 25777
+    username: admin
+    password: ((registry_password))
+    port: 25777
+    db:
+      host: ((bosh_db_dns))
+      port: ((bosh_db_port))
+      user: bosh
+      password: ((bosh_db_password))
+      database: bosh
+      adapter: postgres

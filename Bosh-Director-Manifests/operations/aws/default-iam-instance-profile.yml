@@ -1,0 +1,5 @@
+---
+# All VMs need to be able to write to the blob store to create logs!
+- type: replace
+  path: /cloud_provider/properties/aws/default_iam_instance_profile?
+  value: ((blobstore_bucket_access_instance_profile))

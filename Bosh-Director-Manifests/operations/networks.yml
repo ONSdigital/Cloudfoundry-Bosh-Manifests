@@ -1,0 +1,9 @@
+---
+- type: replace
+  path: /networks/name=default/subnets
+  value:
+    - range: ((director_az1_cidr))
+        gateway: ((director_az1_default_route))
+        dns: [((dns_ip))]
+        reserved: ["((director_az1_reserved_start)) - ((director_az1_reserved_stop))"]
+        static: ["((director_az1_static_start)) - ((director_az1_static_stop))"]
