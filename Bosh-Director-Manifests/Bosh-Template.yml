@@ -47,7 +47,7 @@ networks:
     static: ["((director_az1_static_start)) - ((director_az1_static_stop))"]
 
 jobs:
-- name: ((deployment_name))-boshlite
+- name: ((deployment_name))-bosh-director
   instances: 1
   templates:
   - {name: nats, release: bosh}
@@ -59,10 +59,10 @@ jobs:
   resource_pool: bosh_vm
   networks:
   - name: cf_director
-    static_ips: [((bosh_lite_private_ip))]
+    static_ips: [((bosh_director_private_ip))]
     default: [dns, gateway]
   properties:
-    agent: {mbus: "nats://nats:((nats_password))@((bosh_lite_private_ip)):4222"}
+    agent: {mbus: "nats://nats:((nats_password))@((bosh_director_private_ip)):4222"}
     director:
       address: 127.0.0.1
       name: ((deployment_name))
@@ -126,7 +126,7 @@ jobs:
           private_key: ((nats_clients_health_monitor_tls.private_key))
     ntp: &ntp [0.pool.ntp.org, 1.pool.ntp.org]
     registry:
-      host: ((bosh_lite_private_ip))
+      host: ((bosh_director_private_ip))
       http:
         user: admin
         password: ((http_password))

@@ -1,0 +1,12 @@
+---
+- type: replace
+  path: /instance_groups/name=bosh/properties/default_ssh_options?/gateway_host?
+  value: ((director_dns))
+
+- type: replace
+  path: /cloud_provider/ssh_tunnel/host
+  value: ((director_dns))
+
+- type: replace
+  path: /cloud_provider/ssh_tunnel/private_key
+  value: ((bosh_ssh_key_filename))

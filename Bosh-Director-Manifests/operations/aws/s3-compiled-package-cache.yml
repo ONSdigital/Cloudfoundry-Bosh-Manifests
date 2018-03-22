@@ -1,0 +1,9 @@
+---
+- type: replace
+  path: /instance_groups/name=bosh/properties/compiled_package_cache?
+  value:
+    provider: s3
+    options:
+      s3_region: ((aws_region))
+      credentials_source: env_or_profile
+      bucket_name: ((compiled_package_cache_bucket))

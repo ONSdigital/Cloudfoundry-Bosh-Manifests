@@ -1,0 +1,4 @@
+---
+- type: replace
+  path: /resource_pools/name=vms/cloud_properties/security_groups?
+  value: [((director_instance_security_group))]
