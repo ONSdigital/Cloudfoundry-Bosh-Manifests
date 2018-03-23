@@ -9,7 +9,7 @@
     # Without these templates/read_users.erb fails to render
     director:
       user: director
-      password: ((director_blobstore_password))
+      password: ((blobstore_director_password))
     agent:
       user: agent
-      password: ((agent_blobstore_password))
+      password: ((blobstore_agent_password))

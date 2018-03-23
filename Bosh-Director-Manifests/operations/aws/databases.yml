@@ -79,3 +79,15 @@
     - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext], no_restore: true, ignore_existing: true }
     - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
     - { name: locket, username: locket, password: ((locket_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
+
+- type: replace
+  path: /variables/-
+  value:
+    name: locket_db_password
+    type: password
+
+- type: replace
+  path: /variables/-
+  value:
+    name: bosh_db_password
+    type: password

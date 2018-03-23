@@ -4,3 +4,9 @@
   value:
     name: director
     password: ((director_password))
+
+- type: replace
+  path: /variables/-
+  value:
+    name: director_password
+    type: password
