@@ -1,0 +1,28 @@
+---
+- type: replace
+  path: /instance_groups/-
+  value:
+    name: backup-postgresql-databases-cf
+    instances: 1
+    lifecycle: errand
+    vm_type: ((postgresql_backup_vm_type))
+    stemcell: default
+    networks:
+    - name: default
+    azs: [az1]
+    jobs:
+      - name: database-backup
+        release: postgresql-databases
+    properties:
+      s3_config:
+        bucket_name: ((backup_bucket))
+        credentials_source: env_or_profile
+        region: ((aws_region))
+      postgresql_databases:
+      - name: cloudfoundry
+        postgresql_host: ((cf_db_dns))
+        postgresql_port: ((cf_db_port))
+        # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
+        databases:
+        - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
+        - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }

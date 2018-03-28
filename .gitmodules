@@ -1,3 +1,6 @@
 [submodule "Bosh-Director-Manifests/bosh-deployment"]
 	path = Bosh-Director-Manifests/bosh-deployment
 	url = https://github.com/cloudfoundry/bosh-deployment.git
+[submodule "Bosh-CF-Manifests/cf-deployment"]
+	path = Bosh-CF-Manifests/cf-deployment
+	url = https://github.com/cloudfoundry/cf-deployment.git
