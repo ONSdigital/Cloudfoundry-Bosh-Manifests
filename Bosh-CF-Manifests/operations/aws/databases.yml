@@ -26,3 +26,9 @@
         databases:
         - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
         - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }
+
+- type: replace
+  path: /releases/-
+  value:
+    name: postgresql-databases
+    version: latest
