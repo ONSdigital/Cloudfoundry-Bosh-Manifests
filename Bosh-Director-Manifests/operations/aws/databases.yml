@@ -79,11 +79,32 @@
     - { name: diego, username: diego, password: ((diego_db_password)), extensions: [pgcrypto,citext], no_restore: true, ignore_existing: true }
     - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
     - { name: locket, username: locket, password: ((locket_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
+    - { name: policy_server, username: policy_server, password: ((policy_server_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
+    - { name: routing_api, username: routing_api, password: ((routing_api_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
+    - { name: silk, username: silk, password: ((silk_db_password)), extensions: [pgcrypto,citext], ignore_existing: true }
 
 - type: replace
   path: /variables/-
   value:
     name: locket_db_password
+    type: password
+
+- type: replace
+  path: /variables/-
+  value:
+    name: policy_server_db_password
+    type: password
+
+- type: replace
+  path: /variables/-
+  value:
+    name: routing_api_db_password
+    type: password
+
+- type: replace
+  path: /variables/-
+  value:
+    name: silk_db_password
     type: password
 
 - type: replace
