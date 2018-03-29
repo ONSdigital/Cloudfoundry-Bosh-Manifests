@@ -327,7 +327,7 @@ compilation:
   workers: 6
   network: default
   reuse_compilation_vms: true
-  az: az1
+  az: z1
   cloud_properties:
     instance_type: c3.large
     ephemeral_disk:

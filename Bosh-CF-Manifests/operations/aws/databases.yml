@@ -9,7 +9,7 @@
     stemcell: default
     networks:
     - name: default
-    azs: [az1]
+    azs: [z1]
     jobs:
       - name: database-backup
         release: postgresql-databases
