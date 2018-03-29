@@ -49,6 +49,14 @@ disk_types:
   name: 1TB
 
 vm_extensions:
+- name: cf-router-network-properties
+  cloud_properties:
+    lb_target_groups:
+      - ((cf-router-lb-group))
+      - ((cf-router-tls-lb-group))
+- name: diego-ssh-proxy-network-properties
+  cloud_properties:
+    elbs: [((cf-ssh-lb-elb))]
 - cloud_properties:
     ephemeral_disk:
       size: 1024
@@ -314,14 +322,6 @@ vm_types:
       type: gp2
     instance_type: c3.large
   name: small-highcpu
-- name: cf-router-network-properties
-  cloud_properties:
-    lb_target_groups:
-      - ((cf-router-lb-group))
-      - ((cf-router-tls-lb-group))
-- name: diego-ssh-proxy-network-properties
-  cloud_properties:
-    elbs: [((cf-ssh-lb-elb))]
 
 compilation:
   workers: 6
