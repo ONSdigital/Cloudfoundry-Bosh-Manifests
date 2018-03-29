@@ -86,3 +86,7 @@
 - type: replace
   path: /instance_groups/name=log-api/azs
   value: [z1]
+
+- type: replace
+  path: /instance_groups/name=diego-cell/azs
+  value: [z1]
