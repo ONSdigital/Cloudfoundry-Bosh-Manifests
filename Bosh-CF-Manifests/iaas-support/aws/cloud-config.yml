@@ -52,14 +52,24 @@ vm_extensions:
 - name: cc-instance-profile
   cloud_properties:
     iam_instance_profile: ((cc_instance_profile))
+- name: cf-router-sec-group
+  cloud_properties:
+    security_groups:
+      - ((private_security_group))
+      - ((cf_router_sec_group))
+- name: diego-ssh-sec-group
+  cloud_properties:
+    security_groups:
+      - ((private_security_group))
+      - ((diego_ssh_sec_group))
 - name: cf-router-network-properties
   cloud_properties:
     lb_target_groups:
-      - ((cf-router-lb-group))
-      - ((cf-router-tls-lb-group))
+      - ((cf_router_lb_group))
+      - ((cf_router_tls_lb_group))
 - name: diego-ssh-proxy-network-properties
   cloud_properties:
-    elbs: [((cf-ssh-lb-elb))]
+    elbs: [((cf_ssh_lb_elb))]
 - cloud_properties:
     ephemeral_disk:
       size: 1024
