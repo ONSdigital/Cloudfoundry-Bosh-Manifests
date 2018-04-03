@@ -1,4 +1,4 @@
 ---
 - type: replace
-  path: /tags?/deployment?
+  path: /tags?/deployment-alias?
   value: ((deployment_name))
