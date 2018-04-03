@@ -1,8 +1,8 @@
 ---
 - type: replace
   path: /instance_groups/name=router/vm_extensions?/-
-  value: cf_router_sec_group
+  value: cf-router-sec-group
 
 - type: replace
   path: /instance_groups/name=scheduler/vm_extensions?/-
-  value: diego_ssh_sec_group
+  value: diego-ssh-sec-group
