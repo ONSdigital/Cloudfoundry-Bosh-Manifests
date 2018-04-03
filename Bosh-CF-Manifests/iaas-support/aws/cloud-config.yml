@@ -49,6 +49,9 @@ disk_types:
   name: 1TB
 
 vm_extensions:
+- name: cc-instance-profile
+  cloud_properties:
+    iam_instance_profile: ((cc_instance_profile))
 - name: cf-router-network-properties
   cloud_properties:
     lb_target_groups:
