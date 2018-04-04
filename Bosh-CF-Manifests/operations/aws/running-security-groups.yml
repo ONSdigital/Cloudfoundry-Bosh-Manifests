@@ -1,0 +1,34 @@
+---
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/default_running_security_groups/-
+  value: postgres_networks
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/default_running_security_groups/-
+  value: rabbitmq_networks
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/default_running_security_groups/-
+  value: redis_networks
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/security_group_definitions/-
+  value:
+    name: postgres_networks
+    rules:
+      - {destination: ((rds_az1_cidr)), ports: '5432', protocol: tcp}
+      - {destination: ((rds_az2_cidr)), ports: '5432', protocol: tcp}
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/security_group_definitions/-
+  value:
+    name: rabbitmq_networks
+    rules: ((rabbitmq_network_rules))
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/security_group_definitions/-
+  value:
+    name: redis_networks
+    rules:
+      - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp}
+      - {destination: ((elasti_cache_az2_cidr)), ports: '6379', protocol: tcp}
