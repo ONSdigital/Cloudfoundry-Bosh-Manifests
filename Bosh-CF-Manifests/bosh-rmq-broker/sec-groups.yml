@@ -1,0 +1,25 @@
+   security_group_definitions:
+    - name: dns
+      rules:
+      - {destination: 0.0.0.0/0, ports: '53', protocol: tcp}
+      - {destination: 0.0.0.0/0, ports: '53', protocol: udp}
+    - name: public_networks
+      rules:
+      - {destination: 0.0.0.0-9.255.255.255, protocol: all}
+      - {destination: 11.0.0.0-169.253.255.255, protocol: all}
+      - {destination: 169.255.0.0-172.15.255.255, protocol: all}
+      - {destination: 172.32.0.0-192.167.255.255, protocol: all}
+      - {destination: 192.169.0.0-255.255.255.255, protocol: all}
+    # XXX XXX XXX XXX XXX
+    - name: postgres_networks
+      rules:
+      - {destination: ((rds_az1_cidr)), ports: '5432', protocol: tcp}
+      - {destination: ((rds_az2_cidr)), ports: '5432', protocol: tcp}
+    # XXX XXX XXX XXX XXX
+    - name: rabbitmq_networks
+      rules: ((rabbitmq_network_rules))
+    # XXX XXX XXX XXX XXX
+    - name: redis_networks
+      rules:
+      - {destination: ((elasti_cache_az1_cidr)), ports: '6379', protocol: tcp}
+      - {destination: ((elasti_cache_az2_cidr)), ports: '6379', protocol: tcp}

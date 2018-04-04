@@ -1,0 +1,159 @@
+---
+name: rabbitmq
+update:
+  canaries: 1
+  canary_watch_time: 30000-1200000
+  max_in_flight: 1
+  serial: false
+  update_watch_time: 5000-1200000
+addons:
+- name: metron_agent
+  include:
+    stemcell:
+    - os: ubuntu-trusty
+  exclude:
+    jobs:
+    - name: smoke_tests
+      release: cf-smoke-tests
+  jobs:
+  - name: metron_agent
+    release: loggregator
+    properties:
+      loggregator:
+        tls:
+          ca_cert: "((loggregator_ca))"
+          metron:
+            cert: "((loggregator_cert))"
+            key: "((loggregator_key))"
+instance_groups:
+- name: registrar
+  instances: 1
+  lifecycle: errand
+  vm_type: minimal
+  stemcell: default
+  networks:
+  - name: default
+  azs: [z1]
+  jobs:
+  - {name: broker-registrar, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
+      protocol: https
+      host: rabbitmq-broker.system.((domain_name))
+      username: rabbitmq-broker
+      password: ((rabbitmq_broker_password))
+
+- name: deregistrar
+  instances: 1
+  lifecycle: errand
+  vm_type: minimal
+  stemcell: default
+  networks:
+  - name: default
+  azs: [z1]
+  jobs:
+  - {name: broker-deregistrar, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      service:
+        name: rabbitmq
+      name: rabbitmq
+
+- name: smoke-tests
+  instances: 1
+  lifecycle: errand
+  vm_type: minimal
+  stemcell: default
+  networks:
+  - name: default
+  azs: [z1]
+  jobs:
+  - {name: smoke-tests, release: cf-rabbitmq-multitenant-broker}
+  properties:
+    broker:
+      name: rabbitmq
+      
+- name: management
+  instances: 3
+  azs: [z1, z2, z3]
+  vm_type: small
+  stemcell: default
+  jobs:
+  - name: consul_agent
+    release: cf
+    consumes:
+      consul_client: {from: consul_client_link, deployment: cf}
+      consul_server: nil
+      consul_common: {from: consul_common_link, deployment: cf}
+  - {name: metron_agent, release: cf}
+  - {name: rabbitmq-haproxy, release: cf-rabbitmq}
+  - {name: route_registrar, release: cf}
+  networks:
+  - name: cf_rabbitmq
+  properties:
+    route_registrar:
+      routes:
+      - name: rabbitmq-mgnt
+        port: 15672
+        registration_interval: 20s
+        uris:
+        - rabbitmq-mgnt.system.((domain_name))
+    consul:
+      agent:
+        services: {}
+
+- name: broker
+  instances: 3
+  azs: [z1, z2, z3]
+  vm_type: minimal
+  stemcell: default
+  persistent_disk: 10240
+  networks:
+  - name: cf_rabbitmq
+  jobs:
+  - name: consul_agent
+    release: cf
+    consumes:
+      consul_client: {from: consul_client_link, deployment: cf}
+      consul_server: nil
+      consul_common: {from: consul_common_link, deployment: cf}
+  - {name: metron_agent, release: cf}
+  - {name: rabbitmq-broker, release: cf-rabbitmq-multitenant-broker}
+  - {name: route_registrar, release: cf}
+  properties:
+    route_registrar:
+      routes:
+      - name: rabbitmq-broker
+        port: 4567
+        registration_interval: 20s
+        uris:
+        - rabbitmq-broker.system.((domain_name))
+
+- name: node
+  instances: 3
+  azs: [z1, z2, z3]
+  vm_type: small
+  stemcell: default
+  persistent_disk: 10240
+  jobs:
+  - name: consul_agent
+    release: cf
+    consumes:
+      consul_client: {from: consul_client_link, deployment: cf}
+      consul_server: nil
+      consul_common: {from: consul_common_link, deployment: cf}
+  - {name: metron_agent, release: cf}
+  - {name: rabbitmq-server, release: cf-rabbitmq}
+  networks:
+  - name: cf_rabbitmq
+  properties:
+    consul:
+      agent:
+        services: {}
+
+variables:
+- name: rabbitmq_broker_password
+  type: password
