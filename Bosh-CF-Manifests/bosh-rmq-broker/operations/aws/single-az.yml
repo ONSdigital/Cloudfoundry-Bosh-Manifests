@@ -1,24 +1,16 @@
 ---
 - type: replace
-  path: /instance_groups/name=management/instances
+  path: /instance_groups/name=rmq/instances
   value: 1
 
 - type: replace
-  path: /instance_groups/name=management/azs
+  path: /instance_groups/name=rmq/azs
   value: [z1]
 
 - type: replace
-  path: /instance_groups/name=broker/instances
+  path: /instance_groups/name=haproxy/instances
   value: 1
 
 - type: replace
-  path: /instance_groups/name=broker/azs
-  value: [z1]
-
-- type: replace
-  path: /instance_groups/name=node/instances
-  value: 1
-
-- type: replace
-  path: /instance_groups/name=node/azs
+  path: /instance_groups/name=haproxy/azs
   value: [z1]

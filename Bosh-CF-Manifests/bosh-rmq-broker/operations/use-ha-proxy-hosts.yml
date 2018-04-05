@@ -1,0 +1,3 @@
+---
+- type: remove
+  path: /instance_groups/name=rmq-broker/jobs/name=rabbitmq-broker/properties/rabbitmq-broker/rabbitmq/hosts
