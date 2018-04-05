@@ -1,0 +1,82 @@
+---
+- type: replace
+  path: /releases/name=cf-rabbitmq?
+  value:
+    name: cf-rabbitmq
+    version: latest
+
+- type: replace
+  path: /instance_groups/-
+  value:
+    name: rmq
+    instances: 3
+    jobs:
+    - name: rabbitmq-server
+      release: cf-rabbitmq
+      properties:
+        rabbitmq-server:
+          restart_statsdb_cron_schedule: "42 */4 * * *"
+          plugins:
+          - rabbitmq_management
+          - rabbitmq_mqtt
+          - rabbitmq_stomp
+          ports:
+          - 5672
+          - 5671
+          - 1883
+          - 8883
+          - 61613
+          - 61614
+          - 15672
+          - 15674
+          administrators:
+            management:
+              username: ((rabbitmq-management-username))
+              password: ((rabbitmq-management-password))
+            broker:
+              username: ((rabbitmq-broker-username))
+              password: ((rabbitmq-broker-password))
+          cookie: "rabbit-cluster:aws"
+          cluster_partition_handling: ((cluster-partition-handling-strategy))
+          disk_alarm_threshold: ((disk_alarm_threshold))
+    vm_type: n1-highmem-2
+    stemcell: trusty
+    persistent_disk_type: 50GB
+    networks:
+    - name: default
+    azs:
+    - z1
+    - z2
+
+- type: replace
+  path: /instance_groups/-
+  value:
+    name: haproxy
+    instances: ((haproxy-instances))
+    jobs:
+    - name: rabbitmq-haproxy
+      release: cf-rabbitmq
+      properties:
+        rabbitmq-haproxy:
+          stats:
+            username: ((haproxy-stats-username))
+            password: ((haproxy-stats-password))
+    - name: route_registrar
+      release: routing
+      consumes:
+        nats: {from: nats, deployment: cf}
+      properties:
+        route_registrar:
+          routes:
+          - name: ((rabbitmq-management-hostname))
+            port: 15672
+            registration_interval: 20s
+            uris:
+            - ((rabbitmq-management-hostname)).((bosh-domain))
+    vm_type: n1-standard-1
+    stemcell: trusty
+    networks:
+    - name: default
+    azs:
+    - z1
+    - z2

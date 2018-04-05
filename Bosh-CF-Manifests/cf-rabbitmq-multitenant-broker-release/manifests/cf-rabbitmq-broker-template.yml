@@ -1,0 +1,113 @@
+---
+name: ((deployment-name))
+director_uuid: ((director-uuid))
+
+releases:
+- name: cf-rabbitmq-multitenant-broker
+  version: latest
+- name: routing
+  version: 0.152.0
+  url: https://bosh.io/d/github.com/cloudfoundry-incubator/cf-routing-release?v=0.152.0
+  sha1: ea67ad087880fc0e492b6cce27fa2a25f977b691
+
+stemcells:
+- alias: trusty
+  os: ubuntu-trusty
+  version: ((stemcell-version))
+
+instance_groups:
+- name: rmq-broker
+  instances: 1
+  jobs:
+  - name: rabbitmq-broker
+    release: cf-rabbitmq-multitenant-broker
+    properties:
+      cf:
+        domain: ((bosh-domain))
+      rabbitmq-broker:
+        route: ((rabbitmq-broker-hostname))
+        cc_endpoint: http://api.((bosh-domain))
+        service:
+          username: ((multitenant-rabbitmq-broker-username))
+          password: ((multitenant-rabbitmq-broker-password))
+          name: ((product-name))
+          uuid: ((rabbitmq-broker-uuid))
+          plan_uuid: ((rabbitmq-broker-plan-uuid))
+          shareable: true
+        logging:
+          level: debug
+          print_stack_traces: false
+        rabbitmq:
+          hosts: ((rabbitmq-hosts))
+          operator_set_policy:
+            enabled: true
+            policy_name: "operator_set_policy"
+            policy_definition: "{\"ha-mode\":\"exactly\",\"ha-params\":2,\"ha-sync-mode\":\"automatic\"}"
+            policy_priority: 50
+          management_domain: ((rabbitmq-management-hostname)).((bosh-domain))
+          management:
+            username: ((rabbitmq-management-username))
+          administrator:
+            username: ((rabbitmq-broker-username))
+            password: ((rabbitmq-broker-password))
+  - name: route_registrar
+    release: routing
+    consumes:
+      nats: {from: nats, deployment: cf}
+    properties:
+      route_registrar:
+        routes:
+        - name: ((rabbitmq-broker-hostname))
+          port: 4567
+          registration_interval: 20s
+          uris:
+          - ((rabbitmq-broker-hostname)).((bosh-domain))
+  - name: broker-registrar
+    release: cf-rabbitmq-multitenant-broker
+    properties:
+      cf:
+        api_url: https://api.((bosh-domain))
+        admin_username: ((cf-admin-username))
+        admin_password: ((cf-admin-password))
+      broker:
+        service:
+          name: ((product-name))
+        name: ((product-name))
+        protocol: ((rabbitmq-broker-protocol))
+        host: ((rabbitmq-broker-hostname)).((bosh-domain))
+        username: ((multitenant-rabbitmq-broker-username))
+        password: ((multitenant-rabbitmq-broker-password))
+  - name: broker-deregistrar
+    release: cf-rabbitmq-multitenant-broker
+    properties:
+      cf:
+        api_url: https://api.((bosh-domain))
+        admin_username: ((cf-admin-username))
+        admin_password: ((cf-admin-password))
+      broker:
+        name: ((product-name))
+        service:
+          name: ((product-name))
+  - name: smoke-tests
+    release: cf-rabbitmq-multitenant-broker
+    properties:
+      cf:
+        api_url: https://api.((bosh-domain))
+        domain: ((bosh-domain))
+        admin_username: ((cf-admin-username))
+        admin_password: ((cf-admin-password))
+      broker:
+        name: ((product-name))
+  vm_type: n1-standard-1
+  stemcell: trusty
+  azs:
+  - z1
+  networks:
+  - name: default
+
+update:
+  canaries: 1
+  canary_watch_time: 30000-180000
+  update_watch_time: 30000-180000
+  max_in_flight: 4
+  serial: false
