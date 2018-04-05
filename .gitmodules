@@ -4,6 +4,3 @@
 [submodule "Bosh-CF-Manifests/cf-deployment"]
 	path = Bosh-CF-Manifests/cf-deployment
 	url = https://github.com/cloudfoundry/cf-deployment.git
-[submodule "Bosh-CF-Manifests/cf-rabbitmq-multitenant-broker-release"]
-	path = Bosh-CF-Manifests/cf-rabbitmq-multitenant-broker-release
-	url = https://github.com/ONSdigital/cf-rabbitmq-multitenant-broker-release.git
