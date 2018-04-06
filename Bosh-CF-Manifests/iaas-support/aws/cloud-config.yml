@@ -5,6 +5,9 @@ networks:
 - name: default
   type: manual
   subnets: ((cf_private_subnets))
+- name: cf_rabbitmq
+  type: manual
+  subnets: ((cf_rabbitmq_subnets))
 
 disk_types:
 - cloud_properties:
