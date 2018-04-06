@@ -47,7 +47,9 @@ cf_rabbitmq_subnets:
   reserved: ["((rabbitmq_az1_reserved_start)) - ((rabbitmq_az1_reserved_stop))"]
   cloud_properties:
     subnet: ((rabbitmq_az1_subnet))
-    security_groups: [((rabbitmq_security_group))]
+    security_groups:
+      - ((rabbitmq_security_group))
+      - ((private_security_group))
 - range: ((rabbitmq_az2_cidr))
   gateway: ((rabbitmq_az2_default_route))
   dns: [((dns_ip))]
@@ -55,5 +57,6 @@ cf_rabbitmq_subnets:
   reserved: ["((rabbitmq_az2_reserved_start)) - ((rabbitmq_az2_reserved_stop))"]
   cloud_properties:
     subnet: ((rabbitmq_az2_subnet))
-    security_groups: [((rabbitmq_security_group))]
-
+    security_groups:
+      - ((rabbitmq_security_group))
+      - ((private_security_group))
