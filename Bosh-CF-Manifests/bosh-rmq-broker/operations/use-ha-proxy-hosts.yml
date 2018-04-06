@@ -8,6 +8,6 @@
     rabbitmq-haproxy: {from: rabbitmq-haproxy}
 
 - type: replace
-  path: /instance_groups/name=haproxy/jobs/name=rabbitmq-broker/provides?
+  path: /instance_groups/name=haproxy/jobs/name=rabbitmq-haproxy/provides?
   value:
     rabbitmq-haproxy: {as: rabbitmq-haproxy}
