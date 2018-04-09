@@ -1,10 +1,5 @@
 ---
 - type: replace
-  path: /instance_groups/name=rmq-broker/networks/0
-  value:
-    name: cf_rabbitmq
-
-- type: replace
   path: /instance_groups/name=rmq/networks/0
   value:
     name: cf_rabbitmq

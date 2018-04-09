@@ -60,6 +60,11 @@ vm_extensions:
     security_groups:
       - ((private_security_group))
       - ((cf_router_sec_group))
+- name: rmq-broker-sec-group
+  cloud_properties:
+    security_groups:
+      - ((private_security_group))
+      - ((rabbitmq_security_group))
 - name: diego-ssh-sec-group
   cloud_properties:
     security_groups:

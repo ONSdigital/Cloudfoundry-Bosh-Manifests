@@ -1,0 +1,4 @@
+---
+- type: replace
+  path: /instance_groups/name=rmq-broker/vm_extensions?/-
+  value: rmq-broker-sec-group
