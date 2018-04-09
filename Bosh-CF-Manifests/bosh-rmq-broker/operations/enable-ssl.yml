@@ -1,0 +1,4 @@
+---
+- type: replace
+  path: /instance_groups/name=rmq-broker/jobs/name=rabbitmq-broker/properties/rabbitmq-broker/rabbitmq/ssl?
+  value: true
