@@ -39,7 +39,7 @@
     type: certificate
     options:
       ca: rabbitmq_ca
-      common_name: rabbitmq-node.service.cf.internal
+      common_name: rabbitmq.service.cf.internal
       extended_key_usage:
       - server_auth
       - client_auth

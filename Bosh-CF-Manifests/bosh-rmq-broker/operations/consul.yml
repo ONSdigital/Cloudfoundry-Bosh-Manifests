@@ -1,0 +1,43 @@
+---
+- type: replace
+  path: /releases/-
+  value:
+    name: consul
+    url: ((consul_release_url))
+    version: ((consul_release_version))
+    sha1: ((consul_release_sha1))
+
+- type: replace
+  path: /instance_groups/name=haproxy/jobs/-
+  value:
+    name: consul_agent
+    release: consul
+    consumes:
+      consul_common: {from: consul_common_link, deployment: cf}
+      consul_server: nil
+      consul_client: {from: consul_client_link, deployment: cf}
+    properties:
+      consul:
+        agent:
+          services:
+            rabbitmq: {}
+
+- type: replace
+  path: /instance_groups/name=rmq-broker/jobs/-
+  value:
+    name: consul_agent
+    release: consul
+    consumes:
+      consul_common: {from: consul_common_link, deployment: cf}
+      consul_server: nil
+      consul_client: {from: consul_client_link, deployment: cf}
+
+- type: replace
+  path: /instance_groups/name=rmq/jobs/-
+  value:
+    name: consul_agent
+    release: consul
+    consumes:
+      consul_common: {from: consul_common_link, deployment: cf}
+      consul_server: nil
+      consul_client: {from: consul_client_link, deployment: cf}
