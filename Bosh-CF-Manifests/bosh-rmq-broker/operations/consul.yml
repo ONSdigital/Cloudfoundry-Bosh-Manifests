@@ -20,7 +20,13 @@
       consul:
         agent:
           services:
-            rabbitmq: {}
+            rabbitmq:
+              check:
+                id: rmq-tcp
+                name: RMQ TCP on Port 5671
+                tcp: localhost:5671
+                interval: 10s
+                timeout: 1s
 
 - type: replace
   path: /instance_groups/name=rmq-broker/jobs/-
