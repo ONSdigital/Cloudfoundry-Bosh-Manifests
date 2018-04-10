@@ -1,4 +1,6 @@
 ---
 - type: replace
   path: /instance_groups/name=rmq/jobs/name=rabbitmq-server/properties/rabbitmq-server/plugins
-  value: [rabbitmq_management]
+  value: 
+    - rabbitmq_management
+    - rabbitmq_auth_mechanism_ssl
