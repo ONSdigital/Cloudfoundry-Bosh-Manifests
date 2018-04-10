@@ -1,0 +1,45 @@
+---
+- type: replace
+  path: /instance_groups/name=rmq-broker/jobs/name=rabbitmq-broker/properties/rabbitmq-broker/rabbitmq/ssl?
+  value: true
+
+- type: replace
+  path: /instance_groups/name=rmq/jpbs/name=rabbitmq-server/properties/rabbitmq-server/ssl
+  value:
+    cert: ((rabbitmq_server.certificate))
+    key: ((rabbitmq_server.private_key))
+    cacert: ((rabbitmq_server.ca))
+    ciphers:
+    - ECDHE-ECDSA-AES256-GCM-SHA384
+    - ECDHE-RSA-AES256-GCM-SHA384
+    - ECDHE-ECDSA-AES256-SHA384
+    - ECDHE-RSA-AES256-SHA384
+    - ECDHE-ECDSA-DES-CBC3-SHA
+    - ECDH-ECDSA-AES256-GCM-SHA384
+    - ECDH-RSA-AES256-GCM-SHA384
+    - ECDH-ECDSA-AES256-SHA384
+    - ECDH-RSA-AES256-SHA384
+    - DHE-DSS-AES256-GCM-SHA384
+    - DHE-DSS-AES256-SHA256
+    - AES256-GCM-SHA384
+
+- type: replace
+  path: /variables/-
+  value:
+    name: rabbitmq_ca
+    type: certificate
+    options:
+      is_ca: true
+      common_name: rabbitmq|CA
+
+- type: replace
+  path: /variables/-
+  value:
+    name: rabbitmq_server
+    type: certificate
+    options:
+      ca: rabbitmq_ca
+      common_name: rabbitmq-node.service.cf.internal
+      extended_key_usage:
+      - server_auth
+      - client_auth

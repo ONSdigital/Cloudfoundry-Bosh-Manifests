@@ -1,0 +1,6 @@
+---
+- type: replace
+  path: /instance_groups/name=rmq/jpbs/name=rabbitmq-server/properties/rabbitmq-server/ports
+  value:
+    - 5671
+    - 15672
