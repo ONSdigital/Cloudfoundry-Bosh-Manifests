@@ -30,5 +30,5 @@
         postgresql_port: ((cf_db_port))
         # We don't backup the Diego/BBS db as this should only contain the current VM deployment state
         databases:
-        - { name: ccdb, username: ccadmin, password: ((cc_db_password)) }
-        - { name: uaadb, username: uaaadmin, password: ((uaa_db_password)) }
+        - { name: ccdb, username: ccadmin, password: ((external_cc_database_password)) }
+        - { name: uaadb, username: uaaadmin, password: ((external_uaa_database_password)) }
