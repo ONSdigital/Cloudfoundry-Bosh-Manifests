@@ -112,3 +112,21 @@
   value:
     name: bosh_db_password
     type: password
+
+- type: replace
+  path: /variables/-
+  value:
+    name: diego_db_password
+    type: password
+
+- type: replace
+  path: /variables/-
+  value:
+    name: uaa_db_password
+    type: password
+
+- type: replace
+  path: /variables/-
+  value:
+    name: cc_db_password
+    type: password
