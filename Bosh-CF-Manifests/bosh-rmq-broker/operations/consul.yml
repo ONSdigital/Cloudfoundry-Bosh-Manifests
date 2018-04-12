@@ -8,7 +8,7 @@
     sha1: ((consul_release_sha1))
 
 - type: replace
-  path: /instance_groups/name=haproxy/jobs/-
+  path: /instance_groups/name=rmq/jobs/-
   value:
     name: consul_agent
     release: consul
@@ -38,12 +38,3 @@
       consul_server: nil
       consul_client: {from: consul_client_link, deployment: cf}
 
-- type: replace
-  path: /instance_groups/name=rmq/jobs/-
-  value:
-    name: consul_agent
-    release: consul
-    consumes:
-      consul_common: {from: consul_common_link, deployment: cf}
-      consul_server: nil
-      consul_client: {from: consul_client_link, deployment: cf}

@@ -3,4 +3,5 @@
   path: /instance_groups/name=rmq/jobs/name=rabbitmq-server/properties/rabbitmq-server/ports
   value:
     - 5671
+    - 5672
     - 15672

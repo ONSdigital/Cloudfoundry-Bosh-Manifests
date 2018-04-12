@@ -6,7 +6,3 @@
 - type: replace
   path: /instance_groups/name=rmq/vm_type
   value: default
-
-- type: replace
-  path: /instance_groups/name=haproxy/vm_type
-  value: default
