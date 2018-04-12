@@ -1,0 +1,13 @@
+---
+- type: remove
+  path: /instance_groups/name=rmq-broker/jobs/name=rabbitmq-broker/properties/rabbitmq-broker/rabbitmq/hosts
+
+- type: replace
+  path: /instance_groups/name=rmq-broker/jobs/name=rabbitmq-broker/consumes?
+  value:
+    rabbitmq-haproxy: {from: rabbitmq-haproxy}
+
+- type: replace
+  path: /instance_groups/name=haproxy/jobs/name=rabbitmq-haproxy/provides?
+  value:
+    rabbitmq-haproxy: {as: rabbitmq-haproxy}
