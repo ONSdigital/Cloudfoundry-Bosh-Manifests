@@ -1,9 +1,0 @@
-# Variables shared across director & CF deployments
----
-variables:
-  - name: cc_db_password
-    type: password
-  - name: diego_db_password
-    type: password
-  - name: uaa_db_password
-    type: password

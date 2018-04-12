@@ -23,7 +23,13 @@
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/security_group_definitions/-
   value:
     name: rabbitmq_networks
-    rules: ((rabbitmq_network_rules))
+    rules:
+      - {destination: ((rabbitmq_az1_cidr)), ports: '5671', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '5672', protocol: tcp}
+      - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '5671', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '5672', protocol: tcp}
+      - {destination: ((rabbitmq_az2_cidr)), ports: '15672', protocol: tcp}
 
 - type: replace
   path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/security_group_definitions/-

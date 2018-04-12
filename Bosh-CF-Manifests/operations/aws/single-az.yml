@@ -90,3 +90,10 @@
 - type: replace
   path: /instance_groups/name=diego-cell/azs
   value: [z1]
+
+- type: replace
+  path: /instance_groups/name=api/jobs/name=cloud_controller_ng/properties/cc/security_group_definitions/name=rabbitmq_networks/rules
+  value:
+    - {destination: ((rabbitmq_az1_cidr)), ports: '5671', protocol: tcp}
+    - {destination: ((rabbitmq_az1_cidr)), ports: '5672', protocol: tcp}
+    - {destination: ((rabbitmq_az1_cidr)), ports: '15672', protocol: tcp}
