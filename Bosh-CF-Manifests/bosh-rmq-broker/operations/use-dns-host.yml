@@ -1,6 +1,7 @@
 ---
-- type: remove
+- type: replace
   path: /instance_groups/name=rmq-broker/jobs/name=rabbitmq-broker/properties/rabbitmq-broker/rabbitmq/hosts
+  value: [127.0.0.1]
 
 - type: replace
   path: /instance_groups/name=rmq-broker/jobs/name=rabbitmq-broker/properties/rabbitmq-broker/rabbitmq/dns_host?

@@ -23,8 +23,8 @@
             rabbitmq:
               check:
                 id: rmq-tcp
-                name: RMQ TCP on Port 5671
-                tcp: localhost:5671
+                name: RMQ TCP on Port 5672
+                tcp: localhost:5672
                 interval: 10s
                 timeout: 1s
 
