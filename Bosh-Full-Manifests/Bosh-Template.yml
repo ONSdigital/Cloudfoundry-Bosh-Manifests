@@ -996,9 +996,6 @@ properties:
       server_cert: ((diego_rep_agent.certificate))
       server_key: ((diego_rep_agent.private_key))
       enable_legacy_api_endpoints: false
-    executor:
-      memory_capacity_mb: 30720
-      disk_capacity_mb: 163840
     route_emitter:
       bbs:
         ca_cert: ((diego_bbs_server.ca))
