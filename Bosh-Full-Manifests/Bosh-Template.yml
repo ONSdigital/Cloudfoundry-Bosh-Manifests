@@ -846,9 +846,6 @@ properties:
         client_key: ""
         require_ssl: false
       preloaded_rootfses: ["cflinuxfs2:/var/vcap/packages/cflinuxfs2/rootfs"]
-    executor:
-      memory_capacity_mb: 30720
-      disk_capacity_mb: 163840
     route_emitter:
       bbs:
         ca_cert: ""
