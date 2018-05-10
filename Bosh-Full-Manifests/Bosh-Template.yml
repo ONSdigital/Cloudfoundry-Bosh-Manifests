@@ -98,7 +98,7 @@ jobs:
       zone: z1
 
 - name: diego_cell
-  instances: 12
+  instances: 16
   azs: [az1]
   resource_pool: large_ram_large_disk
   templates:
